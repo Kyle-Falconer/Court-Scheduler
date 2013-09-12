@@ -1,0 +1,227 @@
+Conference: JH BOYS 1																													
+																													
+    #    	Team Name																												
+1	JHB9-LITTLE PIRATES																												
+2	JHB10-PROGRAM SELECT JH																												
+3	JHB11-RAZORBACKS																												
+4	JHB12-REPUBLIC TIGERS - 8TH																												
+5	JHB13-STRAFFORD 8TH GRADE																												
+																													
+																													
+TEAM		OPPONENT	DAY	DATE	      TIME      				COURT		TEAM		OPPONENT	DAY	DATE	      TIME      				COURT									
+1	vs	5	F	12-Jul	4		40	PM	W		5	vs	3	W	31-Jul	5		30	PM	R									
+1	vs	3	F	12-Jul	5		30	PM	W		5	vs	2	W	31-Jul	6		20	PM	R									
+5	vs	4	F	12-Jul	7		10	PM	W																				
+2	vs	3	F	12-Jul	8		00	PM	W		2	vs	4	F	2-Aug	4		40	PM	W									
+4	vs	2	F	12-Jul	8		50	PM	W		1	vs	5	F	2-Aug	4		40	PM	B									
+											3	vs	4	F	2-Aug	5		30	PM	B									
+4	vs	1	F	19-Jul	4		40	PM	W		3	vs	5	F	2-Aug	6		20	PM	W									
+4	vs	3	F	19-Jul	5		30	PM	W		2	vs	1	F	2-Aug	6		20	PM	B									
+1	vs	2	F	19-Jul	6		20	PM	W																				
+																													
+4	vs	5	F	26-Jul	5		30	PM	W																				
+4	vs	1	F	26-Jul	6		20	PM	W																				
+2	vs	5	F	26-Jul	7		10	PM	W																				
+3	vs	1	F	26-Jul	8		50	PM	W																				
+3	vs	2	F	26-Jul	9		30	PM	W																				
+Conference: JH BOYS 2																													
+																													
+    #    	Team Name																												
+1	JHB1-HOOPS																												
+2	JHB2-OZARK THUNDER																												
+3	JHB3-SPFD RAVENS																												
+4	JHB4-STOUTLAND TIGERS																												
+5	JHB5-STRAFFORD 7TH GRADE B																												
+6	JHB6-EAGLES-ASH																												
+7	JHB7-REPUBLIC 7TH GRADE																												
+8	JHB8-STRAFFORD 7TH GRADE A																												
+																													
+																													
+TEAM		OPPONENT	DAY	DATE	      TIME      				COURT		TEAM		OPPONENT	DAY	DATE	      TIME      				COURT									
+2	vs	7	F	12-Jul	4		40	PM	B		6	vs	7	F	26-Jul	4		40	PM	W									
+1	vs	7	F	12-Jul	5		30	PM	B		4	vs	2	F	26-Jul	4		40	PM	B									
+2	vs	5	F	12-Jul	6		20	PM	B		2	vs	7	F	26-Jul	5		30	PM	B									
+4	vs	5	F	12-Jul	7		10	PM	B		3	vs	6	F	26-Jul	6		20	PM	B									
+8	vs	1	F	12-Jul	8		00	PM	B		4	vs	5	F	26-Jul	7		10	PM	B									
+3	vs	4	F	12-Jul	8		50	PM	B		1	vs	5	F	26-Jul	8		00	PM	B									
+3	vs	8	F	12-Jul	9		30	PM	B		3	vs	8	F	26-Jul	8		50	PM	B									
+											8	vs	1	F	26-Jul	9		30	PM	B									
+8	vs	2	F	19-Jul	4		40	PM	R																				
+2	vs	3	F	19-Jul	5		30	PM	R		3	vs	6	W	31-Jul	7		10	PM	R									
+8	vs	4	F	19-Jul	6		20	PM	R		8	vs	6	W	31-Jul	8		00	PM	R									
+7	vs	3	F	19-Jul	7		10	PM	R																				
+1	vs	5	F	19-Jul	7		10	PM	W		6	vs	2	F	2-Aug	7		10	PM	B									
+6	vs	4	F	19-Jul	8		00	PM	R		4	vs	7	F	2-Aug	8		00	PM	W									
+7	vs	5	F	19-Jul	8		50	PM	R		2	vs	1	F	2-Aug	8		00	PM	B									
+6	vs	1	F	19-Jul	9		30	PM	R		5	vs	3	F	2-Aug	8		50	PM	B									
+											7	vs	8	F	2-Aug	8		50	PM	W									
+											5	vs	6	F	2-Aug	9		30	PM	W									
+											4	vs	1	F	2-Aug	9		30	PM	B									
+Conference: JH GIRLS																													
+																													
+    #    	Team Name																												
+1	JHG1-LADY IRISH JH 1																												
+2	JHG2-LADY PANTHERS-SUTHERLAND																												
+3	JHG3-MACKS CREEK LADY PIRATES 7																												
+4	JHG4-RUSH																												
+5	JHG5-TIGERS-HIGGINBOTHAM																												
+6	JHG6-WHO WE PLAYIN																												
+7	JHG7-X-TREME																												
+8	JHG8-YELLOWJACKETS 7TH - KELLEY																												
+9	JHG9-YELLOWJACKETS 8TH - KELLEY																												
+10	JHG10-LADY IRISH JH 2																												
+																													
+TEAM		OPPONENT	DAY	DATE	      TIME      				COURT		TEAM		OPPONENT	DAY	DATE	      TIME      				COURT									
+9	vs	1	F	12-Jul	4		40	PM	R		10	vs	6	F	26-Jul	4		00	PM	R									
+8	vs	1	F	12-Jul	5		30	PM	R		8	vs	10	F	26-Jul	4		40	PM	R									
+5	vs	4	F	12-Jul	6		20	PM	R		6	vs	9	F	26-Jul	5		30	PM	R									
+8	vs	5	F	12-Jul	6		20	PM	W		7	vs	8	F	26-Jul	6		20	PM	R									
+6	vs	9	F	12-Jul	7		10	PM	R		5	vs	9	F	26-Jul	7		10	PM	R									
+2	vs	7	F	12-Jul	8		00	PM	R		4	vs	7	F	26-Jul	8		00	PM	R									
+4	vs	10	F	12-Jul	8		50	PM	R		1	vs	3	F	26-Jul	8		00	PM	W									
+6	vs	7	F	12-Jul	9		30	PM	R		5	vs	3	F	26-Jul	8		50	PM	R									
+10	vs	2	F	12-Jul	9		30	PM	W		4	vs	1	F	26-Jul	9		30	PM	R									
+																													
+10	vs	3	F	19-Jul	4		00	PM	B		2	vs	10	W	31-Jul	5		30	PM	B									
+2	vs	3	F	19-Jul	4		40	PM	B		10	vs	1	W	31-Jul	6		20	PM	B									
+8	vs	2	F	19-Jul	5		30	PM	B		6	vs	2	F	31-Jul	7		10	PM	B									
+7	vs	10	F	19-Jul	6		20	PM	B																				
+8	vs	4	F	19-Jul	7		10	PM	B		3	vs	6	F	2-Aug	4		40	PM	R									
+6	vs	1	F	19-Jul	8		00	PM	W		3	vs	4	F	2-Aug	5		30	PM	R									
+9	vs	3	F	19-Jul	8		00	PM	B		1	vs	7	F	2-Aug	5		30	PM	W									
+6	vs	4	F	19-Jul	8		50	PM	W		9	vs	7	F	2-Aug	6		20	PM	R									
+7	vs	5	F	19-Jul	8		50	PM	B		2	vs	5	F	2-Aug	7		10	PM	R									
+1	vs	5	F	19-Jul	9		30	PM	W		3	vs	8	F	2-Aug	7		10	PM	W									
+9	vs	4	F	19-Jul	9		30	PM	B		5	vs	6	F	2-Aug	8		00	PM	R									
+											2	vs	9	F	2-Aug	8		50	PM	R									
+											5	vs	8	F	2-Aug	9		30	PM	R									
+Conference: HS BOYS 1																													
+																													
+    #    	Team Name																												
+1	HSB10-CARDINALS-MEHRHOFF																												
+2	HSB11-INDIANS V																												
+3	HSB12-KINGS																												
+4	HSB13-LOS JUGADORES																												
+5	HSB15-PIRATES																												
+6	HSB16-SPRINGFIELD WARRIORS																												
+7	HSB17-SW MO DUCKS																												
+8	HSB18-THE WARRIORS																												
+9	HSB19-CUBS																												
+10	HSB20-OMAHA V																												
+																													
+TEAM		OPPONENT	DAY	DATE	      TIME      				COURT		TEAM		OPPONENT	DAY	DATE	      TIME      				COURT									
+2	vs	9	T	9-Jul	5		30	PM	R		9	vs	4	T	23-Jul	4		40	PM	W									
+2	vs	5	T	9-Jul	6		20	PM	R		6	vs	2	T	23-Jul	4		40	PM	B									
+9	vs	7	T	9-Jul	7		10	PM	R		7	vs	3	T	23-Jul	5		30	PM	W									
+3	vs	4	T	9-Jul	7		10	PM	W		8	vs	2	T	23-Jul	5		30	PM	B									
+5	vs	6	T	9-Jul	8		00	PM	R		5	vs	3	T	23-Jul	6		20	PM	W									
+3	vs	8	T	9-Jul	8		00	PM	W		6	vs	4	T	23-Jul	6		20	PM	B									
+4	vs	7	T	9-Jul	8		50	PM	R		5	vs	9	T	23-Jul	7		10	PM	W									
+8	vs	6	T	9-Jul	8		50	PM	W		7	vs	8	T	23-Jul	7		10	PM	B									
+											4	vs	1	T	23-Jul	8		00	PM	B									
+2	vs	10	T	16-Jul	4		00	PM	R		1	vs	5	T	23-Jul	8		50	PM	B									
+10	vs	7	T	16-Jul	4		40	PM	R																				
+2	vs	3	T	16-Jul	5		30	PM	R		1	vs	7	T	30-Jul	4		40	PM	R									
+7	vs	5	T	16-Jul	6		20	PM	R		4	vs	2	T	30-Jul	4		40	PM	W									
+6	vs	1	T	16-Jul	6		20	PM	W		10	vs	3	T	30-Jul	5		30	PM	R									
+3	vs	6	T	16-Jul	7		10	PM	R		10	vs	7	T	30-Jul	6		20	PM	R									
+8	vs	4	T	16-Jul	7		10	PM	W		9	vs	8	T	30-Jul	7		10	PM	R									
+4	vs	5	T	16-Jul	8		00	PM	R		2	vs	1	T	30-Jul	7		10	PM	W									
+9	vs	1	T	16-Jul	8		00	PM	W		6	vs	9	T	30-Jul	8		00	PM	R									
+8	vs	1	T	16-Jul	8		50	PM	R		5	vs	8	T	30-Jul	8		50	PM	R									
+9	vs	3	T	16-Jul	8		50	PM	W		10	vs	6	T	30-Jul	8		50	PM	B									
+																													
+											10	vs	1	W	31-Jul	6		20	PM	W									
+											10	vs	5	W	31-Jul	8		00	PM	W									
+Conference: HS BOYS 2																													
+																													
+    #    	Team Name																												
+1	HSB1-EAGLES-HUME																												
+2	HSB2-HUSKIES BLUE																												
+3	HSB3-HUSKIES GRAY																												
+4	HSB4-ORANGEMEN																												
+5	HSB5-INDIANS-WILSON JV																												
+6	HSB6-MULES																												
+7	HSB7-INDIANS-WILSON FR																												
+8	HSB8-PROGRAM SELECT JV																												
+9	HSB9-OMAHA JV																												
+																													
+TEAM		OPPONENT	DAY	DATE	      TIME      				COURT		TEAM		OPPONENT	DAY	DATE	      TIME      				COURT									
+8	vs	1	T	9-Jul	4		40	PM	B		1	vs	5	T	23-Jul	4		40	PM	B									
+3	vs	4	T	9-Jul	5		30	PM	W		6	vs	4	T	23-Jul	5		30	PM	B									
+1	vs	7	T	9-Jul	5		30	PM	B		1	vs	3	T	23-Jul	6		20	PM	B									
+4	vs	5	T	9-Jul	6		20	PM	W		5	vs	8	T	23-Jul	7		10	PM	B									
+8	vs	6	T	9-Jul	6		20	PM	B		6	vs	7	T	23-Jul	8		00	PM	W									
+2	vs	7	T	9-Jul	7		10	PM	B		4	vs	2	T	23-Jul	8		00	PM	B									
+3	vs	6	T	9-Jul	8		00	PM	B		8	vs	2	T	23-Jul	8		50	PM	W									
+2	vs	5	T	9-Jul	8		50	PM	B		7	vs	3	T	23-Jul	8		50	PM	B									
+																													
+9	vs	4	T	16-Jul	4		00	PM	W		9	vs	3	T	30-Jul	4		40	PM	B									
+9	vs	1	T	16-Jul	4		40	PM	W		8	vs	1	T	30-Jul	5		30	PM	W									
+7	vs	8	T	16-Jul	4		40	PM	B		4	vs	5	T	30-Jul	5		30	PM	B									
+8	vs	4	T	16-Jul	5		30	PM	W		4	vs	7	T	30-Jul	6		20	PM	W									
+3	vs	5	T	16-Jul	5		30	PM	B		2	vs	1	T	30-Jul	6		20	PM	B									
+7	vs	3	T	16-Jul	6		20	PM	B		9	vs	8	T	30-Jul	7		10	PM	B									
+6	vs	1	T	16-Jul	7		10	PM	B		2	vs	7	T	30-Jul	8		00	PM	W									
+6	vs	2	T	16-Jul	8		00	PM	B		9	vs	6	T	30-Jul	8		00	PM	B									
+5	vs	2	T	16-Jul	8		50	PM	B		3	vs	6	T	30-Jul	8		50	PM	W									
+																													
+											5	vs	9	W	31-Jul	5		30	PM	W									
+											3	vs	9	W	31-Jul	7		10	PM	W									
+Conference: HS GIRLS 1																													
+																													
+    #    	Team Name																												
+1	HSG5-CARDINALS-PAYNE																												
+2	HSG6-HERITAGE BANK LADY YELLOWJACKETS																												
+3	HSG7-LADY IRISH V																												
+4	HSG8-LADY TIGERS-BECKHAM																												
+5	HSG9-MO ATTACK VARSITY GIRLS																												
+6	HSG10-NEOSHO XPLOSION																												
+7	HSG11-PIRATES-CRAIN																												
+8	HSG12-SPRINGFIELD STARS-VARSITY																												
+9	HSG13-TEAM FINALE																												
+																													
+																													
+TEAM		OPPONENT	DAY	DATE	      TIME      				COURT		TEAM		OPPONENT	DAY	DATE	      TIME      				COURT									
+5	vs	3	M	8-Jul	5		30	PM	W		8	vs	4	M	22-Jul	5		30	PM	R									
+4	vs	2	M	8-Jul	6		20	PM	W		2	vs	3	M	22-Jul	5		30	PM	B									
+9	vs	1	M	8-Jul	7		10	PM	R		9	vs	4	M	22-Jul	6		20	PM	R									
+2	vs	7	M	8-Jul	7		10	PM	W		6	vs	1	M	22-Jul	6		20	PM	B									
+4	vs	5	M	8-Jul	8		00	PM	R		8	vs	2	M	22-Jul	7		10	PM	R									
+8	vs	3	M	8-Jul	8		00	PM	W		7	vs	3	M	22-Jul	7		10	PM	B									
+9	vs	7	M	8-Jul	8		50	PM	R		6	vs	4	M	22-Jul	8		00	PM	R									
+1	vs	8	M	8-Jul	8		50	PM	W		1	vs	5	M	22-Jul	8		00	PM	B									
+											9	vs	3	M	22-Jul	8		50	PM	R									
+3	vs	4	M	15-Jul	5		30	PM	W		7	vs	5	M	22-Jul	8		50	PM	B									
+1	vs	7	M	15-Jul	5		30	PM	B																				
+8	vs	6	M	15-Jul	6		20	PM	W		6	vs	2	M	29-Jul	5		30	PM	W									
+1	vs	3	M	15-Jul	6		20	PM	B		4	vs	7	M	29-Jul	5		30	PM	B									
+5	vs	8	M	15-Jul	7		10	PM	W		2	vs	1	M	29-Jul	6		20	PM	W									
+2	vs	9	M	15-Jul	7		10	PM	B		7	vs	8	M	29-Jul	6		20	PM	B									
+6	vs	7	M	15-Jul	8		00	PM	W		5	vs	6	M	29-Jul	7		10	PM	W									
+2	vs	5	M	15-Jul	8		00	PM	B		9	vs	8	M	29-Jul	7		10	PM	B									
+6	vs	9	M	15-Jul	8		50	PM	W		4	vs	1	M	29-Jul	8		00	PM	W									
+											5	vs	9	M	29-Jul	8		00	PM	B									
+											3	vs	6	M	29-Jul	8		50	PM	B									
+Conference: HS GIRLS 2																													
+																													
+    #    	Team Name																												
+1	HSG1-LADY IRISH JV																												
+2	HSG2-MO ATTACK																												
+3	HSG3-RUSH																												
+4	HSG4-LADY FOXES																												
+5	HSG5-REPUBLIC SPARKS																												
+																													
+																													
+TEAM		OPPONENT	DAY	DATE	      TIME      				COURT		TEAM		OPPONENT	DAY	DATE	      TIME      				COURT									
+1	vs	3	M	8-Jul	5		30	PM	B		3	vs	2	M	22-Jul	5		30	PM	W									
+1	vs	5	M	8-Jul	6		20	PM	B		4	vs	1	M	22-Jul	6		20	PM	W									
+2	vs	3	M	8-Jul	7		10	PM	B		2	vs	5	M	22-Jul	7		10	PM	W									
+5	vs	4	M	8-Jul	8		00	PM	B		3	vs	1	M	22-Jul	8		00	PM	W									
+4	vs	2	M	8-Jul	8		50	PM	B		4	vs	5	M	22-Jul	8		50	PM	W									
+																													
+5	vs	3	M	15-Jul	6		20	PM	R		3	vs	5	M	29-Jul	5		30	PM	R									
+1	vs	2	M	15-Jul	7		10	PM	R		3	vs	4	M	29-Jul	6		20	PM	R									
+4	vs	1	M	15-Jul	8		00	PM	R		1	vs	5	M	29-Jul	7		10	PM	R									
+5	vs	2	M	15-Jul	8		50	PM	R		2	vs	1	M	29-Jul	8		00	PM	R									
+4	vs	3	M	15-Jul	8		50	PM	B		2	vs	4	M	29-Jul	8		50	PM	R									
