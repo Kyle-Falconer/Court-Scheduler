@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plannerBenchmark>
+  <benchmarkDirectory>local/data/nqueens/stepLimit</benchmarkDirectory>
+
+  <inheritedSolverBenchmark>
+    <problemBenchmarks>
+      <xstreamAnnotatedClass>org.optaplanner.examples.nqueens.domain.NQueens</xstreamAnnotatedClass>
+      <inputSolutionFile>data/nqueens/unsolved/256queens.xml</inputSolutionFile>
+    </problemBenchmarks>
+    <solver>
+      <solutionClass>org.optaplanner.examples.nqueens.domain.NQueens</solutionClass>
+      <planningEntityClass>org.optaplanner.examples.nqueens.domain.Queen</planningEntityClass>
+      <scoreDirectorFactory>
+        <scoreDefinitionType>SIMPLE</scoreDefinitionType>
+        <scoreDrl>/org/optaplanner/examples/nqueens/solver/nQueensScoreRules.drl</scoreDrl>
+      </scoreDirectorFactory>
+    </solver>
+  </inheritedSolverBenchmark>
+
+  <solverBenchmark>
+    <name>Entity tabu</name>
+    <solver>
+      <constructionHeuristic>
+        <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+        <forager>
+          <pickEarlyType>FIRST_NON_DETERIORATING_SCORE</pickEarlyType>
+        </forager>
+      </constructionHeuristic>
+      <localSearch>
+        <termination>
+          <maximumStepCount>100</maximumStepCount>
+        </termination>
+        <changeMoveSelector>
+          <selectionOrder>ORIGINAL</selectionOrder>
+        </changeMoveSelector>
+        <acceptor>
+          <entityTabuSize>5</entityTabuSize>
+        </acceptor>
+        <forager>
+        </forager>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+</plannerBenchmark>

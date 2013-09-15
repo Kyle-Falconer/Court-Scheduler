@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <!--<environmentMode>FAST_ASSERT</environmentMode>-->
+  <solutionClass>org.optaplanner.examples.nqueens.domain.NQueens</solutionClass>
+  <planningEntityClass>org.optaplanner.examples.nqueens.domain.Queen</planningEntityClass>
+
+  <scoreDirectorFactory>
+    <scoreDefinitionType>SIMPLE</scoreDefinitionType>
+    <!--<simpleScoreCalculatorClass>org.optaplanner.examples.nqueens.solver.score.NQueensSimpleScoreCalculator</simpleScoreCalculatorClass>-->
+    <!--<incrementalScoreCalculatorClass>org.optaplanner.examples.nqueens.solver.score.NQueensBasicIncrementalScoreCalculator</incrementalScoreCalculatorClass>-->
+    <!--<incrementalScoreCalculatorClass>org.optaplanner.examples.nqueens.solver.score.NQueensAdvancedIncrementalScoreCalculator</incrementalScoreCalculatorClass>-->
+    <scoreDrl>/org/optaplanner/examples/nqueens/solver/nQueensScoreRules.drl</scoreDrl>
+    <!--<assertionScoreDirectorFactory>-->
+      <!--<simpleScoreCalculatorClass>org.optaplanner.examples.nqueens.solver.score.NQueensSimpleScoreCalculator</simpleScoreCalculatorClass>-->
+    <!--</assertionScoreDirectorFactory>-->
+  </scoreDirectorFactory>
+
+  <termination>
+    <scoreAttained>0</scoreAttained>
+  </termination>
+  <constructionHeuristic>
+    <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+    <forager>
+      <pickEarlyType>FIRST_NON_DETERIORATING_SCORE</pickEarlyType>
+    </forager>
+  </constructionHeuristic>
+  <localSearch>
+    <changeMoveSelector>
+      <selectionOrder>ORIGINAL</selectionOrder>
+    </changeMoveSelector>
+    <!-- changeMoveSelector is the generic form of RowChangeMoveFactory: -->
+    <!--<moveListFactory>-->
+      <!--<moveListFactoryClass>org.optaplanner.examples.nqueens.solver.move.factory.RowChangeMoveFactory</moveListFactoryClass>-->
+    <!--</moveListFactory>-->
+    <acceptor>
+      <entityTabuSize>5</entityTabuSize>
+    </acceptor>
+    <forager>
+      <!-- Real world problems require to use of <acceptedCountLimit> -->
+    </forager>
+  </localSearch>
+  <!-- To scale out, replace <localSearch> with this configuration: -->
+  <!--<localSearch>-->
+    <!--<unionMoveSelector>-->
+      <!--<changeMoveSelector/>-->
+      <!--<swapMoveSelector/>-->
+    <!--</unionMoveSelector>-->
+    <!--<acceptor>-->
+      <!--<entityTabuSize>11</entityTabuSize>-->
+    <!--</acceptor>-->
+    <!--<forager>-->
+      <!--<acceptedCountLimit>2000</acceptedCountLimit>-->
+      <!--<pickEarlyType>FIRST_BEST_SCORE_IMPROVING</pickEarlyType>-->
+    <!--</forager>-->
+  <!--</localSearch>-->
+</solver>
