@@ -16,6 +16,7 @@
 
 package org.optaplanner.examples.nurserostering.persistence;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 
 import org.jdom.Element;
@@ -48,40 +49,22 @@ public class NurseRosteringSolutionExporter extends AbstractXmlSolutionExporter 
         }
 
         public void writeSolution() throws IOException {
-            Element solutionElement = new Element("Solution");
-            document.setRootElement(solutionElement);
 
-            Element schedulingPeriodIDElement = new Element("SchedulingPeriodID");
-            schedulingPeriodIDElement.setText(nurseRoster.getCode());
-            solutionElement.addContent(schedulingPeriodIDElement);
 
-            Element competitorElement = new Element("Competitor");
-            competitorElement.setText("Geoffrey De Smet with OptaPlanner");
-            solutionElement.addContent(competitorElement);
+            BufferedWriter writer =  new java.io.BufferedWriter(new java.io.FileWriter("test.csv", true));
+            writer.newLine();
 
-            Element softConstraintsPenaltyElement = new Element("SoftConstraintsPenalty");
-            softConstraintsPenaltyElement.setText(Integer.toString(nurseRoster.getScore().getSoftScore()));
-            solutionElement.addContent(softConstraintsPenaltyElement);
+            writer.write("date, employee, shift type\n");
 
             for (ShiftAssignment shiftAssignment : nurseRoster.getShiftAssignmentList()) {
                 Shift shift = shiftAssignment.getShift();
                 if (shift != null) {
-                    Element assignmentElement = new Element("Assignment");
-                    solutionElement.addContent(assignmentElement);
+                    writer.write(shift.getShiftDate().getDateString() +","+shiftAssignment.getEmployee().getCode()+","+shift.getShiftType().getCode()+"\n");
 
-                    Element dateElement = new Element("Date");
-                    dateElement.setText(shift.getShiftDate().getDateString());
-                    assignmentElement.addContent(dateElement);
-
-                    Element employeeElement = new Element("Employee");
-                    employeeElement.setText(shiftAssignment.getEmployee().getCode());
-                    assignmentElement.addContent(employeeElement);
-
-                    Element shiftTypeElement = new Element("ShiftType");
-                    shiftTypeElement.setText(shift.getShiftType().getCode());
-                    assignmentElement.addContent(shiftTypeElement);
                 }
             }
+
+            writer.close();
         }
     }
 
