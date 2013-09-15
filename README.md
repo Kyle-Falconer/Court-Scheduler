@@ -30,7 +30,7 @@ To run one of the examples using IntelliJ
 -----------------------------------------
 
 1. With the project open in IntelliJ, make the project by going to the Build menu, then selecting Make. This may take some time since Maven has to download all the dependencies. If you see errors during this process, just be patient and wait for it to finish. You may have to "make" the project twice.
-2. Open the Run Configurations dialog via the Run menu, then click on the "+" button at the top and choose "Application"
+2. Open the Edit Configurations dialog via the Run menu, then click on the "+" button at the top and choose "Application"
 3. In the Configuration tab, under Main Class, put: "org.optaplanner.examples.nurserostering.app.NurseRosteringApp"
 4. Under "Working directory", select the "optaplanner-examples" folder under the project's main directory, example: "C:\git\Court-Scheduler\optaplanner-examples"
 5. Under "Use classpath of module" choose "optaplanner examples"
