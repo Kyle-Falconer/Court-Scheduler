@@ -1,4 +1,5 @@
-package org.courtscheduler;
+package courtscheduler;
+
 
 import org.optaplanner.core.api.score.Score;
 import org.optaplanner.core.impl.solution.Solution;
@@ -10,7 +11,6 @@ import java.util.Collection;
  * User: Kyle
  * Date: 9/21/13
  * Time: 8:32 PM
- * To change this template use File | Settings | File Templates.
  */
 public class Courts implements Solution {
 
