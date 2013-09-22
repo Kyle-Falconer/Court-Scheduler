@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Court-Scheduler.iml" filepath="$PROJECT_DIR$/Court-Scheduler.iml" />
       <module fileurl="file://$PROJECT_DIR$/main/main.iml" filepath="$PROJECT_DIR$/main/main.iml" />
       <module fileurl="file://$PROJECT_DIR$/optaplanner.iml" filepath="$PROJECT_DIR$/optaplanner.iml" />
       <module fileurl="file://$PROJECT_DIR$/optaplanner-benchmark/optaplanner-benchmark.iml" filepath="$PROJECT_DIR$/optaplanner-benchmark/optaplanner-benchmark.iml" />
