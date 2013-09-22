@@ -2,7 +2,8 @@
 /local
 
 # Eclipse, Netbeans and IntelliJ files
-/.*
+*/.idea/workspace.xml
+*/.idea/tasks.xml
 !.gitignore
 !.gitattributes
 /nbproject
@@ -13,3 +14,4 @@
 # Repository wide ignore mac DS_Store files
 .DS_Store
 *.orig
+.idea/workspace.xml
