@@ -11,10 +11,15 @@ import org.optaplanner.core.config.solver.XmlSolverFactory;
  * Time: 9:35 PM
  */
 public class Main {
+
+    protected static int LOG = 2;
+
     public static void main(String[] args){
 
-        System.out.println("Court Scheduler");
-        System.out.println("===============");
+        if (LOG >= 1) {
+            System.out.println("Court Scheduler");
+            System.out.println("===============");
+        }
 
         // http://docs.jboss.org/drools/release/5.5.0.Final/drools-planner-docs/html_single/index.html#d0e1961
         XmlSolverFactory solverFactory = new XmlSolverFactory();
@@ -23,7 +28,10 @@ public class Main {
         solverConfig.getTerminationConfig().setMaximumMinutesSpend(1000L);  // FIXME: get this from the config file
         Solver solver = solverConfig.buildSolver();
 
-        System.out.println("\n\nconfiguration loaded...");
+        if (LOG >= 2 ){
+            System.out.println("\n\nconfiguration loaded...");
+        }
+
     }
 
 }
