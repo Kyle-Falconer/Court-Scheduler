@@ -2,7 +2,7 @@ Can definitely cut:
 org.optaplanner.core.impl.domain.solution.mutation
 org.optaplanner.core.impl.heuristic.selector.common.decorator.FairSelectorProbabilityWeightFactory
 org.optaplanner.core.impl.move.NoChangeMove
-org.optaplanner.core.impl.score.incremental.AbstractIncrementalScoreCalculator
+org.optaplanner.core.impl.score.director.incremental.AbstractIncrementalScoreCalculator
 
 org.optaplanner.examples.app
 org.optaplanner.examples.cloudbalancing
