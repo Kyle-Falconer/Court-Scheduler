@@ -1,0 +1,42 @@
+Can definitely cut:
+org.optaplanner.core.impl.domain.solution.mutation
+org.optaplanner.core.impl.heuristic.selector.common.decorator.FairSelectorProbabilityWeightFactory
+org.optaplanner.core.impl.move.NoChangeMove
+org.optaplanner.core.impl.score.director.incremental.AbstractIncrementalScoreCalculator
+
+org.optaplanner.examples.app
+org.optaplanner.examples.cloudbalancing
+org.optaplanner.examples.common.domain.PersistableIdComparator
+org.optaplanner.examples.common.persistence.AbstractTxtSolutionExporter
+org.optaplanner.examples.common.persistence.AbstractTxtSolutionImporter
+org.optaplanner.examples.common.swingui.latitudelongitude
+org.optaplanner.examples.curriculumcourse
+org.optaplanner.examples.examination
+org.optaplanner.examples.machinereassignment
+org.optaplanner.examples.manners2009
+org.optaplanner.examples.nqueens
+org.optaplanner.examples.pas
+org.optaplanner.examples.projectjobscheduling
+org.optaplanner.examples.travelingtournament
+org.optaplanner.examples.tsp
+org.optaplanner.examples.vehiclerouting
+
+optaplanner-webexamples (do we even need this?)
+
+
+Might be useful later, but show up as not necessary:
+
+org.optaplanner.benchmark
+org.optaplanner.examples.common.app.CommonBenchmarkApp
+org.optaplanner.examples.nurserostering.domain.NurseRosterParametrization
+org.optaplanner.examples.nurserostering.domain.solver.EmployeeAssignmentTotal
+org.optaplanner.examples.nurserostering.domain.solver.EmployeeConsecutiveAssignmentEnd
+org.optaplanner.examples.nurserostering.domain.solver.EmployeeConsecutiveAssignmentStart
+org.optaplanner.examples.nurserostering.domain.solver.EmployeeConsecutiveWeekendAssignmentEnd
+org.optaplanner.examples.nurserostering.domain.solver.EmployeeConsecutiveWeekendAssignmentStart
+org.optaplanner.examples.nurserostering.domain.solver.EmployeeFreeSequence
+org.optaplanner.examples.nurserostering.domain.solver.EmployeeWeekendSequence
+org.optaplanner.examples.nurserostering.domain.solver.EmployeeWorkSequence
+org.optaplanner.examples.nurserostering.solver.move.factory
+org.optaplanner.examples.nurserostering.solver.move.EmployeeMultipleChangeMove
+org.optaplanner.examples.nurserostering.solver.move.ShiftAssignmentSwapMove
