@@ -9,14 +9,14 @@ import courtscheduler.persistence.Team;
 
 public class Reader {
    
-   public Reader() {
+   public Reader(String filename) {
       BufferedReader br = null;
       InputStreamReader isr = null;
       FileInputStream fis = null;
       
       try {
-         File file = new File("main/src/courtscheduler/persistence/teamlist.csv");
-         System.out.println("File found..");
+         File file = new File(filename);
+         System.out.println("File found...");
          
          fis = new FileInputStream(file);
          isr = new InputStreamReader(fis);
@@ -25,7 +25,7 @@ public class Reader {
          ArrayList<Team> teamList = new ArrayList<Team>();
          String line = null;
          
-         System.out.println("Processing file..");
+         System.out.println("Processing file...");
          
          while((line = br.readLine()) != null) {
             String[] splitLine = line.split(",",-1);
@@ -97,10 +97,5 @@ public class Reader {
          }         
       }      
    }
-
-/*   public static void main(String[] args) {
-
-        new Reader();
-    }*/
 
 }

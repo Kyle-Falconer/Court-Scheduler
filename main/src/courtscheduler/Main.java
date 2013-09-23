@@ -17,12 +17,14 @@ public class Main {
 
     public static void main(String[] args){
 
-        new Reader();
-
         if (LOG >= 1) {
             System.out.println("Court Scheduler");
-            System.out.println("===============");
+            System.out.println("============================================================");
         }
+
+        new Reader("main/src/courtscheduler/persistence/teamlist.csv");
+
+
 
         // http://docs.jboss.org/drools/release/5.5.0.Final/drools-planner-docs/html_single/index.html#d0e1961
         /*
