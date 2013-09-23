@@ -22,6 +22,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="optaplanner-benchmark" />
+        <module name="optaplanner-core" />
+        <module name="optaplanner-examples" />
+        <module name="optaplanner-webexamples" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

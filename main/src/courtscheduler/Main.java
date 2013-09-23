@@ -1,5 +1,6 @@
 package courtscheduler;
 
+import courtscheduler.persistence.Reader;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
@@ -15,6 +16,8 @@ public class Main {
     protected static int LOG = 2;
 
     public static void main(String[] args){
+
+        new Reader();
 
         if (LOG >= 1) {
             System.out.println("Court Scheduler");
