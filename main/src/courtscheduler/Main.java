@@ -22,6 +22,7 @@ public class Main {
         }
 
         // http://docs.jboss.org/drools/release/5.5.0.Final/drools-planner-docs/html_single/index.html#d0e1961
+        /*
         XmlSolverFactory solverFactory = new XmlSolverFactory();
         solverFactory.configure("/courtscheduler/solver/SolverConfig.xml");
         SolverConfig solverConfig = solverFactory.getSolverConfig();
@@ -31,6 +32,7 @@ public class Main {
         if (LOG >= 2 ){
             System.out.println("\n\nconfiguration loaded...");
         }
+        */
 
     }
 
