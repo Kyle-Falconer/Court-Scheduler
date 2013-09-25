@@ -26,7 +26,8 @@ public class Reader {
          String line = null;
          
          System.out.println("Processing file...");
-         
+         br.readLine();
+
          while((line = br.readLine()) != null) {
             String[] splitLine = line.split(",",-1);
             
