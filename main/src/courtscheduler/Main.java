@@ -22,7 +22,8 @@ public class Main {
             System.out.println("============================================================");
         }
 
-        new Reader("main/src/courtscheduler/persistence/teamlist.csv");
+        //new Reader("main/src/courtscheduler/persistence/teamlist.csv");
+        new Reader(args[0]);
 
 
 

@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="main:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/main_jar</output-path>
+    <root id="archive" name="main.jar">
+      <element id="module-output" name="main" />
+      <element id="module-output" name="optaplanner-core" />
+      <element id="module-output" name="optaplanner-examples" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
