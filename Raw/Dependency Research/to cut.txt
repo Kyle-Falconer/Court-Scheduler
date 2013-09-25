@@ -21,7 +21,23 @@ org.optaplanner.examples.travelingtournament
 org.optaplanner.examples.tsp
 org.optaplanner.examples.vehiclerouting
 
-optaplanner-webexamples (do we even need this?)
+optaplanner-webexamples
+
+
+Cascades (things which depend upon cut things, which we will have to cut or modify as well):
+optaplanner-core\src\test\java\org.optaplanner.core.impl.domain.solution.mutation.MutationCounterTest
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\impl\statistic\bestsolutionmutation\BestSolutionMutationSingleStatistic.java
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\impl\statistic\bestsolutionmutation\BestSolutionMutationProblemStatistic.java
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\impl\statistic\ProblemStatisticType.java
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\impl\statistic\movecountperstep\MoveCountPerStepProblemStatistic.java
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\impl\statistic\AbstractProblemStatistic.java
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\impl\statistic\ProblemStatistic.java
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\config\ProblemBenchmarksConfig.java
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\impl\statistic\memoryuse\MemoryUseProblemStatistic.java
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\impl\statistic\bestscore\BestScoreProblemStatistic.java
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\impl\statistic\stepscore\StepScoreProblemStatistic.java
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\impl\statistic\improvingsteppercentage\ImprovingStepPercentageProblemStatistic.java
+optaplanner-benchmark\src\main\java\org\optaplanner\benchmark\impl\statistic\calculatecount\CalculateCountProblemStatistic.java
 
 
 Might be useful later, but show up as not necessary:
