@@ -2,11 +2,11 @@
   <library name="org.apache.poi:poi:3.7" type="repository">
     <properties maven-id="org.apache.poi:poi:3.7" />
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/poi-3.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/main/lib/poi-3.7.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/lib/poi-3.7-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/main/lib/poi-3.7-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
