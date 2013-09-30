@@ -9,7 +9,7 @@
     <scoreDrl>/courtscheduler/solver/SolverRules.drl</scoreDrl>
   </scoreDirectorFactory>
 
-  <termination>
+  <termination>                            l
     <!--
       Official benchmark maximumSecondsSpend allowed on:
       - ge0ffrey's main pc: sprint 11, medium 700, long 42000
