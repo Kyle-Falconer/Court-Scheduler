@@ -1,21 +1,17 @@
 package courtscheduler.persistence;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.*;
+
 public class XlsxReader {
 
-	public XlsxReader() throws Exception {
+	public XlsxReader(String filename) throws Exception {
 		
-		File file = new File("test.xlsx");   
+		File file = new File(filename);
 	    FileInputStream fis = new FileInputStream(file);
 	    XSSFWorkbook wb = new XSSFWorkbook(fis);
 	    
@@ -34,9 +30,9 @@ public class XlsxReader {
 	    
 	    Integer columnCounter = 0;
 	    //short columnCount = null;
-	    
-	    System.out.println(new java.util.Date() + "[INFO] Worksheet Name: "+sh.getSheetName());
-	    System.out.println(new java.util.Date() + "[INFO] Worksheet has " + (rowCount+1) + " lines of data.");
+
+	    System.out.println(new java.util.Date() + "[INFO] Worksheet Name: " + sh.getSheetName());
+	    System.out.println(new java.util.Date() + "[INFO] Worksheet has " + (rowCount + 1) + " lines of data.");
 	    
 	    System.out.println("\t[C0]\t[C1]\t[C2]");
 	    
@@ -108,7 +104,7 @@ public class XlsxReader {
 		    	Process process = runtime.exec("/Windows/write.exe " + outFile.getAbsolutePath());
 		    }
 	    }
-	    
+
 	}
 
 	public short getColumnWidth(File file) throws Exception {
@@ -132,10 +128,6 @@ public class XlsxReader {
 	    }
 	    
 	    return columnWidth;
-	}
-
-	public static void main(String[] args) throws Exception {
-		new XlsxReader();
 	}
 
 }
