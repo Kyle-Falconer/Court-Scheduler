@@ -13,13 +13,12 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 @PlanningEntity
 public class MatchAssignment extends AbstractPersistable {
 
-    @PlanningVariable
+    @PlanningVariable(valueRangeProviderRefs = {"planningVariable" })
     public Object getPlanningVariable(){
         // FIXME
         return null;
     }
 
-    @PlanningVariable
     public void setPlanningVariable(Object variable){
         // FIXME
     }

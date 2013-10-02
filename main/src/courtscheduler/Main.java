@@ -23,22 +23,20 @@ public class Main {
         }
 
         //new Reader("main/src/courtscheduler/persistence/teamlist.csv");
-        new Reader(args[0]);
+        //new Reader(args[0]);
 
 
 
         // http://docs.jboss.org/drools/release/5.5.0.Final/drools-planner-docs/html_single/index.html#d0e1961
-        /*
-        XmlSolverFactory solverFactory = new XmlSolverFactory();
-        solverFactory.configure("/courtscheduler/solver/SolverConfig.xml");
+
+        XmlSolverFactory solverFactory = new XmlSolverFactory("/courtscheduler/solver/SolverConfig.xml");
         SolverConfig solverConfig = solverFactory.getSolverConfig();
-        solverConfig.getTerminationConfig().setMaximumMinutesSpend(1000L);  // FIXME: get this from the config file
         Solver solver = solverConfig.buildSolver();
 
         if (LOG >= 2 ){
             System.out.println("\n\nconfiguration loaded...");
         }
-        */
+
 
     }
 

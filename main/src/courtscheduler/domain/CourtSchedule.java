@@ -3,6 +3,7 @@ package courtscheduler.domain;
 
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
+import org.optaplanner.core.api.domain.value.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.solution.Solution;
 
@@ -59,6 +60,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     }
 
     @PlanningEntityCollectionProperty
+	@ValueRangeProvider(id="planningVariable")
     public List<MatchAssignment> getMatchAssignments(){
         return null;
     }

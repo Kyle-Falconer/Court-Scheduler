@@ -6,7 +6,7 @@
 
   <scoreDirectorFactory>
     <scoreDefinitionType>HARD_SOFT</scoreDefinitionType>
-    <scoreDrl>/courtscheduler/solver/SolverRules.drl</scoreDrl>
+    <scoreDrl>/courtscheduler/solver/ScoreRules.drl</scoreDrl>
   </scoreDirectorFactory>
 
   <termination>
