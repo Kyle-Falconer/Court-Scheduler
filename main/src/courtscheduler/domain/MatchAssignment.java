@@ -13,7 +13,7 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 @PlanningEntity
 public class MatchAssignment extends AbstractPersistable {
 
-    @PlanningVariable(valueRangeProviderRefs = {"teamRange" })
+    @PlanningVariable(valueRangeProviderRefs = {"teamRange"}, strengthComparatorClass = TeamStrengthComparator.class)
     public Object getPlanningVariable(){
         // FIXME
         return null;
