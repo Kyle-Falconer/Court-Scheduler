@@ -13,7 +13,6 @@ public class MatchTime {
 
     private String startTime;
     private String endTime;
-    Integer courtId;
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
@@ -31,11 +30,4 @@ public class MatchTime {
         return endTime;
     }
 
-    public void setCourtId(Integer courtId) {
-        this.courtId = courtId;
-    }
-
-    public Integer getCourtId() {
-        return courtId;
-    }
 }

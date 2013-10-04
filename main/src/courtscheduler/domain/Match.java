@@ -11,6 +11,7 @@ public class Match {
 
     private MatchTime matchTime;
     private MatchDate matchDate;
+	Integer courtId;
 
     public void setMatchTime(MatchTime matchTime) {
         this.matchTime = matchTime;
@@ -27,4 +28,12 @@ public class Match {
     public MatchDate getMatchDate() {
         return matchDate;
     }
+
+	public void setCourtId(Integer courtId) {
+		this.courtId = courtId;
+	}
+
+	public Integer getCourtId() {
+		return courtId;
+	}
 }
