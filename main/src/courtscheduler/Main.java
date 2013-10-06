@@ -1,9 +1,17 @@
 package courtscheduler;
 
 //import courtscheduler.persistence.XlsxReader;
+import courtscheduler.domain.CourtSchedule;
+import courtscheduler.domain.Match;
+import courtscheduler.domain.MatchAssignment;
+import courtscheduler.domain.MatchDate;
+import courtscheduler.persistence.XlsxReader;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
 import org.optaplanner.core.api.solver.Solver;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -26,7 +34,7 @@ public class Main {
         //new Reader("main/src/courtscheduler/persistence/teamlist.csv");
         // new Reader(args[0]);
 
-  //      new XlsxReader(args[0]);
+        //new XlsxReader(args[0]);
 
 
 
@@ -38,8 +46,7 @@ public class Main {
         if (LOG >= 2 ){
             System.out.println("\n\nconfiguration loaded...");
         }
-
-
+        CourtSchedule testSchedule;
+        XlsxReader.readExcelFile("C:\\Users\\Charles\\Documents\\Court-Scheduler\\Book1.xlsx");
     }
-
 }

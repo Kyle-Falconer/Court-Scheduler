@@ -21,6 +21,8 @@ import java.util.*;
 @PlanningSolution
 public class CourtSchedule extends AbstractPersistable implements Solution<HardSoftScore> {
 
+    public static int NUMBER_OF_COURTS;
+
     private HardSoftScore score;
     private CourtScheduleInfo courtScheduleInfo;
 

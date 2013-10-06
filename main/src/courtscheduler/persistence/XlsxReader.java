@@ -1,5 +1,7 @@
 package courtscheduler.persistence;
 
+import courtscheduler.domain.CourtSchedule;
+import courtscheduler.domain.Team;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -7,11 +9,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.util.ArrayList;
-import courtscheduler.persistence.Team;
+import java.util.List;
 
-public class XlsxReader {
+public abstract class XlsxReader {
 
-	public XlsxReader(String filename) throws Exception {
+	public static CourtSchedule readExcelFile(String filename) throws Exception {
 		
 		File file = new File(filename);
 	    FileInputStream fis = new FileInputStream(file);
@@ -144,8 +146,15 @@ public class XlsxReader {
 		    	Process process = runtime.exec("/Windows/write.exe " + outFile.getAbsolutePath());
 		    }
 	    }
-
+        return generateCourtScheduleFromTeamList(teamList);
 	}
+
+    private static CourtSchedule generateCourtScheduleFromTeamList(List<Team> teamList) {
+        CourtSchedule schedule = new CourtSchedule();
+        schedule.setTeamList(teamList);
+
+        return schedule;
+    }
 
 	public short getColumnWidth(File file) throws Exception {
 		
