@@ -6,6 +6,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.util.ArrayList;
+import courtscheduler.persistence.Team;
 
 public class XlsxReader {
 
@@ -25,16 +27,16 @@ public class XlsxReader {
 	    // Get worksheet by index
 	    XSSFSheet sh = wb.getSheetAt(0);
 	    
-	    Integer rowCounter = 0;
+	    Integer rowCounter = 2;
 	    Integer rowCount = sh.getLastRowNum();
+        ArrayList<Team> teamList = new ArrayList<Team>();
 	    
 	    Integer columnCounter = 0;
 	    //short columnCount = null;
 
 	    System.out.println(new java.util.Date() + "[INFO] Worksheet Name: " + sh.getSheetName());
-	    System.out.println(new java.util.Date() + "[INFO] Worksheet has " + (rowCount + 1) + " lines of data.");
-	    
-	    System.out.println("\t[C0]\t[C1]\t[C2]");
+	    System.out.println(new java.util.Date() + "[INFO] Worksheet has " + (rowCount - 1) + " lines of data.");
+
 	    
 	    // This is nice to dynamically get your column count, but it sets the 
 	    // worksheet row and column index to the end.
@@ -63,34 +65,72 @@ public class XlsxReader {
 			    Row currentRow = sh.getRow(rowCounter);
 			    short columnCount = currentRow.getLastCellNum();
 			    columnCounter = 0;
+
+                Integer teamId = null;
+                String x = "";
+                String teamName = "";
+                String year = "";
+                String gender = "";
+                Integer grade = null;
+                String level = "";
+                String requests = "";
+                String notSameTimeAs = "";
+                Team team = new Team();
 			    
 			    while(columnCounter < columnCount){
 			    	
-			    	Cell cell = currentRow.getCell(columnCounter); 
+			    	Cell cell = currentRow.getCell(columnCounter);
+
 			    	
-			    	if(columnCounter == 0)
-			    		System.out.print("[R"+rowCounter+"]");
-			    	
-			    	//String value = currentRow.getCell(i).toString();
-			    	//System.out.println("currentRow.getCell(0).getNumericCellValue="+currentRow.getCell(i));
-			    	System.out.print("\t" + cell.toString());
-			    	
-			    	if(columnCounter == 0)
-			    		bw.write("\"" + cell.toString() + "\"");
-			    	else 
+			    	if(columnCounter == 0){
+                        int index = cell.toString().indexOf(".");
+                        teamId = Integer.parseInt(cell.toString().substring(0,index));
+                    }
+                    else
 			    		bw.write(",\"" + cell.toString() + "\"");
-			    	
-			    	if(columnCounter == (columnCount-1)){
-			    		bw.write("\n");
-			    		System.out.println();
-			    	}
+
+
+                    if(columnCounter == 1)
+                        x = cell.toString();
+                    if(columnCounter == 2)
+                        teamName = cell.toString();
+                    if(columnCounter == 3)
+                        year =  cell.toString();
+                    if(columnCounter == 4)
+                        gender = cell.toString();
+                    if(columnCounter == 5){
+                        int index = cell.toString().indexOf(".");
+                        grade = Integer.parseInt(cell.toString().substring(0,index));
+                    }
+                    if(columnCounter == 6)
+                        level = cell.toString();
+                    if(columnCounter == 7)
+                        requests = cell.toString();
+                    if(columnCounter == 8)
+                        notSameTimeAs = cell.toString();
+
+                    team.setTeamId(teamId);
+                    team.setX(x);
+                    team.setTeamName(teamName);
+                    team.setYear(year);
+                    team.setGender(gender);
+                    team.setGrade(grade);
+                    team.setLevel(level);
+                    team.setRequests(requests);
+                    team.setNotSameTimeAs(notSameTimeAs);
+
 			    	
 			    	columnCounter+=1;
-			    }	    	    
+			    }
+
+                teamList.add(team);
 		    	
 		    	rowCounter+=1;
-		    }	    
-		    
+		    }
+
+            for(int x = 0; x < 7; x++)
+                System.out.println(teamList.get(x));
+
 		    System.out.println(new java.util.Date() + "[INFO] Processing finished. Converted document: \"test.csv\"");	
 		    
 	    }finally {
