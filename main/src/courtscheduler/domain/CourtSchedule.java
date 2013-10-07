@@ -31,9 +31,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     private List<MatchDate> matchDateList;
     private List<Match> matchList;
     private List<Conference> conferenceList;
-    private List<Gender> genderList;
-    private List<Grade> gradeList;
-    private List<Level> levelList;
+    //private List<Gender> genderList;
+    //private List<Grade> gradeList;
+    //private List<Level> levelList;
     //private List<Requests> requestsList;
 
     private List<MatchAssignment> matchAssignmentList;
