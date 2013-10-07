@@ -39,6 +39,5 @@ public class MatchAssignment extends AbstractPersistable {
         match = newMatch;
     }
 
-    }
 
 }

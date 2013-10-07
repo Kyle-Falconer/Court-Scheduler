@@ -142,10 +142,10 @@ public abstract class XlsxReader {
 	    			bw.close();
 	    		}catch(Exception e){/* do nothing */}
 	    	
-		    if(rowCount > 0){
+		    /*if(rowCount > 0){
 		    	Runtime runtime = Runtime.getRuntime();
 		    	Process process = runtime.exec("/Windows/write.exe " + outFile.getAbsolutePath());
-		    }
+		    }*/
 	    }
         return generateCourtScheduleFromTeamList(teamList);
 	}
@@ -223,6 +223,7 @@ public abstract class XlsxReader {
         //schedule.setGenderList();
         //schedule.setGradeList();
         //schedule.setLevelList();
+		schedule.setMatchAssignmentList(new ArrayList<MatchAssignment>());
         return schedule;
     }
 

@@ -9,6 +9,7 @@ import courtscheduler.persistence.XlsxReader;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
 import org.optaplanner.core.api.solver.Solver;
+import org.optaplanner.core.impl.solution.Solution;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +32,7 @@ public class Main {
             System.out.println("============================================================");
         }
 
-        //new Reader("main/src/courtscheduler/persistence/teamlist.csv");
-        // new Reader(args[0]);
-
-        //new XlsxReader(args[0]);
-
-
-
+		// initialize solver
         // http://docs.jboss.org/drools/release/5.5.0.Final/drools-planner-docs/html_single/index.html#d0e1961
         XmlSolverFactory solverFactory = new XmlSolverFactory("/courtscheduler/solver/SolverConfig.xml");
         SolverConfig solverConfig = solverFactory.getSolverConfig();
@@ -46,7 +41,14 @@ public class Main {
         if (LOG >= 2 ){
             System.out.println("\n\nconfiguration loaded...");
         }
-        CourtSchedule testSchedule;
-        XlsxReader.readExcelFile("C:\\Users\\Charles\\Documents\\Court-Scheduler\\Book1.xlsx");
+        CourtSchedule testSchedule = XlsxReader.readExcelFile("Book1.xlsx");
+
+		// solve the problem (gee, it sounds so easy when you put it like that)
+		solver.setPlanningProblem(testSchedule);
+		solver.solve();
+		Solution bestSolution = solver.getBestSolution();
+
+		// output best solution
+		// TODO
     }
 }
