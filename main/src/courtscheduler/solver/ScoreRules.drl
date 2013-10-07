@@ -21,6 +21,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 import courtscheduler.domain.CourtSchedule;
+import courtscheduler.domain.MatchAssignment;
 
 
 global HardSoftScoreHolder scoreHolder;
