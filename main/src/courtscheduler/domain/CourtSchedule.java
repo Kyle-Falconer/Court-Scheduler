@@ -140,6 +140,22 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         this.score = score;
     }
 
+    public void writeXlsx() {
+
+
+
+        for(MatchAssignment matchAssignment : matchAssignmentList) {
+            //write out the following via the xlsx reader/writer already being used
+            String teamName1 = matchAssignment.getTeamId().getTeamName();
+            String teamName2 = matchAssignment.getTeamId().getTeamName();
+            String courtId = matchAssignment.getCourtId().toString();
+            String matchTime = matchAssignment.getMatch().getMatchTime().getStartTime();
+            String matchDate = matchAssignment.getMatch().getMatchDate().getDate();
+
+            //writeRow(teamName1 + "," + teamName2 + ",'.....
+        }
+    }
+
     /**
      * Called by the {@link org.optaplanner.core.impl.score.director.drools.DroolsScoreDirector} when the {@link org.optaplanner.core.impl.solution.Solution} needs to be inserted
      * into an empty {@link org.kie.api.runtime.KieSession}.
