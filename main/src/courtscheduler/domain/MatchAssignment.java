@@ -12,15 +12,32 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
  */
 @PlanningEntity
 public class MatchAssignment extends AbstractPersistable {
+    private Team team1;
+    private Team team2;
+    private Match match;
 
     @PlanningVariable(valueRangeProviderRefs = {"teamRange"}, strengthComparatorClass = TeamStrengthComparator.class)
-    public Object getPlanningVariable(){
-        // FIXME
-        return null;
+    public Team getTeam1(){
+        return team1;
+    }
+    public void setTeam1(Team newTeam){
+        team1 = newTeam;
     }
 
-    public void setPlanningVariable(Object variable){
-        // FIXME
+    @PlanningVariable(valueRangeProviderRefs = {"teamRange"}, strengthComparatorClass = TeamStrengthComparator.class)
+    public Team getTeam2(){
+        return team2;
     }
+    public void setTeam2(Team newTeam){
+        team2 = newTeam;
+    }
+
+    public Match getMatch() {
+        return match;
+    }
+    public void setMatch(Match newMatch) {
+        match = newMatch;
+    }
+
 
 }

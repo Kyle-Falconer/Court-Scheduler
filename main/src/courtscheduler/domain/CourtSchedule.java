@@ -25,6 +25,8 @@ import java.util.*;
 @PlanningSolution
 public class CourtSchedule extends AbstractPersistable implements Solution<HardSoftScore> {
 
+    public static int NUMBER_OF_COURTS;
+
     private HardSoftScore score;
     private CourtScheduleInfo courtScheduleInfo;
 
@@ -89,8 +91,8 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     public List<Conference> getConferenceList() {
         return conferenceList;
     }
-    /*       Will and Kyle : These shouldnt be their own classes and should be pulled from teamList
-    public void setGenderList(List<Gender> genderList) {
+
+    /*public void setGenderList(List<Gender> genderList) {
         this.genderList = genderList;
     }
 
@@ -112,8 +114,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
     public List<Level> getLevelList() {
         return levelList;
-    }
-      */
+    }*/
 
     public void setMatchAssignmentList(List<MatchAssignment> matchAssignmentList) {
         this.matchAssignmentList = matchAssignmentList;
@@ -211,9 +212,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         facts.addAll(matchDateList);
         facts.addAll(matchTimeList);
         facts.addAll(conferenceList);
-      //  facts.addAll(genderList);
-      //  facts.addAll(gradeList);
-      //  facts.addAll(levelList);
+        //facts.addAll(genderList);
+        //facts.addAll(gradeList);
+        //facts.addAll(levelList);
         // Do not add the planning entity's (matchAssignmentList) because that will be done automatically
         return facts;  //To change body of implemented methods use File | Settings | File Templates.
     }

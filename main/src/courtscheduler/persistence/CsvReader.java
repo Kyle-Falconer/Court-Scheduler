@@ -1,15 +1,16 @@
 package courtscheduler.persistence;
 
+import courtscheduler.domain.Team;
+
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import courtscheduler.persistence.Team;
 
-public class Reader {
+public class CsvReader {
    
-   public Reader(String filename) {
+   public CsvReader(String filename) {
       BufferedReader br = null;
       InputStreamReader isr = null;
       FileInputStream fis = null;

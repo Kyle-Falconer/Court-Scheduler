@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.kie:kie-api:6.1.0-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-api/6.1.0-SNAPSHOT/kie-api-6.1.0-20131003.175332-171.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-api/6.1.0-SNAPSHOT/kie-api-6.1.0-20131007.040626-177.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-api/6.1.0-SNAPSHOT/kie-api-6.1.0-20131003.175332-171-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-api/6.1.0-SNAPSHOT/kie-api-6.1.0-20131007.040626-177-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-api/6.1.0-SNAPSHOT/kie-api-6.1.0-20131003.175332-171-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-api/6.1.0-SNAPSHOT/kie-api-6.1.0-20131007.040626-177-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
