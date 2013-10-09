@@ -134,7 +134,7 @@ public abstract class XlsxReader {
             for(int x = 0; x < 7; x++)
                 System.out.println(teamList.get(x));
 
-		    System.out.println(new java.util.Date() + "[INFO] Processing finished. Converted document: \"test.csv\"");	
+		    System.out.println(new java.util.Date() + "[INFO] Processing finished."); // Converted document: \"test.csv\"");
 		    
 	    }finally {
 	    	if ( bw != null )
@@ -155,7 +155,7 @@ public abstract class XlsxReader {
         schedule.setTeamList(teamList);
         //time
         MatchTime[] time = new MatchTime[24];
-        for(int i=0;i<23;i++){
+        for(int i=0;i<24;i++){
             MatchTime hourly= new MatchTime();
             hourly.setStartTime(i+":00");
             hourly.setEndTime(i+":50");
@@ -196,10 +196,11 @@ public abstract class XlsxReader {
 
         //Match
         List<Match> matches= new ArrayList<Match>();
-        Match match = new Match();
+
         for(int i=0; i<31;i++){
-            for(int j=0;j<24;j++){
-                for(int k=5;k<5;k++){
+			for(int j=0;j<24;j++){
+                for(int k=0;k<5;k++){
+					Match match = new Match();
                     match.setMatchDate(date[i]);
                     match.setMatchTime(time[j]);
                     match.setCourtId(k);

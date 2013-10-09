@@ -1,6 +1,7 @@
 package courtscheduler.domain;
 
 
+import org.apache.poi.ss.usermodel.Row;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.value.ValueRangeProvider;
@@ -10,9 +11,10 @@ import org.optaplanner.core.impl.solution.Solution;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 // import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 //...
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -145,7 +147,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         this.score = score;
     }
 
-    public void writeXlsx() {
+    public void writeXlsx(String filepath) {
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Conference 1");
@@ -153,7 +155,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         int rowNumber = 0;
         int cellNumber = 0;
         Row header = sheet.createRow(rowNumber);
-        cell.setCellValue("CourtScheduler");
+        //cell.setCellValue("CourtScheduler");
         header.createCell(0).setCellValue("Team 1");
         header.createCell(1).setCellValue("Team 2");
         header.createCell(2).setCellValue("Court");
@@ -163,12 +165,13 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
         for(MatchAssignment matchAssignment : matchAssignmentList) {
             cellNumber = 0;
-            Row dataRow = sheet.createRow(rowNumber++);
-            String teamName1 = matchAssignment.getTeamId().getTeamName();
-            dataRow.createCell(cellNumber).setCellValue(teamName1);
-            String teamName2 = matchAssignment.getTeamId().getTeamName();
+			rowNumber++;
+            Row dataRow = sheet.createRow(rowNumber);
+            String teamName1 = matchAssignment.getTeam1().getTeamName();
+            dataRow.createCell(cellNumber++).setCellValue(teamName1);
+            String teamName2 = matchAssignment.getTeam2().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName2);
-            String courtId = matchAssignment.getCourtId().toString();
+            String courtId = matchAssignment.getMatch().getCourtId().toString();
             dataRow.createCell(cellNumber++).setCellValue(courtId);
             String matchTime = matchAssignment.getMatch().getMatchTime().getStartTime();
             dataRow.createCell(cellNumber++).setCellValue(matchTime);
@@ -178,10 +181,10 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
         try {
             FileOutputStream out =
-                    new FileOutputStream(new File("C:\\CourtScheduler.xls"));
+                    new FileOutputStream(new File(filepath));
             workbook.write(out);
             out.close();
-            System.out.println("Excel written successfully..");
+            System.out.println("Excel written successfully to " + filepath + ".");
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -189,6 +192,25 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
             e.printStackTrace();
         }
     }
+
+	public void generatePlaceholderMatches() {
+		for (Team t1 : teamList) {
+			for (Team t2 : teamList) {
+				if (t1.getTeamId() < t2.getTeamId()) {
+					MatchAssignment next = new MatchAssignment();
+					next.setTeam1(t1);
+					next.setTeam2(t2);
+					// get a random match
+					int randomInt =(int)(Math.random() * (matchList.size() + 1));
+					Match nextMatch = matchList.get(randomInt);
+					//System.out.println(nextMatch.getMatchTime() + " " + nextMatch.getMatchDate() + " " + nextMatch.getCourtId());
+					//System.out.println(randomInt + " -> " + nextMatch);
+					next.setMatch(nextMatch);
+					matchAssignmentList.add(next);
+				}
+			}
+		}
+	}
 
     /**
      * Called by the {@link org.optaplanner.core.impl.score.director.drools.DroolsScoreDirector} when the {@link org.optaplanner.core.impl.solution.Solution} needs to be inserted

@@ -38,9 +38,11 @@ public class Main {
         CourtSchedule testSchedule = XlsxReader.readExcelFile("Book1.xlsx");
 
 		// solve the problem (gee, it sounds so easy when you put it like that)
-		solver.setPlanningProblem(testSchedule);
+		//solver.setPlanningProblem(testSchedule);
 		// solver.solve();
 		// Solution bestSolution = solver.getBestSolution();
+		testSchedule.generatePlaceholderMatches();
+		testSchedule.writeXlsx("output.xlsx");
 
 		// output best solution
 		// TODO
