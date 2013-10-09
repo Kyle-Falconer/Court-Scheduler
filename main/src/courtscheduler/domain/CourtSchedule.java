@@ -7,6 +7,10 @@ import org.optaplanner.core.api.domain.value.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.solution.Solution;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+// import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+//...
 
 import java.io.Serializable;
 import java.util.*;
@@ -34,7 +38,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     //private List<Level> levelList;
     //private List<Requests> requestsList;
 
-    private List<MatchAssignment> matchAssignmentList;
+    public List<MatchAssignment> matchAssignmentList;
 
 
     public void setCourtScheduleInfo(CourtScheduleInfo courtScheduleInfo) {
@@ -142,17 +146,46 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
     public void writeXlsx() {
 
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Conference 1");
+        //Create a new row in current sheet
+        int rowNumber = 0;
+        int cellNumber = 0;
+        Row header = sheet.createRow(rowNumber);
+        cell.setCellValue("CourtScheduler");
+        header.createCell(0).setCellValue("Team 1");
+        header.createCell(1).setCellValue("Team 2");
+        header.createCell(2).setCellValue("Court");
+        header.createCell(3).setCellValue("Time");
+        header.createCell(4).setCellValue("Date");
 
 
         for(MatchAssignment matchAssignment : matchAssignmentList) {
-            //write out the following via the xlsx reader/writer already being used
+            cellNumber = 0;
+            Row dataRow = sheet.createRow(rowNumber++);
             String teamName1 = matchAssignment.getTeamId().getTeamName();
+            dataRow.createCell(cellNumber).setCellValue(teamName1);
             String teamName2 = matchAssignment.getTeamId().getTeamName();
+            dataRow.createCell(cellNumber++).setCellValue(teamName2);
             String courtId = matchAssignment.getCourtId().toString();
+            dataRow.createCell(cellNumber++).setCellValue(courtId);
             String matchTime = matchAssignment.getMatch().getMatchTime().getStartTime();
+            dataRow.createCell(cellNumber++).setCellValue(matchTime);
             String matchDate = matchAssignment.getMatch().getMatchDate().getDate();
+            dataRow.createCell(cellNumber++).setCellValue(matchDate);
+        }
 
-            //writeRow(teamName1 + "," + teamName2 + ",'.....
+        try {
+            FileOutputStream out =
+                    new FileOutputStream(new File("C:\\CourtScheduler.xls"));
+            workbook.write(out);
+            out.close();
+            System.out.println("Excel written successfully..");
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
