@@ -14,141 +14,196 @@ import java.util.List;
 
 public abstract class XlsxReader {
 
+    private static ArrayList<Team> teamList = new ArrayList<Team>();
+
 	public static CourtSchedule readExcelFile(String filename) throws Exception {
 		
 		File file = new File(filename);
 	    FileInputStream fis = new FileInputStream(file);
 	    XSSFWorkbook wb = new XSSFWorkbook(fis);
 	    
-	    File outFile = new File("text.csv");
-	    BufferedWriter bw = null;
-	    //FileOutputStream out = null;
-
-	    // Get worksheet by name
-	    //XSSFSheet sh = wb.getSheet("<worksheet name>");
-	    
 	    // Get worksheet by index
 	    XSSFSheet sh = wb.getSheetAt(0);
 	    
 	    Integer rowCounter = 2;
 	    Integer rowCount = sh.getLastRowNum();
-        ArrayList<Team> teamList = new ArrayList<Team>();
-	    
-	    Integer columnCounter = 0;
-	    //short columnCount = null;
 
 	    System.out.println(new java.util.Date() + "[INFO] Worksheet Name: " + sh.getSheetName());
 	    System.out.println(new java.util.Date() + "[INFO] Worksheet has " + (rowCount - 1) + " lines of data.");
-
-	    
-	    // This is nice to dynamically get your column count, but it sets the 
-	    // worksheet row and column index to the end.
-	    //short columnWidth = getColumnWidth(file);
-	    //for(int i = 0; i < columnWidth; i++ ){
-	    //	System.out.print("\t[C"+i+"]");
-	    //}
-	    //System.out.println();
-	    
-	    try{
-		    if(rowCount > 0 ) {
-		    	if(outFile.exists()){
-		    		outFile.delete();
-			    	outFile.createNewFile();	
-		    	}
-		    	
-		    	bw = new BufferedWriter(new OutputStreamWriter(
-		    	          new FileOutputStream(outFile), "utf-8"));
-		    	//out = new FileOutputStream(outFile);
-		    }
 		    
-		    while (rowCounter <= rowCount){
-		    	//System.out.println(new java.util.Date() + "[INFO] Processing row " + rowCounter);
-			    
-		    	//Row row = sh.getRow(1);
-			    Row currentRow = sh.getRow(rowCounter);
-			    short columnCount = currentRow.getLastCellNum();
-			    columnCounter = 0;
+        while (rowCounter <= rowCount){
+            Row currentRow = sh.getRow(rowCounter);
+            processRow(currentRow);
+            rowCounter+=1;
+        }
 
-                Integer teamId = null;
-                String x = "";
-                String teamName = "";
-                String year = "";
-                String gender = "";
-                Integer grade = null;
-                String level = "";
-                String requests = "";
-                String notSameTimeAs = "";
-                Team team = new Team();
-			    
-			    while(columnCounter < columnCount){
-			    	
-			    	Cell cell = currentRow.getCell(columnCounter);
+        for(int x = 0; x < 7; x++)
+            System.out.println(teamList.get(x));
 
-			    	
-			    	if(columnCounter == 0){
-                        int index = cell.toString().indexOf(".");
-                        teamId = Integer.parseInt(cell.toString().substring(0,index));
-                    }
-                    else
-			    		bw.write(",\"" + cell.toString() + "\"");
+        System.out.println(new java.util.Date() + "[INFO] Processing finished."); // Converted document: \"test.csv\"");
 
-
-                    if(columnCounter == 1)
-                        x = cell.toString();
-                    if(columnCounter == 2)
-                        teamName = cell.toString();
-                    if(columnCounter == 3)
-                        year =  cell.toString();
-                    if(columnCounter == 4)
-                        gender = cell.toString();
-                    if(columnCounter == 5){
-                        int index = cell.toString().indexOf(".");
-                        grade = Integer.parseInt(cell.toString().substring(0,index));
-                    }
-                    if(columnCounter == 6)
-                        level = cell.toString();
-                    if(columnCounter == 7)
-                        requests = cell.toString();
-                    if(columnCounter == 8)
-                        notSameTimeAs = cell.toString();
-
-                    team.setTeamId(teamId);
-                    team.setX(x);
-                    team.setTeamName(teamName);
-                    team.setYear(year);
-                    team.setGender(gender);
-                    team.setGrade(grade);
-                    team.setLevel(level);
-                    team.setRequests(requests);
-                    team.setNotSameTimeAs(notSameTimeAs);
-
-			    	
-			    	columnCounter+=1;
-			    }
-
-                teamList.add(team);
-		    	
-		    	rowCounter+=1;
-		    }
-
-            for(int x = 0; x < 7; x++)
-                System.out.println(teamList.get(x));
-
-		    System.out.println(new java.util.Date() + "[INFO] Processing finished."); // Converted document: \"test.csv\"");
-		    
-	    }finally {
-	    	if ( bw != null )
-	    		try{
-	    			bw.close();
-	    		}catch(Exception e){/* do nothing */}
-	    	
-		    /*if(rowCount > 0){
-		    	Runtime runtime = Runtime.getRuntime();
-		    	Process process = runtime.exec("/Windows/write.exe " + outFile.getAbsolutePath());
-		    }*/
-	    }
         return generateCourtScheduleFromTeamList(teamList);
 	}
+
+    private static void processRow(Row currentRow) {
+
+        short columnCount = currentRow.getLastCellNum();
+        int columnCounter = 0;
+
+        Integer teamId = null;
+        String x = "";
+        String teamName = "";
+        String year = "";
+        String gender = "";
+        Integer grade = null;
+        String level = "";
+        String requests = "";
+        String notSameTimeAs = "";
+        Team team = new Team();
+
+        while(columnCounter < columnCount){
+
+            Cell cell = currentRow.getCell(columnCounter);
+
+            if(columnCounter == 0){
+                int index = cell.toString().indexOf(".");
+                teamId = Integer.parseInt(cell.toString().substring(0,index));
+            }
+            if(columnCounter == 1)
+                x = cell.toString();
+            if(columnCounter == 2)
+                teamName = cell.toString();
+            if(columnCounter == 3)
+                year =  cell.toString();
+            if(columnCounter == 4)
+                gender = cell.toString();
+            if(columnCounter == 5){
+                int index = cell.toString().indexOf(".");
+                grade = Integer.parseInt(cell.toString().substring(0,index));
+            }
+            if(columnCounter == 6)
+                level = cell.toString();
+            if(columnCounter == 7)
+                requests = cell.toString();
+            if(columnCounter == 8)
+                notSameTimeAs = cell.toString();
+
+            team.setTeamId(teamId);
+            team.setX(x);
+            team.setTeamName(teamName);
+            team.setYear(year);
+            team.setGender(gender);
+            team.setGrade(grade);
+            team.setLevel(level);
+
+            processRequestConstraints(team, requests);
+            //team.setRequests(requests);
+            team.setNotSameTimeAs(notSameTimeAs);
+
+
+            columnCounter+=1;
+        }
+
+        teamList.add(team);
+    }
+
+    private static void processRequestConstraints(Team team, String requests) {
+
+        String splitToken = ":"; // This needs to be updated with whatever Shane wants to use to separate the requests
+        String[] requestArray = requests.split(splitToken);
+
+        List<MatchDate> offDateList = new ArrayList<MatchDate>();
+        List<MatchTime> offTimeList = new ArrayList<MatchTime>();
+        List<MatchDate> preferredDateList = new ArrayList<MatchDate>();
+        List<Integer> playOnceTeamList = new ArrayList<Integer>();
+        //List<Integer> sharedTeamList = new ArrayList<Integer>(); // Not sure if this constraint will be in this column
+        boolean likesDoubleHeaders = false;
+        boolean likesBackToBack = false;
+
+        for(String request : requestArray) {
+
+            // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
+            if(request.startsWith(" ")) {
+                //parse the date and use it to create a new MatchDate object
+                MatchDate offDate = new MatchDate();
+                offDateList.add(offDate);
+            }
+
+            // CANT PLAY UNTIL AFTER CERTAIN TIME //
+            if(request.startsWith("after")){
+                // incomplete; need to ensure that each time has pm or am so that it can be converted to military
+                request.replace("after", "");
+                request = getMilitaryTime(request);
+                MatchTime offTime = new MatchTime();
+                offTime = new MatchTime();
+            }
+
+            // CANT PLAY UNTIL BEFORE CERTAIN TIME //
+            if(request.startsWith("before")){
+                // incomplete; need to ensure that each time has pm or am so that it can be converted to military
+                request.replace("before", "");
+                request = getMilitaryTime(request);
+                MatchTime offTime = new MatchTime();
+                offTime = new MatchTime();
+            }
+
+            // CANT PLAY BETWEEN CERTAIN TIME //
+            if(request.startsWith(" ")) {
+                MatchTime offTime = new MatchTime();
+                offTimeList.add(offTime);
+            }
+
+            // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY //
+            if(request.startsWith(" ")) {
+                //parse the date and use it to create a new MatchDate object
+                MatchDate preferredDate = new MatchDate();
+                preferredDateList.add(preferredDate);
+            }
+
+            // TEAM REQUEST TO PLAY ANOTHER TEAM ONLY ONCE
+            if(request.startsWith(" ")) {
+                //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
+                Integer teamId = null;
+                playOnceTeamList.add(teamId);
+            }
+
+            // DOUBLE HEADER PREFERENCE REQUEST (DEFAULTED TO false) //
+            if(request.startsWith("DH"))
+                likesDoubleHeaders = true;
+
+            // BACK TO BACK PREFERENCE REQUEST (DEFAULTED TO false) //
+            if(request.startsWith("B2B"))
+                likesBackToBack = true;
+        }
+
+        team.setOffDateList(offDateList);
+        team.setOffTimeList(offTimeList);
+        team.setPreferredDateList(preferredDateList);
+        team.setPlayOnceTeamList(playOnceTeamList);
+        team.setLikesDoubleHeaders(likesDoubleHeaders);
+        team.setLikesBackToBack(likesBackToBack);
+    }
+
+    private static String getMilitaryTime(String time) {
+
+        if(time.contains("pm") || time.contains("p.m.")) {
+            time = time.replace("pm", "");
+            time = time.replace("p.m.", "");
+
+            try {
+                Integer timeInt = Integer.parseInt(time);
+                timeInt += 12;
+                return timeInt.toString();
+            }catch (NumberFormatException e) {
+                return "";
+            }
+        }else {
+            time = time.replace("am", "");
+            time = time.replace("a.m.", "");
+
+            return time;
+        }
+    }
 
     private static CourtSchedule generateCourtScheduleFromTeamList(List<Team> teamList) {
         CourtSchedule schedule = new CourtSchedule();
