@@ -175,7 +175,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
             dataRow.createCell(cellNumber++).setCellValue(courtId);
             String matchTime = matchAssignment.getMatch().getMatchTime().getStartTime();
             dataRow.createCell(cellNumber++).setCellValue(matchTime);
-            String matchDate = matchAssignment.getMatch().getMatchDate().getDate();
+            String matchDate = matchAssignment.getMatch().getMatchDate().getCal().toString();
             dataRow.createCell(cellNumber++).setCellValue(matchDate);
         }
 

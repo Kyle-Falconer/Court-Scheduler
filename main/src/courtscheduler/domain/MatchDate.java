@@ -2,6 +2,8 @@ package courtscheduler.domain;
 
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 
+import java.util.Calendar;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Michael
@@ -11,15 +13,15 @@ import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
  */
 public class MatchDate {
 
-    private String date;
+    private Calendar cal;
     private DayOfWeek dayOfWeek;
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setCal(Calendar cal) {
+        this.cal = cal;
     }
 
-    public String getDate() {
-        return date;
+    public Calendar getCal() {
+        return cal;
     }
 
     public void setDayOfWeek(DayOfWeek dayOfWeek) {

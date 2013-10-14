@@ -10,6 +10,7 @@ import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 public abstract class XlsxReader {
@@ -89,7 +90,6 @@ public abstract class XlsxReader {
                 notSameTimeAs = cell.toString();
 
             team.setTeamId(teamId);
-            team.setX(x);
             team.setTeamName(teamName);
             team.setYear(year);
             team.setGender(gender);
@@ -98,7 +98,6 @@ public abstract class XlsxReader {
 
             processRequestConstraints(team, requests);
             //team.setRequests(requests);
-            team.setNotSameTimeAs(notSameTimeAs);
 
 
             columnCounter+=1;
@@ -116,14 +115,14 @@ public abstract class XlsxReader {
         List<MatchTime> offTimeList = new ArrayList<MatchTime>();
         List<MatchDate> preferredDateList = new ArrayList<MatchDate>();
         List<Integer> playOnceTeamList = new ArrayList<Integer>();
-        //List<Integer> sharedTeamList = new ArrayList<Integer>(); // Not sure if this constraint will be in this column
+        List<Integer> sharedTeamList = new ArrayList<Integer>();
         boolean likesDoubleHeaders = false;
         boolean likesBackToBack = false;
 
         for(String request : requestArray) {
 
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
-            if(request.startsWith(" ")) {
+            if(request.startsWith("xd")) {
                 //parse the date and use it to create a new MatchDate object
                 MatchDate offDate = new MatchDate();
                 offDateList.add(offDate);
@@ -134,8 +133,8 @@ public abstract class XlsxReader {
                 // incomplete; need to ensure that each time has pm or am so that it can be converted to military
                 request.replace("after", "");
                 request = getMilitaryTime(request);
-                MatchTime offTime = new MatchTime();
-                offTime = new MatchTime();
+                MatchTime offTime = new MatchTime("0:00", request);
+                offTimeList.add(offTime);
             }
 
             // CANT PLAY UNTIL BEFORE CERTAIN TIME //
@@ -143,13 +142,13 @@ public abstract class XlsxReader {
                 // incomplete; need to ensure that each time has pm or am so that it can be converted to military
                 request.replace("before", "");
                 request = getMilitaryTime(request);
-                MatchTime offTime = new MatchTime();
-                offTime = new MatchTime();
+                MatchTime offTime = new MatchTime(request, "0:00");
+                offTimeList.add(offTime);
             }
 
             // CANT PLAY BETWEEN CERTAIN TIME //
-            if(request.startsWith(" ")) {
-                MatchTime offTime = new MatchTime();
+            if(request.startsWith("xr")) {
+                MatchTime offTime = new MatchTime("0:00", "0:00");
                 offTimeList.add(offTime);
             }
 
@@ -222,7 +221,9 @@ public abstract class XlsxReader {
         MatchDate[] date = new MatchDate[31];
         for(int i=0;i<31;i++){
             MatchDate day= new MatchDate();
-            day.setDate("Oct."+i);
+            Calendar cal = Calendar.getInstance();
+            cal.set(2013, 9, i);
+            day.setCal(cal);
             switch(i%7){
                 case(0):
                     day.setDayOfWeek(DayOfWeek.MONDAY);

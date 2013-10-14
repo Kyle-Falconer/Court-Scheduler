@@ -5,14 +5,21 @@ import java.util.List;
 public class Team {
 
     private Integer teamId;
-    private String x = "";
     private String teamName;
     private String year = "";
     private String gender;
     private Integer grade;
     private String level;
-    private String requests;
-    private String notSameTimeAs = "";
+    private Integer conference;
+
+    private DoubleHeaderPreference doubleHeaderPreference;
+    private BackToBackPreference backToBackPreference;
+    private DateConstraint dateConstraint;
+    private OffTimes offTimes;
+    private SharedTeams sharedTeams;
+    private PlayOnceRequests playOnceRequests;
+    private PreferredDates preferredDates;
+
     private boolean likesDoubleHeaders = false;
     private boolean likesBackToBack = false;
     private List<MatchDate> offDateList;
@@ -89,14 +96,6 @@ public class Team {
       return teamId;
     }
 
-    public void setX(String x) {
-      this.x = x;
-    }
-
-    public String getX() {
-      return x;
-    }
-
     public void setTeamName(String teamName) {
       this.teamName = teamName;
     }
@@ -137,25 +136,73 @@ public class Team {
       return level;
     }
 
-    public void setRequests(String requests) {
-      this.requests = requests;
+    public Integer getConference() {
+        return conference;
     }
 
-    public String getRequests() {
-      return requests;
+    public void setConference(Integer conference) {
+        this.conference = conference;
     }
 
-    public void setNotSameTimeAs(String notSameTimeAs) {
-      this.notSameTimeAs = notSameTimeAs;
+    public DoubleHeaderPreference getDoubleHeaderPreference() {
+        return doubleHeaderPreference;
     }
 
-    public String getNotSameTimeAs() {
-      return notSameTimeAs;
+    public void setDoubleHeaderPreference(DoubleHeaderPreference doubleHeaderPreference) {
+        this.doubleHeaderPreference = doubleHeaderPreference;
+    }
+
+    public BackToBackPreference getBackToBackPreference() {
+        return backToBackPreference;
+    }
+
+    public void setBackToBackPreference(BackToBackPreference backToBackPreference) {
+        this.backToBackPreference = backToBackPreference;
+    }
+
+    public DateConstraint getDateConstraint() {
+        return dateConstraint;
+    }
+
+    public void setDateConstraint(DateConstraint dateConstraint) {
+        this.dateConstraint = dateConstraint;
+    }
+
+    public OffTimes getOffTimes() {
+        return offTimes;
+    }
+
+    public void setOffTimes(OffTimes offTimes) {
+        this.offTimes = offTimes;
+    }
+
+    public SharedTeams getSharedTeams() {
+        return sharedTeams;
+    }
+
+    public void setSharedTeams(SharedTeams sharedTeams) {
+        this.sharedTeams = sharedTeams;
+    }
+
+    public PlayOnceRequests getPlayOnceRequests() {
+        return playOnceRequests;
+    }
+
+    public void setPlayOnceRequests(PlayOnceRequests playOnceRequests) {
+        this.playOnceRequests = playOnceRequests;
+    }
+
+    public PreferredDates getPreferredDates() {
+        return preferredDates;
+    }
+
+    public void setPreferredDates(PreferredDates preferredDates) {
+        this.preferredDates = preferredDates;
     }
 
     @Override
     public String toString() {
-      return teamId.toString() + "~" + x + "~" + teamName + "~" + year + "~" + gender + "~" + grade.toString() + "~" + level + "~" + requests + "~" + notSameTimeAs;
+      return teamId.toString() + "~" + teamName + "~" + year + "~" + gender + "~" + grade.toString() + "~" + level;
     }
      
 }   

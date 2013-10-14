@@ -14,6 +14,14 @@ public class MatchTime {
     private String startTime;
     private String endTime;
 
+    public MatchTime() {
+    }
+
+    public MatchTime(String startTime, String endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
