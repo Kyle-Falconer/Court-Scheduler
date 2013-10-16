@@ -58,14 +58,14 @@ public class CsvReader {
                
                Team team = new Team();
                team.setTeamId(teamId);
-               team.setX(x);
+               // team.setX(x);
                team.setTeamName(teamName);
                team.setYear(year);
                team.setGender(gender);
                team.setGrade(grade);
                team.setLevel(level);
-               team.setRequests(requests);
-               team.setNotSameTimeAs(notSameTimeAs);
+               // team.setRequests(requests);
+               // team.setNotSameTimeAs(notSameTimeAs);
             
                teamList.add(team);
               

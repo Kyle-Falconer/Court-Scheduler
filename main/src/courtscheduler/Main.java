@@ -8,6 +8,8 @@ import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
 
+import java.util.Scanner;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,7 +37,17 @@ public class Main {
         if (LOG >= 2 ){
             System.out.println("\n\nconfiguration loaded...");
         }
-        CourtSchedule testSchedule = XlsxReader.readExcelFile("Book1.xlsx");
+
+        String in_filename;
+        if (args.length < 1){
+            System.out.print("Please enter the path of the input file: ");    // FIXME - should be more human.
+            Scanner s = new Scanner(System.in);
+            in_filename = s.next();
+        } else {
+            in_filename = args[0];
+        }
+
+        CourtSchedule testSchedule = XlsxReader.readExcelFile(args[0]);
 
 		// solve the problem (gee, it sounds so easy when you put it like that)
 		//solver.setPlanningProblem(testSchedule);
