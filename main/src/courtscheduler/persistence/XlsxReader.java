@@ -124,8 +124,16 @@ public abstract class XlsxReader {
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
             if(request.startsWith("xd")) {
                 //parse the date and use it to create a new MatchDate object
-                MatchDate offDate = new MatchDate();
-                offDateList.add(offDate);
+                String[] dates = request.split("-");
+                DateConstraint badDates = team.getDateConstraint();
+                if(dates.length>1){
+                    badDates.addRestrictedDates(dates[0],dates[1]);
+                }
+                else{
+                    badDates.addRestrictedDate(dates[0]);
+                }
+                team.setDateConstraint(badDates);
+
             }
 
             // CANT PLAY UNTIL AFTER CERTAIN TIME //
