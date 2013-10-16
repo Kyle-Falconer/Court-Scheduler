@@ -47,7 +47,7 @@ public class Main {
             in_filename = args[0];
         }
 
-        CourtSchedule testSchedule = XlsxReader.readExcelFile(args[0]);
+        CourtSchedule testSchedule = XlsxReader.readExcelFile(in_filename);
 
 		// solve the problem (gee, it sounds so easy when you put it like that)
 		//solver.setPlanningProblem(testSchedule);
