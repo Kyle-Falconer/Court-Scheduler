@@ -123,7 +123,7 @@ public abstract class XlsxReader {
 
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
             if(request.startsWith("xd")) {
-                //parse the date and use it to create a new MatchDate object
+                //parse the date and use it to create a new DateConstraint object
                 String[] dates = request.split("-");
                 DateConstraint badDates = team.getDateConstraint();
                 if(dates.length>1){

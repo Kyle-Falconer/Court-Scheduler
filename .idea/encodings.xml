@@ -4,6 +4,8 @@
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/optaplanner-benchmark" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/optaplanner-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/optaplanner-distribution" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/optaplanner-docs" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/optaplanner-examples" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/optaplanner-webexamples" charset="UTF-8" />
   </component>
