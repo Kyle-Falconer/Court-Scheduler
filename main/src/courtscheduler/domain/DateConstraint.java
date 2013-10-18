@@ -27,28 +27,7 @@ public class DateConstraint extends Constraint{
     public void addRestrictedDate(Calendar badDate){
         MatchDate bDate = new MatchDate();
         bDate.setCal(badDate);
-        switch(badDate.get(Calendar.DAY_OF_WEEK)){
-            case 1:
-                bDate.setDayOfWeek(DayOfWeek.SUNDAY);
-                break;
-            case 2:
-                bDate.setDayOfWeek(DayOfWeek.MONDAY);
-                break;
-            case 3:
-                bDate.setDayOfWeek(DayOfWeek.TUESDAY);
-                break;
-            case 4:
-                bDate.setDayOfWeek(DayOfWeek.WEDNESDAY);
-                break;
-            case 5:
-                bDate.setDayOfWeek(DayOfWeek.THURSDAY);
-                break;
-            case 6:
-                bDate.setDayOfWeek(DayOfWeek.FRIDAY);
-                break;
-            case 7:
-                bDate.setDayOfWeek(DayOfWeek.SATURDAY);
-        }
+		bDate.setDayOfWeek(getDayOfWeek(badDate));
         this.restrictedDates.add(bDate);
     }
     public void addRestrictedDate(String badDate){
@@ -64,32 +43,9 @@ public class DateConstraint extends Constraint{
     }
     public void addRestrictedDates(Calendar startDate, Calendar endDate){
         MatchDate badDate = new MatchDate();
-        while(!(startDate.get(Calendar.MONTH)==endDate.get(Calendar.MONTH) &&
-                !(startDate.get(Calendar.DATE)>endDate.get(Calendar.DATE))&&
-                startDate.get(Calendar.YEAR)==endDate.get(Calendar.YEAR))){
+        while(startDate.before(endDate)){
             badDate.setCal(startDate);
-            switch(startDate.get(Calendar.DAY_OF_WEEK)){
-                case 1:
-                    badDate.setDayOfWeek(DayOfWeek.SUNDAY);
-                    break;
-                case 2:
-                    badDate.setDayOfWeek(DayOfWeek.MONDAY);
-                    break;
-                case 3:
-                    badDate.setDayOfWeek(DayOfWeek.TUESDAY);
-                    break;
-                case 4:
-                    badDate.setDayOfWeek(DayOfWeek.WEDNESDAY);
-                    break;
-                case 5:
-                    badDate.setDayOfWeek(DayOfWeek.THURSDAY);
-                    break;
-                case 6:
-                    badDate.setDayOfWeek(DayOfWeek.FRIDAY);
-                    break;
-                case 7:
-                    badDate.setDayOfWeek(DayOfWeek.SATURDAY);
-            }
+			badDate.setDayOfWeek(getDayOfWeek(startDate));
             this.restrictedDates.add(badDate);
             startDate.add(Calendar.DATE,1);
 
@@ -104,4 +60,8 @@ public class DateConstraint extends Constraint{
         eCal.set(Integer.valueOf(eDate[2]),Integer.valueOf(eDate[0]),Integer.valueOf(eDate[1]));
         this.addRestrictedDates(sCal,eCal);
     }
+	private DayOfWeek getDayOfWeek(Calendar date) {
+		// DayOfWeek class is zero-indexed, and Java's Calendar is one-indexed
+		return DayOfWeek.values()[date.get(Calendar.DAY_OF_WEEK) - 1];
+	}
 }
