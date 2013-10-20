@@ -11,7 +11,7 @@ import java.util.Calendar;
  * Time: 6:44 PM
  * To change this template use File | Settings | File Templates.
  */
-public class MatchDate {
+public class MatchDate implements Comparable<MatchDate>{
 
     private Calendar cal;
     private DayOfWeek dayOfWeek;
@@ -30,5 +30,11 @@ public class MatchDate {
 
     public DayOfWeek getDayOfWeek() {
         return dayOfWeek;
+    }
+
+
+    @Override
+    public int compareTo(MatchDate otherDate) {
+        return this.cal.compareTo(otherDate.getCal());  // FIXME:  is this sufficient?
     }
 }

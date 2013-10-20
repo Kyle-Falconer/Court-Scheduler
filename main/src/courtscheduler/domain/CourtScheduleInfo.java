@@ -16,5 +16,9 @@ public class CourtScheduleInfo {
         this.firstMatchDateTime = firstMatchDateTime;
     }
 
+    public boolean isInPlanningWindow(MatchDate matchDate) {
+        return  firstMatchDateTime.getMatchDate().compareTo(matchDate)>= 0  && lastMatchDateTime.getMatchDate().compareTo(matchDate) < 1  ;
+    }
+
 
 }

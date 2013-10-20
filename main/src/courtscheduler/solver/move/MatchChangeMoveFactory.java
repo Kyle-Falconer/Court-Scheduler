@@ -1,9 +1,14 @@
 package courtscheduler.solver.move;
 
+import courtscheduler.domain.CourtSchedule;
+import courtscheduler.domain.MatchAssignment;
+import courtscheduler.domain.Team;
+import courtscheduler.domain.solver.MovableMatchSelectionFilter;
 import org.optaplanner.core.impl.heuristic.selector.move.factory.MoveListFactory;
 import org.optaplanner.core.impl.move.Move;
 import org.optaplanner.core.impl.solution.Solution;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,17 +19,22 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class MatchChangeMoveFactory  implements MoveListFactory {
-    /**
-     * When it is called depends on the configured {@link org.optaplanner.core.impl.heuristic.selector.common.SelectionCacheType}.
-     * <p/>
-     * It can never support {@link org.optaplanner.core.impl.heuristic.selector.common.SelectionCacheType#JUST_IN_TIME},
-     * because it returns a {@link java.util.List}, not an {@link java.util.Iterator}.
-     *
-     * @param solution never null, the {@link org.optaplanner.core.impl.solution.Solution} of which the {@link org.optaplanner.core.impl.move.Move}s need to be generated
-     * @return never null
-     */
-    @Override
+
+
+    private MovableMatchSelectionFilter filter = new MovableMatchSelectionFilter();
+
     public List<Move> createMoveList(Solution solution) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        CourtSchedule courtSchedule = (CourtSchedule) solution;
+        List<Move> moveList = new ArrayList<Move>();
+        List<Team> teamList = courtSchedule.getTeamList();
+        for (MatchAssignment matchAssignment : courtSchedule.getMatchAssignments()) {
+            if (filter.accept(courtSchedule, matchAssignment)) {
+                for (Team team : teamList) {
+                    moveList.add(new TeamChangeMove(matchAssignment, team));
+                }
+            }
+        }
+        return moveList;
     }
+
 }
