@@ -16,32 +16,29 @@
 
 package courtscheduler.solver.move;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import courtscheduler.domain.CourtSchedule;
 import courtscheduler.domain.MatchAssignment;
+import courtscheduler.domain.Team;
+import courtscheduler.domain.solver.MovableMatchSelectionFilter;
 import org.optaplanner.core.impl.heuristic.selector.move.factory.MoveListFactory;
 import org.optaplanner.core.impl.move.Move;
 import org.optaplanner.core.impl.solution.Solution;
-import org.optaplanner.examples.nurserostering.domain.Employee;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.domain.ShiftAssignment;
-import org.optaplanner.examples.nurserostering.domain.solver.MovableShiftAssignmentSelectionFilter;
-import org.optaplanner.examples.nurserostering.solver.move.EmployeeChangeMove;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TeamChangeMoveFactory implements MoveListFactory {
 
-    private MovableShiftAssignmentSelectionFilter filter = new MovableShiftAssignmentSelectionFilter();
+    private MovableMatchSelectionFilter filter = new MovableMatchSelectionFilter();
 
     public List<Move> createMoveList(Solution solution) {
-        MatchAssignment courtSchedule = (MatchAssignment) solution;
+        CourtSchedule courtSchedule = (CourtSchedule) solution;
         List<Move> moveList = new ArrayList<Move>();
-        List<Employee> teamList = CourtSchedule.setTeamList();
-        for (MatchAssignment matchAssignment : CourtSchedule.getMatchAssignments()) {
+        List<Team> teamList = courtSchedule.getTeamList();
+        for (MatchAssignment matchAssignment : courtSchedule.getMatchAssignments()) {
             if (filter.accept(courtSchedule, matchAssignment)) {
-                for (Employee team : teamList) {
-                    moveList.add(new EmployeeChangeMove(matchAssignment, team));
+                for (Team team : teamList) {
+                    moveList.add(new TeamChangeMove(matchAssignment, team));
                 }
             }
         }

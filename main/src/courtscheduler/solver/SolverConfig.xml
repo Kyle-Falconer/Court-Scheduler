@@ -26,10 +26,10 @@
         <cacheType>PHASE</cacheType>
         <moveListFactoryClass>courtscheduler.solver.move.MatchChangeMoveFactory</moveListFactoryClass>
       </moveListFactory>
-      <moveListFactory>
+      <!--<moveListFactory>
         <cacheType>PHASE</cacheType>
         <moveListFactoryClass>courtscheduler.solver.move.MatchScheduleSwapMoveFactory</moveListFactoryClass>
-      </moveListFactory>
+      </moveListFactory>-->
 
     </unionMoveSelector>
     <acceptor>

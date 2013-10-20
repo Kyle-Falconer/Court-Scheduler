@@ -7,6 +7,7 @@ import courtscheduler.persistence.XlsxReader;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
+import org.optaplanner.core.impl.solution.Solution;
 
 import java.util.Scanner;
 
@@ -52,7 +53,7 @@ public class Main {
 		// solve the problem (gee, it sounds so easy when you put it like that)
 		solver.setPlanningProblem(testSchedule);
 		solver.solve();
-		//Solution bestSolution = solver.getBestSolution();
+		Solution bestSolution = solver.getBestSolution();
 		//testSchedule.generatePlaceholderMatches();
 		testSchedule.writeXlsx("output.xlsx");
 

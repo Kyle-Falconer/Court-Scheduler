@@ -3,6 +3,9 @@ package courtscheduler.domain;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: User
@@ -39,5 +42,8 @@ public class MatchAssignment extends AbstractPersistable {
         match = newMatch;
     }
 
-
+    public List<Team> getTeamList() {
+        Team[] teams = {team1, team2};
+        return Arrays.asList(teams);
+    }
 }
