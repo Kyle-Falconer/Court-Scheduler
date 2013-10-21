@@ -204,5 +204,28 @@ public class Team {
     public String toString() {
       return teamId.toString() + "~" + teamName + "~" + year + "~" + gender + "~" + grade.toString() + "~" + level;
     }
-     
+
+	public int getConstraintStrength() {
+		// TODO: sensible weighting
+		// shared teams shouldn't be the same weight as wanting to play once on a particular day
+		// all these numbers are admittedly going to be arbitrary--
+		//   the important thing is that they make sense relative to one another
+		int strength = 0;
+		if (this.getLikesDoubleHeaders())
+			strength++;
+		if (this.getLikesBackToBack())
+			strength++;
+		if (this.getDateConstraint() != null)
+			strength++;
+		if (this.getOffTimes() != null)
+			strength++;
+		if (this.getSharedTeams() != null)
+			strength++;
+		if (this.getPlayOnceRequests() != null)
+			strength++;
+		if (this.getPreferredDates() != null)
+			strength++;
+
+		return strength;
+	}
 }   

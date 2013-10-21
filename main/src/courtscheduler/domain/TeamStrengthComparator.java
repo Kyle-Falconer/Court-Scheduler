@@ -15,7 +15,7 @@ public class TeamStrengthComparator implements Comparator<Team> {
         * Teams with fewer constraints should sort "higher" than teams with more constraints,
         * since teams with fewer constraints are more likely to fit into a given match.
         * See 4.3.5.3 in the OptaPlanner 6.0 documentation for more. --MS */
-        return 0; //FIXME
+        return Integer.compare(a.getConstraintStrength(), b.getConstraintStrength());
     }
 
 }
