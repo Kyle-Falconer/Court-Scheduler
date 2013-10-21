@@ -41,21 +41,18 @@ public class DateConstraint extends Constraint{
     public void addRestrictedDate(int day, boolean[] times){
         for(int i=0;i<this.restrictedDates.length;i++){
             //and if true=ok, or if false=ok
-            this.restrictedDates[day][i]= (times[i]&&this.restrictedDates[day][i]);
+            this.restrictedDates[day][i]= (times[i]||this.restrictedDates[day][i]);
         }
     }
     //specific slot add
     public void addRestrictedTime(int day, int time){
-        this.restrictedDates[day][time]=false;
+        this.restrictedDates[day][time]=true;
     }
 
     //wrappers for other input types
     // no time
     public void addRestrictedDate(int day){
-        boolean[] noTimes  =new boolean[this.restrictedDates.length];
-        for(int i=0; i<noTimes.length;i++){
-            noTimes[i]=false;
-        }
+        boolean[] noTimes = makeTimeArray(0,24);
         this.addRestrictedDate(day,noTimes);
     }
     //no day
@@ -70,13 +67,18 @@ public class DateConstraint extends Constraint{
             this.addRestrictedDate(days[i],times);
         }
     }
+    public void addRestrictedDates(int days[]){
+        for(int i=0;i<days.length;i++){
+            this.addRestrictedDate(days[i]);
+        }
+    }
 
     //conversion methods for times
     //int[] (0-24 with 1=1:00, size should not exceed 24, but need not be in order or full) ->boolean[]
     public boolean[] makeTimeArray(int[] times){
         boolean[] timeArray = new boolean[this.restrictedDates[0].length];
         for(int i=0;i<times.length;i++){
-            timeArray[times[i]]=false;
+            timeArray[times[i]]=true;
         }
         return timeArray;
     }
@@ -87,6 +89,16 @@ public class DateConstraint extends Constraint{
             times[i]=startTime+i;
         }
         return makeTimeArray(times);
+    }
+    public boolean[] makeTimeArray(String startTime, String endTime){
+        String[] start= startTime.split(":");
+        String[] end= endTime.split(":");
+        return makeTimeArray(Integer.getInteger(start[0]),Integer.getInteger(end[0]));
+    }
+    public boolean[] makeTimeArray(MatchTime time){
+        String[] start= time.getStartTime().split(":");
+        String[] end= time.getEndTime().split(":");
+        return makeTimeArray(Integer.getInteger(start[0]),Integer.getInteger(end[0]));
     }
 
     //conversion methods for days
@@ -100,7 +112,7 @@ public class DateConstraint extends Constraint{
         return findDate(badDate.getCal());
     }
     //string date->int day (calls calendar find date)
-    public int getDate(String badDate){
+    public int findDate(String badDate){
         Calendar bCal = Calendar.getInstance();
         String[] bDate= badDate.split("/");
         bCal.set(Integer.valueOf(bDate[2]),Integer.valueOf(bDate[0]),Integer.valueOf(bDate[1]));

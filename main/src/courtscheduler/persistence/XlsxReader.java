@@ -122,15 +122,16 @@ public abstract class XlsxReader {
         for(String request : requestArray) {
 
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
+            DateConstraint badDates = team.getDateConstraint();
             if(request.startsWith("xd")) {
                 //parse the date and use it to create a new DateConstraint object
                 String[] dates = request.split("-");
-                DateConstraint badDates = team.getDateConstraint();
+
                 if(dates.length>1){
-                    badDates.addRestrictedDates(dates[0],dates[1]);
+                    badDates.addRestrictedDates(badDates.findDateRange(dates[0],dates[1]));
                 }
                 else{
-                    badDates.addRestrictedDate(dates[0]);
+                    badDates.addRestrictedDate(badDates.findDate(dates[0]));
                 }
                 team.setDateConstraint(badDates);
 
@@ -143,6 +144,7 @@ public abstract class XlsxReader {
                 request = getMilitaryTime(request);
                 MatchTime offTime = new MatchTime("0:00", request);
                 offTimeList.add(offTime);
+                badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
             }
 
             // CANT PLAY UNTIL BEFORE CERTAIN TIME //
@@ -152,6 +154,7 @@ public abstract class XlsxReader {
                 request = getMilitaryTime(request);
                 MatchTime offTime = new MatchTime(request, "0:00");
                 offTimeList.add(offTime);
+                badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
             }
 
             // CANT PLAY BETWEEN CERTAIN TIME //
