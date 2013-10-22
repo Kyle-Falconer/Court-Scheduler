@@ -45,28 +45,15 @@ global HardSoftScoreHolder scoreHolder;
 //    constraint will result in subtracting from the solution's hard score).
 
 // can't have the same team playing themselves
-rule "noMirrorMatch"
+// teams can't play if they're not in the same conference
+rule "obviousConstraints"
     when
-        // something happens
-        MatchAssignment(team1 == team2)
+        MatchAssignment(team1.teamId == team2.teamId)
+        or MatchAssignment(team1.conference != team2.conference)
     then
-        // do something
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
-
-// can't have two teams playing if they don't have the same gender, grade, and level
-rule "genderGradeLevelAreSame"
-    when
-        // something happens
-        MatchAssignment($team1 : team1, $team2 : team2)
-        eval(false)
-    then
-        // do something
-        scoreHolder.addHardConstraintMatch(kcontext, -1);
-end
-
-// can only have up to N matches at the same time on the same day
 
 
 // ############################################################################

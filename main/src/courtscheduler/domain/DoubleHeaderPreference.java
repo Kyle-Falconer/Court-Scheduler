@@ -11,7 +11,7 @@ public class DoubleHeaderPreference extends Constraint {
 
     boolean likesDoubleHeaders = false;
 
-    public boolean isLikesDoubleHeaders() {
+    public boolean likesDoubleHeaders() {
         return likesDoubleHeaders;
     }
 

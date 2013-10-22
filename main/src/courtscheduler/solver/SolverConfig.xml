@@ -9,7 +9,7 @@
     <scoreDrl>/courtscheduler/solver/ScoreRules.drl</scoreDrl>
   </scoreDirectorFactory>
 
-  <termination>                            l
+  <termination>
     <!--
       Official benchmark maximumSecondsSpend allowed on:
       - ge0ffrey's main pc: sprint 11, medium 700, long 42000
@@ -18,6 +18,7 @@
     <!--<scoreAttained>-0hard/-999999soft</scoreAttained>-->
   </termination>
   <constructionHeuristic>
+    <!-- See http://docs.jboss.org/drools/release/6.0.0.CR5/optaplanner-docs/html_single/index.html#constructionHeuristics -->
     <constructionHeuristicType>BEST_FIT</constructionHeuristicType>
   </constructionHeuristic>
   <localSearch>
