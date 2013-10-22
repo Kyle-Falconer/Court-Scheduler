@@ -2,20 +2,22 @@ package courtscheduler.domain;
 
 
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.value.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.solution.Solution;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-// import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-//...
+import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 
 import java.io.*;
 import java.util.*;
+
+// import org.apache.poi.hssf.usermodel.HSSFSheet;
+//...
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,7 +27,7 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 @PlanningSolution
-public class CourtSchedule extends AbstractPersistable implements Solution<HardSoftScore> {
+public class CourtSchedule extends AbstractPersistable implements Solution<HardSoftScore>, Serializable {
 
     public static int NUMBER_OF_COURTS;
 
@@ -35,15 +37,124 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     private List<Team> teamList;  // Value Range Providers
     private List<MatchTime> matchTimeList;
     private List<MatchDate> matchDateList;
-    private List<Match> matchList;
+
     private List<Conference> conferenceList;
     //private List<Gender> genderList;
     //private List<Grade> gradeList;
     //private List<Level> levelList;
     //private List<Requests> requestsList;
 
-    public List<MatchAssignment> matchAssignmentList;
+    // configurables
+    private LocalDate conferenceStartDate;
+    private LocalDate conferenceEndDate;
+    private int numberOfCourts;
+    private int timeslotMidnightOffsetInMinutes;
+    private int numberOfTimeSlotsPerDay;
+    private int timeslotDurationInMinutes;
 
+    public List<Match> matchAssignmentList;
+
+    private Match[][][] schedule;
+    private List<Match> matchList;
+
+
+    public CourtSchedule(){
+
+    }
+
+    public CourtSchedule(List<Team> teamList){
+
+        // FIXME -- these should be configurable!
+        conferenceStartDate = new LocalDate( 2014, 01, 1);
+        conferenceEndDate = new LocalDate( 2014, 06, 1);
+        numberOfCourts = 3;
+        timeslotMidnightOffsetInMinutes = 420;  // 7am
+        numberOfTimeSlotsPerDay = 16;  // end at ~8:30pm
+        timeslotDurationInMinutes = 50;
+
+        schedule = new Match[getNumberOfConferenceDays()][numberOfTimeSlotsPerDay][numberOfCourts];
+
+
+        this.teamList = teamList;
+        //time
+        MatchTime[] time = new MatchTime[24];
+        for(int i=0;i<24;i++){
+            MatchTime hourly= new MatchTime();
+            hourly.setStartTime(i+":00");
+            hourly.setEndTime(i+":50");
+            time[i]=hourly;
+        }
+        setMatchTimeList(Arrays.asList(time));
+
+        //date
+        MatchDate[] date = new MatchDate[31];
+        for(int i=0;i<31;i++){
+            MatchDate day= new MatchDate();
+            Calendar cal = Calendar.getInstance();
+            cal.set(2013, 9, i);
+            day.setCal(cal);
+            switch(i%7){
+                case(0):
+                    day.setDayOfWeek(DayOfWeek.MONDAY);
+                    break;
+                case(1):
+                    day.setDayOfWeek(DayOfWeek.TUESDAY);
+                    break;
+                case(2):
+                    day.setDayOfWeek(DayOfWeek.WEDNESDAY);
+                    break;
+                case(3):
+                    day.setDayOfWeek(DayOfWeek.THURSDAY);
+                    break;
+                case(4):
+                    day.setDayOfWeek(DayOfWeek.FRIDAY);
+                    break;
+                case(5):
+                    day.setDayOfWeek(DayOfWeek.SATURDAY);
+                    break;
+                case(6):
+                    day.setDayOfWeek(DayOfWeek.SUNDAY);
+            }
+            date[i]=day;
+        }
+        setMatchDateList(Arrays.asList(date));
+
+        //Match
+        List<Match> matches= new ArrayList<Match>();
+
+        for(int =0; i<31;i++){
+            for(int j=0;j<24;j++){
+                for(int k=1;k<6;k++){
+                    Match match = new Match();
+                    match.setMatchDate(date[i]);
+                    match.setMatchTime(time[j]);
+                    match.setCourtId(k);
+                    matches.add(match);
+                }
+            }
+        }
+        setMatchList(matches);
+
+
+        generatePlaceholderMatches(teamList.toArray(new Team[teamList.size()]));
+
+        //conference
+        List<Conference> conferences= new ArrayList<Conference>();
+        for(int i=0;i<teamList.size();i++){
+            for(int j=0;j<4;j++){
+                Conference conference = new Conference();
+                conference.setConference(j);
+                conference.setTeam(teamList.get(i));
+                conferences.add(conference);
+            }
+        }
+        setConferenceList(conferences);
+        //setGenderList();
+        //setGradeList();
+        //setLevelList();
+        setMatchAssignmentList(new ArrayList<MatchAssignment>());
+
+    }
 
     public void setCourtScheduleInfo(CourtScheduleInfo courtScheduleInfo) {
         this.courtScheduleInfo = courtScheduleInfo;
@@ -94,6 +205,10 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         return conferenceList;
     }
 
+    public int getNumberOfConferenceDays(){
+        return Days.daysBetween(conferenceStartDate, conferenceStartDate).getDays();
+    }
+
     /*public void setGenderList(List<Gender> genderList) {
         this.genderList = genderList;
     }
@@ -118,13 +233,13 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         return levelList;
     }*/
 
-    public void setMatchAssignmentList(List<MatchAssignment> matchAssignmentList) {
+    public void setMatchAssignmentList(List<Match> matchList) {
         this.matchAssignmentList = matchAssignmentList;
     }
 
     @PlanningEntityCollectionProperty
-    public List<MatchAssignment> getMatchAssignments(){
-        return matchAssignmentList;
+    public List<Match> getMatches(){
+        return matchList;
     }
     /**
      * Returns the Score of this Solution.
@@ -193,19 +308,15 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         }
     }
 
-	public void generatePlaceholderMatches() {
-		for (Team t1 : teamList) {
-			for (Team t2 : teamList) {
+	public void generatePlaceholderMatches(Team[] teams) {
+        // TODO: optimize
+		for (Team t1 : teams) {
+			for (Team t2 : teams) {
 				if (t1.getTeamId() < t2.getTeamId()) {
-					MatchAssignment next = new MatchAssignment();
-					next.setTeam1(t1);
-					next.setTeam2(t2);
-					// get a random match
-					int randomInt =(int)(Math.random() * (matchList.size() + 1));
-					Match nextMatch = matchList.get(randomInt);
-					//System.out.println(nextMatch.getMatchTime() + " " + nextMatch.getMatchDate() + " " + nextMatch.getCourtId());
-					//System.out.println(randomInt + " -> " + nextMatch);
-					next.setMatch(nextMatch);
+					Match next = new Match(t1, t2);
+
+
+                    // TODO: verify conference is ok, that they can play each other.
 					matchAssignmentList.add(next);
 				}
 			}

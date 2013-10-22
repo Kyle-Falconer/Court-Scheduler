@@ -13,8 +13,7 @@ import java.util.Scanner;
 
 
 /**
- * Created with IntelliJ IDEA.
- * User: Kyle
+ * AKA: Project "Matchsticks"
  * Date: 9/21/13
  * Time: 9:35 PM
  */
@@ -48,7 +47,8 @@ public class Main {
             in_filename = args[0];
         }
 
-        CourtSchedule testSchedule = XlsxReader.readExcelFile(in_filename);
+        XlsxReader xlsx = new XlsxReader(in_filename);
+        CourtSchedule testSchedule = new CourtSchedule(xlsx.readExcelFile());   // code smells!! FIXME
 
 		// solve the problem (gee, it sounds so easy when you put it like that)
 		solver.setPlanningProblem(testSchedule);

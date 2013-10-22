@@ -1,23 +1,28 @@
 package courtscheduler.persistence;
 
-import courtscheduler.domain.*;
+import courtscheduler.domain.MatchDate;
+import courtscheduler.domain.MatchTime;
+import courtscheduler.domain.Team;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
-public abstract class XlsxReader {
+public class XlsxReader {
 
     private static ArrayList<Team> teamList = new ArrayList<Team>();
+    private String filename;
 
-	public static CourtSchedule readExcelFile(String filename) throws Exception {
+    public XlsxReader  (String filename){
+        this.filename = filename;
+    }
+
+	public ArrayList<Team> readExcelFile() throws Exception {
 		
 		File file = new File(filename);
 	    FileInputStream fis = new FileInputStream(file);
@@ -43,7 +48,7 @@ public abstract class XlsxReader {
 
         System.out.println(new java.util.Date() + "[INFO] Processing finished."); // Converted document: \"test.csv\"");
 
-        return generateCourtScheduleFromTeamList(teamList);
+        return teamList;
 	}
 
     private static void processRow(Row currentRow) {
@@ -204,85 +209,6 @@ public abstract class XlsxReader {
         }
     }
 
-    private static CourtSchedule generateCourtScheduleFromTeamList(List<Team> teamList) {
-        CourtSchedule schedule = new CourtSchedule();
-        schedule.setTeamList(teamList);
-        //time
-        MatchTime[] time = new MatchTime[24];
-        for(int i=0;i<24;i++){
-            MatchTime hourly= new MatchTime();
-            hourly.setStartTime(i+":00");
-            hourly.setEndTime(i+":50");
-            time[i]=hourly;
-        }
-        schedule.setMatchTimeList(Arrays.asList(time));
-
-        //date
-        MatchDate[] date = new MatchDate[31];
-        for(int i=0;i<31;i++){
-            MatchDate day= new MatchDate();
-            Calendar cal = Calendar.getInstance();
-            cal.set(2013, 9, i);
-            day.setCal(cal);
-            switch(i%7){
-                case(0):
-                    day.setDayOfWeek(DayOfWeek.MONDAY);
-                    break;
-                case(1):
-                    day.setDayOfWeek(DayOfWeek.TUESDAY);
-                    break;
-                case(2):
-                    day.setDayOfWeek(DayOfWeek.WEDNESDAY);
-                    break;
-                case(3):
-                    day.setDayOfWeek(DayOfWeek.THURSDAY);
-                    break;
-                case(4):
-                    day.setDayOfWeek(DayOfWeek.FRIDAY);
-                    break;
-                case(5):
-                    day.setDayOfWeek(DayOfWeek.SATURDAY);
-                    break;
-                case(6):
-                    day.setDayOfWeek(DayOfWeek.SUNDAY);
-            }
-            date[i]=day;
-        }
-        schedule.setMatchDateList(Arrays.asList(date));
-
-        //Match
-        List<Match> matches= new ArrayList<Match>();
-
-        for(int i=0; i<31;i++){
-			for(int j=0;j<24;j++){
-                for(int k=1;k<6;k++){
-					Match match = new Match();
-                    match.setMatchDate(date[i]);
-                    match.setMatchTime(time[j]);
-                    match.setCourtId(k);
-                    matches.add(match);
-                }
-            }
-        }
-        schedule.setMatchList(matches);
-
-        //conference
-        List<Conference> conferences= new ArrayList<Conference>();
-        for(int i=0;i<teamList.size();i++){
-            for(int j=0;j<4;j++){
-                Conference conference = new Conference();
-                conference.setConference(j);
-                conference.setTeam(teamList.get(i));
-                conferences.add(conference);
-            }
-        }
-        schedule.setConferenceList(conferences);
-        //schedule.setGenderList();
-        //schedule.setGradeList();
-        //schedule.setLevelList();
-		schedule.setMatchAssignmentList(new ArrayList<MatchAssignment>());
-        return schedule;
-    }
 
 	public short getColumnWidth(File file) throws Exception {
 		

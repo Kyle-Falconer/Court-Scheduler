@@ -1,8 +1,8 @@
 package courtscheduler.solver.move;
 
 import courtscheduler.domain.CourtSchedule;
+import courtscheduler.domain.Match;
 import courtscheduler.domain.MatchAssignment;
-import courtscheduler.domain.Team;
 import courtscheduler.domain.solver.MovableMatchSelectionFilter;
 import org.optaplanner.core.impl.heuristic.selector.move.factory.MoveListFactory;
 import org.optaplanner.core.impl.move.Move;
@@ -26,11 +26,11 @@ public class MatchChangeMoveFactory  implements MoveListFactory {
     public List<Move> createMoveList(Solution solution) {
         CourtSchedule courtSchedule = (CourtSchedule) solution;
         List<Move> moveList = new ArrayList<Move>();
-        List<Team> teamList = courtSchedule.getTeamList();
-        for (MatchAssignment matchAssignment : courtSchedule.getMatchAssignments()) {
-            if (filter.accept(courtSchedule, matchAssignment)) {
-                for (Team team : teamList) {
-                    moveList.add(new TeamChangeMove(matchAssignment, team));
+        List<Match> matchList = courtSchedule.getMatchList();
+        for (Match matchAssignment : courtSchedule.getMatches()) {
+            //if (filter.accept(courtSchedule, matchAssignment)) {
+                for (Match match : matchList) {
+                    moveList.add(new MatchChangeMove(matchAssignment, match));
                 }
             }
         }

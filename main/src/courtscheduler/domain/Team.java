@@ -28,6 +28,8 @@ public class Team {
     private List<Integer> playOnceTeamList;
     private List<MatchDate> preferredDateList;
 
+    private MatchAvailability avail;
+
 
     public Team() {
     }
@@ -204,5 +206,8 @@ public class Team {
     public String toString() {
       return teamId.toString() + "~" + teamName + "~" + year + "~" + gender + "~" + grade.toString() + "~" + level;
     }
-     
-}   
+
+    public MatchAvailability getAvailability() {
+        return this.avail;
+    }
+}

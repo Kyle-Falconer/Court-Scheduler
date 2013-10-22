@@ -19,7 +19,7 @@ public class MatchAssignment extends AbstractPersistable {
     private Team team2;
     private Match match;
 
-    @PlanningVariable(valueRangeProviderRefs = {"teamRange"}, strengthComparatorClass = TeamStrengthComparator.class)
+    @PlanningVariable(valueRangeProviderRefs = {"teamRange"}, strengthComparatorClass = MatchStrengthComparator.class)
     public Team getTeam1(){
         return team1;
     }
@@ -27,7 +27,7 @@ public class MatchAssignment extends AbstractPersistable {
         team1 = newTeam;
     }
 
-    @PlanningVariable(valueRangeProviderRefs = {"teamRange"}, strengthComparatorClass = TeamStrengthComparator.class)
+    @PlanningVariable(valueRangeProviderRefs = {"teamRange"}, strengthComparatorClass = MatchStrengthComparator.class)
     public Team getTeam2(){
         return team2;
     }

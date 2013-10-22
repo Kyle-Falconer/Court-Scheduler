@@ -1,7 +1,7 @@
 package courtscheduler.solver.move;
 
+import courtscheduler.domain.Match;
 import courtscheduler.domain.MatchAssignment;
-import courtscheduler.domain.Team;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -17,32 +17,32 @@ import java.util.Collections;
  * Date: 10/20/13
  * Time: 5:20 PM
  */
-public class TeamChangeMove implements Move {
+public class MatchChangeMove implements Move {
 
     private MatchAssignment matchAssignment;
-    private Team toTeam;
+    private Match toMatch;
 
-    public TeamChangeMove(MatchAssignment matchAssignment, Team toTeam){
+    public MatchChangeMove(MatchAssignment matchAssignment, Match toMatch){
         this.matchAssignment = matchAssignment;
-        this.toTeam = toTeam;
+        this.toMatch = toMatch;
     }
 
     @Override
     public boolean isMoveDoable(ScoreDirector scoreDirector) {
         // cannot move to same position
         // see http://docs.jboss.org/drools/release/6.0.0.CR5/optaplanner-docs/html/moveAndNeighborhoodSelection.html#d0e5896
-        return !ObjectUtils.equals(matchAssignment.getTeam1(), toTeam) ||
-                !ObjectUtils.equals(matchAssignment.getTeam2(), toTeam);
+        return !ObjectUtils.equals(matchAssignment.getTeam1(), toMatch) ||
+                !ObjectUtils.equals(matchAssignment.getTeam2(), toMatch);
     }
 
     @Override
     public Move createUndoMove(ScoreDirector scoreDirector) {
-        return new TeamChangeMove(matchAssignment, toTeam);
+        return new MatchChangeMove(matchAssignment, toMatch);
     }
 
     @Override
     public void doMove(ScoreDirector scoreDirector) {
-        CourtScheduleMoveHelper.moveTeam(scoreDirector, matchAssignment, toTeam);
+        CourtScheduleMoveHelper.moveMatch(scoreDirector, matchAssignment, toMatch);
     }
 
     @Override
@@ -52,17 +52,17 @@ public class TeamChangeMove implements Move {
 
     @Override
     public Collection<? extends Object> getPlanningValues() {
-        return Collections.singletonList(toTeam);
+        return Collections.singletonList(toMatch);
     }
 
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (o instanceof TeamChangeMove) {
-            TeamChangeMove other = (TeamChangeMove) o;
+        } else if (o instanceof MatchChangeMove) {
+            MatchChangeMove other = (MatchChangeMove) o;
             return new EqualsBuilder()
                     .append(matchAssignment, other.matchAssignment)
-                    .append(toTeam, other.toTeam)
+                    .append(toMatch, other.toMatch)
                     .isEquals();
         } else {
             return false;
@@ -72,11 +72,11 @@ public class TeamChangeMove implements Move {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(matchAssignment)
-                .append(toTeam)
+                .append(toMatch)
                 .toHashCode();
     }
 
     public String toString() {
-        return matchAssignment + " => " + toTeam;
+        return matchAssignment + " => " + toMatch;
     }
 }

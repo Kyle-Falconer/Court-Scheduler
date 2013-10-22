@@ -9,31 +9,14 @@ package courtscheduler.domain;
  */
 public class Match {
 
-    private MatchTime matchTime;
-    private MatchDate matchDate;
-	Integer courtId;
+    private Team t1;
+    private Team t2;
+    MatchAvailability avail;   // calculated based on the intersection of the teams' availabilities
 
-    public void setMatchTime(MatchTime matchTime) {
-        this.matchTime = matchTime;
+    public Match(Team t1, Team t2){
+        this.t1 = t1;
+        this.t2 = t2;
+        avail = new MatchAvailability(t1.getAvailability(), t2.getAvailability());
     }
 
-    public MatchTime getMatchTime() {
-        return matchTime;
-    }
-
-    public void setMatchDate(MatchDate matchDate) {
-        this.matchDate = matchDate;
-    }
-
-    public MatchDate getMatchDate() {
-        return matchDate;
-    }
-
-	public void setCourtId(Integer courtId) {
-		this.courtId = courtId;
-	}
-
-	public Integer getCourtId() {
-		return courtId;
-	}
 }
