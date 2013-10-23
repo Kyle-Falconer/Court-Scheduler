@@ -14,7 +14,7 @@ public class MatchAvailability {
 
     }
 
-    public MatchAvailability(MatchAvailability m1, MatchAvailability m2){
+    public MatchAvailability MatchAvailability(MatchAvailability m1, MatchAvailability m2){
         // TODO: set the intersection of these two, m1 and m2 to be this MatchAvailability
     }
 

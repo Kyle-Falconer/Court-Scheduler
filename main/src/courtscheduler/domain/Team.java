@@ -210,4 +210,9 @@ public class Team {
     public MatchAvailability getAvailability() {
         return this.avail;
     }
+
+    public void compileMatchAvaiilability(){
+        this.avail.constraints[0]=this.getDateConstraint();
+        this.avail.constraints[1]=this.getSharedTeams();
+    }
 }
