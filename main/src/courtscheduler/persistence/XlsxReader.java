@@ -219,7 +219,21 @@ public abstract class XlsxReader {
                 }
                 team.setDateConstraint(prefDates);
             }
-
+            //DONT PLAY THESE TEAMS
+            else if(request.startsWith("xplay")) {
+                //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
+                request.replace("playOnce", "");
+                int index = request.indexOf(".");
+                Integer teamId=null;
+                try{
+                    teamId = Integer.parseInt(request.substring(0,index));
+                }
+                catch(NumberFormatException nfe){
+                    JOptionPane.showMessageDialog(null,
+                        "Team"+team.getTeamId()+"xplay constraint teamID error."+request);
+                }
+                sharedTeamList.add(teamId);
+            }
             // TEAM REQUEST TO PLAY ANOTHER TEAM ONLY ONCE
             else if(request.startsWith("playOnce")) {
                 //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
