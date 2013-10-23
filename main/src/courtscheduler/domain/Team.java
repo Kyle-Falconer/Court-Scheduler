@@ -20,6 +20,7 @@ public class Team {
     private PlayOnceRequests playOnceRequests;
     private PreferredDates preferredDates;
 
+    //depricated, replaced by Constraint Types.
     private boolean likesDoubleHeaders = false;
     private boolean likesBackToBack = false;
     private List<MatchDate> offDateList;
