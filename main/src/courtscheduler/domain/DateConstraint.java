@@ -13,70 +13,70 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class DateConstraint extends Constraint{
-    private boolean restrictedDates[][];
+    private boolean Dates[][];
 
     //constructors
     public DateConstraint(){
-        restrictedDates= new boolean[365][24];
+        Dates= new boolean[365][24];
     }
     public DateConstraint(int days, int times){
-        restrictedDates= new boolean[days][times];
+        Dates= new boolean[days][times];
     }
 
     //get functions
     public boolean[][] getRestrictedDates(){
-        return this.restrictedDates;
+        return this.Dates;
     }
 
 
 
     //set functions
-    public void setRestrictedDates(boolean[][] badDates){
-        this.restrictedDates=badDates;
+    public void setDates(boolean[][] badDates){
+        this.Dates=badDates;
     }
 
 
     //add functions
     //day/general adding
-    public void addRestrictedDate(int day, boolean[] times){
-        for(int i=0;i<this.restrictedDates.length;i++){
+    public void addDate(int day, boolean[] times){
+        for(int i=0;i<this.Dates.length;i++){
             //and if true=ok, or if false=ok
-            this.restrictedDates[day][i]= (times[i]||this.restrictedDates[day][i]);
+            this.Dates[day][i]= (times[i]||this.Dates[day][i]);
         }
     }
     //specific slot add
-    public void addRestrictedTime(int day, int time){
-        this.restrictedDates[day][time]=true;
+    public void addTime(int day, int time){
+        this.Dates[day][time]=true;
     }
 
     //wrappers for other input types
     // no time
-    public void addRestrictedDate(int day){
+    public void addDate(int day){
         boolean[] noTimes = makeTimeArray(0,24);
-        this.addRestrictedDate(day,noTimes);
+        this.addDate(day, noTimes);
     }
     //no day
     public void addRestrictedTimes(boolean[] times){
-        for(int i=0; i<this.restrictedDates.length;i++){
-            this.addRestrictedDate(i,times);
+        for(int i=0; i<this.Dates.length;i++){
+            this.addDate(i,times);
         }
     }
     //array of days
-    public void addRestrictedDates(int days[], boolean[] times){
+    public void addDates(int days[], boolean[] times){
         for(int i=0;i<days.length;i++){
-            this.addRestrictedDate(days[i],times);
+            this.addDate(days[i], times);
         }
     }
-    public void addRestrictedDates(int days[]){
+    public void addDates(int days[]){
         for(int i=0;i<days.length;i++){
-            this.addRestrictedDate(days[i]);
+            this.addDate(days[i]);
         }
     }
 
     //conversion methods for times
     //int[] (0-24 with 1=1:00, size should not exceed 24, but need not be in order or full) ->boolean[]
     public boolean[] makeTimeArray(int[] times){
-        boolean[] timeArray = new boolean[this.restrictedDates[0].length];
+        boolean[] timeArray = new boolean[this.Dates[0].length];
         for(int i=0;i<times.length;i++){
             timeArray[times[i]]=true;
         }
@@ -103,26 +103,26 @@ public class DateConstraint extends Constraint{
 
     //conversion methods for days
     //Calendar date ->int date
-    public int findDate(Calendar badDate){
-        return badDate.get(Calendar.DAY_OF_YEAR);
+    public int findDate(Calendar Date){
+        return Date.get(Calendar.DAY_OF_YEAR);
     }
 
     //matchDate -> int day (calls calendar find date)
-    public int findDate(MatchDate badDate){
-        return findDate(badDate.getCal());
+    public int findDate(MatchDate Date){
+        return findDate(Date.getCal());
     }
     //string date->int day (calls calendar find date)
-    public int findDate(String badDate){
+    public int findDate(String Date){
         Calendar bCal = Calendar.getInstance();
-        String[] bDate= badDate.split("/");
+        String[] bDate= Date.split("/");
         bCal.set(Integer.valueOf(bDate[2]),Integer.valueOf(bDate[0]),Integer.valueOf(bDate[1]));
         return findDate(bCal);
     }
     //array of matchDate inputs -> array of int days
-    public int[] findDates(List<MatchDate> badDates){
-        int[] days= new int[badDates.size()];
-        for(int i=0;i<badDates.size();i++){
-            days[i]=badDates.get(i).getCal().get(Calendar.DAY_OF_YEAR);
+    public int[] findDates(List<MatchDate> Dates){
+        int[] days= new int[Dates.size()];
+        for(int i=0;i<Dates.size();i++){
+            days[i]=Dates.get(i).getCal().get(Calendar.DAY_OF_YEAR);
         }
         return days;
 

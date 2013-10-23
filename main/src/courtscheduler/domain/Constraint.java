@@ -20,6 +20,10 @@ public class Constraint {
         this.hard = hard;
     }
 
+    public void toggleHard(){
+        this.hard=!this.hard;
+    }
+
     public Integer getWeight() {
         return weight;
     }

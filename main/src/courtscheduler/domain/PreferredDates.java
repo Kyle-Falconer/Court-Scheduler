@@ -10,7 +10,7 @@ import java.util.List;
  * Time: 4:41 PM
  * To change this template use File | Settings | File Templates.
  */
-public class PreferredDates extends Constraint {
+public class PreferredDates extends DateConstraint {
 
     List<MatchDate> preferredDateList = new ArrayList<MatchDate>();
 
