@@ -1,0 +1,25 @@
+MatchAvailablility: added in DateConstraint/SharedTeams/prefferedDates as constraint[] was not allowing access to fields.
+DateConstraint: added mergeDates function that returns a merged boolean[][] given two boolean[][]
+SharedTeams: added an addTeam function, appends an Integer teamId to list without having to pull and set entire list.
+CourtSchedule: removed old Matchbuilder and replaced with double for loop that iterates over teamList for each element in teamList, pairing into matches.
+XlsxReader: added in call to put team's ID into their own dont play list.
+Match: added Integers date,time,court and add/set functions for each
+CourtSchedule: Added List<Integer>'s dayList,timeList,courtList, and get/set methods for them.
+CourtSchedule: commented out setting of MatchAssignment (depricated?)
+Match: added in get functions for t1 and t2
+CourtSchedule: edited writeXlsx function to loop through matchList rather than MatchAssign List, and matchDate/court/time to the Integer values in match
+MatchChangeMove: Removed MatchAssignment, added Integers day,time,court
+MatchChangeMove: doMove split to 3 functions, but is NOT finished, needs be worked to pick appropriate function for each shift.
+MatchChangeMove: getPlanningValues switched from returning a Collections.singletonList to List<Integer> containting day,time, and court.
+CourtScheduleMoveHelper: removed moveMatch method, added moveDay,moveTime, and moveCourt.
+MatchChangeMoveFactory: removed matchAssignement, added dayList,timeList,courtList, reworked for loops and MatchChangeMove call.
+Match: added optiplanner imports, added @PlanningEntity, @planningVariable tags.(above getDay, getTime,getCourt)
+CourtSchedule: added @ValueRangeProvider tags above getDayList, getTimeList,getCourtList. May consider removing value range provider above the teamId
+Match: added getMatchDate() which returns a MatchDate based on a input calendar + day.
+CourtScheduleInfo: Added calendar firstday to pass to .getMatchDate calls, added setters for firstDay and lastMatchDate.
+MovableMatchSelectionFilter: switched functions from matchAssignment to Match
+CourtSchedule: added Calendar firstDay and getter/setter.
+
+successful compile.
+
+Biggest issue: Complete doMove in MatchChangeMove properly, needs to itterate through courts->times->days, currently changes all at once.

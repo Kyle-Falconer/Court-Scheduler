@@ -213,7 +213,8 @@ public class Team {
     }
 
     public void compileMatchAvaiilability(){
-        this.avail.constraints[0]=this.getDateConstraint();
-        this.avail.constraints[1]=this.getSharedTeams();
+        this.avail.badDates=this.getDateConstraint();
+        this.avail.prefDates=this.getPreferredDates();
+        this.avail.dontPlay=this.getSharedTeams();
     }
 }

@@ -27,10 +27,16 @@ public class MatchChangeMoveFactory  implements MoveListFactory {
         CourtSchedule courtSchedule = (CourtSchedule) solution;
         List<Move> moveList = new ArrayList<Move>();
         List<Match> matchList = courtSchedule.getMatchList();
-        for (Match matchAssignment : courtSchedule.getMatches()) {
+        List<Integer> dayList = courtSchedule.getDayList();
+        List<Integer> timeList = courtSchedule.getTimeList();
+        List<Integer> courtList= courtSchedule.getCourtList();
+        for (Match match:matchList) {
             //if (filter.accept(courtSchedule, matchAssignment)) {
-                for (Match match : matchList) {
-                    moveList.add(new MatchChangeMove(matchAssignment, match));
+            for(Integer day: dayList){
+                for(Integer time: timeList){
+                    for(Integer court: courtList){
+                        moveList.add(new MatchChangeMove(match,day,time,court));
+                    }
                 }
             }
         }

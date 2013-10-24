@@ -21,4 +21,8 @@ public class SharedTeams extends Constraint {
     public void setSharedTeamList(List<Integer> sharedTeamList) {
         this.sharedTeamList = sharedTeamList;
     }
+
+    public void addSharedTeam(Integer teamId){
+        this.sharedTeamList.add(teamId);
+    }
 }

@@ -1,5 +1,7 @@
 package courtscheduler.domain;
 
+import java.util.Calendar;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Michael
@@ -11,13 +13,21 @@ public class CourtScheduleInfo {
 
     private Match firstMatchDateTime;
     private Match lastMatchDateTime;
+    private Calendar firstDay;
 
     public void setFirstMatchDateTime(Match firstMatchDateTime) {
         this.firstMatchDateTime = firstMatchDateTime;
     }
+    public void setLastMatchDateTime(Match lastMatchDateTime){
+        this.lastMatchDateTime = lastMatchDateTime;
+    }
+    public void setFirstDay(Calendar firstDay){
+        this.firstDay=firstDay;
+    }
+
 
     public boolean isInPlanningWindow(MatchDate matchDate) {
-        return  firstMatchDateTime.getMatchDate().compareTo(matchDate)>= 0  && lastMatchDateTime.getMatchDate().compareTo(matchDate) < 1  ;
+        return  firstMatchDateTime.getMatchDate(firstDay).compareTo(matchDate)>= 0  && lastMatchDateTime.getMatchDate(firstDay).compareTo(matchDate) < 1  ;
     }
 
 

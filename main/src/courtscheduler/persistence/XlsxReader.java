@@ -1,8 +1,6 @@
 package courtscheduler.persistence;
 
-import courtscheduler.domain.MatchDate;
-import courtscheduler.domain.MatchTime;
-import courtscheduler.domain.Team;
+import courtscheduler.domain.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -121,11 +119,13 @@ public class XlsxReader {
         List<MatchTime> offTimeList = new ArrayList<MatchTime>();//dateConstraint, deprecate
         List<MatchDate> preferredDateList = new ArrayList<MatchDate>();//prefferedDate(extends dateConstraint), deprecate
         List<Integer> playOnceTeamList = new ArrayList<Integer>();
-        List<Integer> sharedTeamList = new ArrayList<Integer>();
+        List<Integer> sharedTeamList = new ArrayList<Integer>(); //SharedTeams, deprecate
         boolean likesDoubleHeaders = false;//flat bool
         boolean likesBackToBack = false;//flat bool
         DateConstraint badDates = team.getDateConstraint();
         PreferredDates prefDates = team.getPreferredDates();
+        SharedTeams dontPlay=team.getSharedTeams();
+        dontPlay.addSharedTeam(team.getTeamId());
         for(String request : requestArray) {
 
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
@@ -227,7 +227,7 @@ public class XlsxReader {
             //DONT PLAY THESE TEAMS
             else if(request.startsWith("xplay")) {
                 //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
-                request.replace("playOnce", "");
+                request.replace("xplay", "");
                 int index = request.indexOf(".");
                 Integer teamId=null;
                 try{
@@ -237,7 +237,7 @@ public class XlsxReader {
                     JOptionPane.showMessageDialog(null,
                         "Team"+team.getTeamId()+"xplay constraint teamID error."+request);
                 }
-                sharedTeamList.add(teamId);
+                dontPlay.addSharedTeam(teamId);
             }
             // TEAM REQUEST TO PLAY ANOTHER TEAM ONLY ONCE
             else if(request.startsWith("playOnce")) {

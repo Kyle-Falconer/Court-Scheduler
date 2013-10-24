@@ -56,7 +56,10 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
     private Match[][][] schedule;
     private List<Match> matchList;
-
+    private List<Integer> dayList;
+    private List<Integer> timeList;
+    private List<Integer> courtList;
+    private Calendar firstDay;
 
     public CourtSchedule(){
 
@@ -121,16 +124,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
         //Match
         List<Match> matches= new ArrayList<Match>();
-
-        for(int =0; i<31;i++){
-            for(int j=0;j<24;j++){
-                for(int k=1;k<6;k++){
-                    Match match = new Match();
-                    match.setMatchDate(date[i]);
-                    match.setMatchTime(time[j]);
-                    match.setCourtId(k);
-                    matches.add(match);
-                }
+        for(int i=0;i<teamList.size();i++){
+            for(int j=0; j<teamList.size();j++){
+                Match match = new Match(teamList.get(i),teamList.get(j));
             }
         }
         setMatchList(matches);
@@ -152,7 +148,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         //setGenderList();
         //setGradeList();
         //setLevelList();
-        setMatchAssignmentList(new ArrayList<MatchAssignment>());
+        //setMatchAssignmentList(new ArrayList<MatchAssignment>());
 
     }
 
@@ -208,6 +204,35 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     public int getNumberOfConferenceDays(){
         return Days.daysBetween(conferenceStartDate, conferenceStartDate).getDays();
     }
+    @ValueRangeProvider(id = "dayRange")
+    public List<Integer> getDayList(){
+        return this.dayList;
+    }
+    @ValueRangeProvider(id = "timeRange")
+    public List<Integer> getTimeList(){
+        return this.timeList;
+    }
+    @ValueRangeProvider(id = "courtRange")
+    public List<Integer> getCourtList(){
+        return this.courtList;
+    }
+    public void setDayList(List<Integer> dayList){
+        this.dayList=dayList;
+    }
+    public void setTimeList(List<Integer> timeList){
+        this.timeList=timeList;
+    }
+    public void setCourtList(List<Integer> courtList){
+        this.courtList=courtList;
+    }
+
+    public void setFirstDay(Calendar firstDay){
+        this.firstDay=firstDay;
+    }
+    public Calendar getFirstDay(){
+        return this.firstDay;
+    }
+
 
     /*public void setGenderList(List<Gender> genderList) {
         this.genderList = genderList;
@@ -278,19 +303,19 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         header.createCell(4).setCellValue("Date");
 
 
-        for(MatchAssignment matchAssignment : matchAssignmentList) {
+        for(Match match : matchList) {
             cellNumber = 0;
 			rowNumber++;
             Row dataRow = sheet.createRow(rowNumber);
-            String teamName1 = matchAssignment.getTeam1().getTeamName();
+            String teamName1 = match.getT1().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName1);
-            String teamName2 = matchAssignment.getTeam2().getTeamName();
+            String teamName2 = match.getT2().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName2);
-            String courtId = matchAssignment.getMatch().getCourtId().toString();
+            Integer courtId = match.getCourt();
             dataRow.createCell(cellNumber++).setCellValue(courtId);
-            String matchTime = matchAssignment.getMatch().getMatchTime().getStartTime();
+            Integer matchTime = match.getTime();
             dataRow.createCell(cellNumber++).setCellValue(matchTime);
-            String matchDate = matchAssignment.getMatch().getMatchDate().getCal().toString();
+            Integer matchDate = match.getDay();
             dataRow.createCell(cellNumber++).setCellValue(matchDate);
         }
 

@@ -24,7 +24,7 @@ public class DateConstraint extends Constraint{
     }
 
     //get functions
-    public boolean[][] getRestrictedDates(){
+    public boolean[][] getDates(){
         return this.Dates;
     }
 
@@ -35,6 +35,16 @@ public class DateConstraint extends Constraint{
         this.Dates=badDates;
     }
 
+    //merge functions
+    public DateConstraint mergeDates(boolean[][] dates1, boolean[][] dates2){
+        DateConstraint merge= new DateConstraint(dates1.length,dates1[0].length);
+        for(int i=0;i<dates1.length;i++){
+            for(int j=0;j<dates1[i].length;j++){
+                merge.Dates[i][j]=dates1[i][j]||this.Dates[i][j];
+            }
+        }
+        return merge;
+    }
 
     //add functions
     //day/general adding
