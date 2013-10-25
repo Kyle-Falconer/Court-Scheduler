@@ -14,11 +14,11 @@ public class PreferredDates extends DateConstraint {
 
     List<MatchDate> preferredDateList = new ArrayList<MatchDate>();
 
+	public PreferredDates(List<MatchDate> preferredDateList) {
+		this.preferredDateList = preferredDateList;
+	}
+
     public List<MatchDate> getPreferredDateList() {
         return preferredDateList;
-    }
-
-    public void setPreferredDateList(List<MatchDate> preferredDateList) {
-        this.preferredDateList = preferredDateList;
     }
 }

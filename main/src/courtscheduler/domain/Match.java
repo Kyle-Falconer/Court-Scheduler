@@ -29,7 +29,6 @@ public class Match {
 
 
     public Match(Team t1, Team t2){
-        if(!(t1.getSharedTeamList().contains(t2.getTeamId()))&&!(t2.getSharedTeamList().contains(t1.getTeamId())))
         this.t1 = t1;
         this.t2 = t2;
         avail = new MatchAvailability(t1.getAvailability(), t2.getAvailability());

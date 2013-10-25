@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 public class XlsxReader {
 
@@ -115,11 +114,8 @@ public class XlsxReader {
         String splitToken = ":"; // This needs to be updated with whatever Shane wants to use to separate the requests
         String[] requestArray = requests.split(splitToken);
 
-        List<MatchDate> offDateList = new ArrayList<MatchDate>();//dateConstraint, deprecate
         List<MatchTime> offTimeList = new ArrayList<MatchTime>();//dateConstraint, deprecate
-        List<MatchDate> preferredDateList = new ArrayList<MatchDate>();//prefferedDate(extends dateConstraint), deprecate
         List<Integer> playOnceTeamList = new ArrayList<Integer>();
-        List<Integer> sharedTeamList = new ArrayList<Integer>(); //SharedTeams, deprecate
         boolean likesDoubleHeaders = false;//flat bool
         boolean likesBackToBack = false;//flat bool
         DateConstraint badDates = team.getDateConstraint();
@@ -134,13 +130,11 @@ public class XlsxReader {
                 //parse the date and use it to create a new DateConstraint object
                 String[] dates = request.split("-");
                 if(dates[0].split("/").length<3){
-                    JOptionPane.showMessageDialog(null,
-                            "Team"+team.getTeamId()+"xd constraint date 1 is too short.("+request);
+					debug("Team" + team.getTeamId() + "xd constraint date 1 is too short.(" + request);
                 }
                 if(dates.length>1){
                     if(dates[1].split("/").length<3){
-                        JOptionPane.showMessageDialog(null,
-                                "Team"+team.getTeamId()+"xd constraint date 2 is too short."+request);
+						debug("Team" + team.getTeamId() + "xd constraint date 2 is too short." + request);
                     }
                     badDates.addDates(badDates.findDateRange(dates[0],dates[1]));
                 }
@@ -157,8 +151,7 @@ public class XlsxReader {
                 if(request.contains("pm") || request.contains("p.m.")
                         ||request.contains("am")||request.contains("a.m.")){
 
-                    JOptionPane.showMessageDialog(null,
-                            "Team"+team.getTeamId()+"after constraint time has no am/pm."+request);
+					debug("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
                 }
                 request.replace("after", "");
                 request = getMilitaryTime(request);
@@ -173,8 +166,7 @@ public class XlsxReader {
                 if(request.contains("pm") || request.contains("p.m.")
                     ||request.contains("am")||request.contains("a.m.")){
 
-                    JOptionPane.showMessageDialog(null,
-                            "Team"+team.getTeamId()+"before constraint time has no am/pm."+request);
+					debug("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
                 }
                 request.replace("before", "");
                 request = getMilitaryTime(request);
@@ -189,14 +181,12 @@ public class XlsxReader {
                 if(times[0].contains("pm") || times[0].contains("p.m.")
                         ||times[0].contains("am")||times[0].contains("a.m.")){
 
-                    JOptionPane.showMessageDialog(null,
-                            "Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);
+                    debug("Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);
                 }
                 if(times[1].contains("pm") || times[1].contains("p.m.")
                         ||times[1].contains("am")||times[1].contains("a.m.")){
 
-                    JOptionPane.showMessageDialog(null,
-                            "Team"+team.getTeamId()+"xr constraint time has no am/pm on time 2."+request);
+					debug("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request);
                 }
                 times[0]=getMilitaryTime(times[0]);
                 times[1]=getMilitaryTime(times[1]);
@@ -209,13 +199,11 @@ public class XlsxReader {
             else if(request.startsWith("pd")) {
                 String[] dates = request.split("-");
                 if(dates[0].split("/").length<3){
-                    JOptionPane.showMessageDialog(null,
-                            "Team"+team.getTeamId()+"pd constraint date 1 is too short.("+request);
+					debug("Team" + team.getTeamId() + "pd constraint date 1 is too short.(" + request);
                 }
                 if(dates.length>1){
                     if(dates[1].split("/").length<3){
-                        JOptionPane.showMessageDialog(null,
-                                "Team"+team.getTeamId()+"pd constraint date 2 is too short."+request);
+                        debug("Team"+team.getTeamId()+"pd constraint date 2 is too short."+request);
                     }
                     prefDates.addDates(prefDates.findDateRange(dates[0],dates[1]));
                 }
@@ -234,8 +222,7 @@ public class XlsxReader {
                     teamId = Integer.parseInt(request.substring(0,index));
                 }
                 catch(NumberFormatException nfe){
-                    JOptionPane.showMessageDialog(null,
-                        "Team"+team.getTeamId()+"xplay constraint teamID error."+request);
+					debug("Team" + team.getTeamId() + "xplay constraint teamID error." + request);
                 }
                 dontPlay.addSharedTeam(teamId);
             }
@@ -256,17 +243,17 @@ public class XlsxReader {
             else if(request.startsWith("B2B"))
                 likesBackToBack = true;
             else{
-                JOptionPane.showMessageDialog(null,
-                    "Unknown constraint:"+request);
+				debug("Unknown constraint:" + request);
             }
         }
 
-        team.setOffDateList(offDateList);
-        team.setOffTimeList(offTimeList);
-        team.setPreferredDateList(preferredDateList);
-        team.setPlayOnceTeamList(playOnceTeamList);
-        team.setLikesDoubleHeaders(likesDoubleHeaders);
-        team.setLikesBackToBack(likesBackToBack);
+        team.setOffTimes(new OffTimes(offTimeList));
+        team.setPreferredDates(prefDates);
+		team.setDateConstraint(badDates);
+        team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));
+        team.setDoubleHeaderPreference(new DoubleHeaderPreference(likesDoubleHeaders));
+        team.setBackToBackPreference(new BackToBackPreference(likesBackToBack));
+		team.setSharedTeams(dontPlay);
     }
 
     private static String getMilitaryTime(String time) {
@@ -314,4 +301,7 @@ public class XlsxReader {
 	    return columnWidth;
 	}
 
+	private static void debug(String debugMessage) {
+		System.out.println(debugMessage);
+	}
 }

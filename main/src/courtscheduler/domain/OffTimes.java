@@ -14,11 +14,11 @@ public class OffTimes extends Constraint{
 
     List<MatchTime> offTimeList = new ArrayList<MatchTime>();
 
+	public OffTimes(List<MatchTime> offTimeList) {
+		this.offTimeList = offTimeList;
+	}
+
     public List<MatchTime> getOffTimeList() {
         return offTimeList;
-    }
-
-    public void setOffTimeList(List<MatchTime> offTimeList) {
-        this.offTimeList = offTimeList;
     }
 }

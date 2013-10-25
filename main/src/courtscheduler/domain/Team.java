@@ -20,75 +20,11 @@ public class Team {
     private PlayOnceRequests playOnceRequests;
     private PreferredDates preferredDates;
 
-    //depricated, replaced by Constraint Types.
-    private boolean likesDoubleHeaders = false;
-    private boolean likesBackToBack = false;
-    private List<MatchDate> offDateList;
-    private List<MatchTime> offTimeList;
-    private List<Integer> sharedTeamList;
-    private List<Integer> playOnceTeamList;
-    private List<MatchDate> preferredDateList;
-
     private MatchAvailability avail;
 
 
     public Team() {
-    }
-
-    public void setLikesDoubleHeaders(boolean likesDoubleHeaders) {
-        this.likesDoubleHeaders = likesDoubleHeaders;
-    }
-
-    public boolean getLikesDoubleHeaders() {
-        return likesDoubleHeaders;
-    }
-
-    public void setLikesBackToBack(boolean likesBackToBack) {
-        this.likesBackToBack = likesBackToBack;
-    }
-
-    public boolean getLikesBackToBack() {
-        return likesBackToBack;
-    }
-
-    public void setPlayOnceTeamList(List<Integer> playOnceTeamList) {
-        this.playOnceTeamList = playOnceTeamList;
-    }
-
-    public List<Integer> getPlayOnceTeamList() {
-        return playOnceTeamList;
-    }
-
-    public void setPreferredDateList(List<MatchDate> preferredDateList) {
-        this.preferredDateList = preferredDateList;
-    }
-
-    public List<MatchDate> getPreferredDateList() {
-        return preferredDateList;
-    }
-
-    public void setOffDateList(List<MatchDate> offDateList) {
-        this.offDateList = offDateList;
-    }
-
-    public List<MatchDate> getOffDateList() {
-        return offDateList;
-    }
-
-    public void setOffTimeList(List<MatchTime> offTimeList) {
-        this.offTimeList = offTimeList;
-    }
-
-    public List<MatchTime> getOffTimeList() {
-        return offTimeList;
-    }
-
-    public void setSharedTeamList(List<Integer> sharedTeamList) {
-        this.sharedTeamList = sharedTeamList;
-    }
-
-    public List<Integer> getSharedTeamList() {
-        return sharedTeamList;
+		sharedTeams = new SharedTeams();
     }
 
     public void setTeamId(Integer teamId) {
@@ -217,4 +153,10 @@ public class Team {
         this.avail.prefDates=this.getPreferredDates();
         this.avail.dontPlay=this.getSharedTeams();
     }
+
+	public static boolean canPlay(Team t1, Team t2) {
+		List<Integer> t1BadTeams = t1.getSharedTeams().getSharedTeamList();
+		List<Integer> t2BadTeams = t2.getSharedTeams().getSharedTeamList();
+		return !t1BadTeams.contains(t2.getTeamId()) && !t2BadTeams.contains(t1.getTeamId());
+	}
 }

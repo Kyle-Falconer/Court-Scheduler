@@ -11,11 +11,11 @@ public class DoubleHeaderPreference extends Constraint {
 
     boolean likesDoubleHeaders = false;
 
+	public DoubleHeaderPreference(boolean likesDoubleHeaders) {
+		this.likesDoubleHeaders = likesDoubleHeaders;
+	}
+
     public boolean likesDoubleHeaders() {
         return likesDoubleHeaders;
-    }
-
-    public void setLikesDoubleHeaders(boolean likesDoubleHeaders) {
-        this.likesDoubleHeaders = likesDoubleHeaders;
     }
 }

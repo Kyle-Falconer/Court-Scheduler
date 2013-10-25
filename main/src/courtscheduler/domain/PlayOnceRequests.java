@@ -14,11 +14,11 @@ public class PlayOnceRequests extends Constraint {
 
     List<Integer> playOnceTeamList = new ArrayList<Integer>();
 
+	public PlayOnceRequests(List<Integer> playOnceTeamList) {
+		this.playOnceTeamList = playOnceTeamList;
+	}
+
     public List<Integer> getPlayOnceTeamList() {
         return playOnceTeamList;
-    }
-
-    public void setPlayOnceTeamList(List<Integer> playOnceTeamList) {
-        this.playOnceTeamList = playOnceTeamList;
     }
 }

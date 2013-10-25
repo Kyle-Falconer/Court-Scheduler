@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.kie:kie-internal:6.1.0-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-internal/6.1.0-SNAPSHOT/kie-internal-6.1.0-20131023.173810-214.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-internal/6.1.0-SNAPSHOT/kie-internal-6.1.0-20131024.224609-219.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-internal/6.1.0-SNAPSHOT/kie-internal-6.1.0-20131023.173810-214-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-internal/6.1.0-SNAPSHOT/kie-internal-6.1.0-20131024.224609-219-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-internal/6.1.0-SNAPSHOT/kie-internal-6.1.0-20131023.173810-214-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/kie/kie-internal/6.1.0-SNAPSHOT/kie-internal-6.1.0-20131024.224609-219-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

@@ -126,13 +126,12 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         List<Match> matches= new ArrayList<Match>();
         for(int i=0;i<teamList.size();i++){
             for(int j=0; j<teamList.size();j++){
-                Match match = new Match(teamList.get(i),teamList.get(j));
+				if (Team.canPlay(teamList.get(i), teamList.get(j))) {
+                	matches.add(new Match(teamList.get(i),teamList.get(j)));
+				}
             }
         }
         setMatchList(matches);
-
-
-        generatePlaceholderMatches(teamList.toArray(new Team[teamList.size()]));
 
         //conference
         List<Conference> conferences= new ArrayList<Conference>();
@@ -145,11 +144,6 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
             }
         }
         setConferenceList(conferences);
-        //setGenderList();
-        //setGradeList();
-        //setLevelList();
-        //setMatchAssignmentList(new ArrayList<MatchAssignment>());
-
     }
 
     public void setCourtScheduleInfo(CourtScheduleInfo courtScheduleInfo) {
