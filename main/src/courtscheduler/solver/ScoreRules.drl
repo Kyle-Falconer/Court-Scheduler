@@ -21,7 +21,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 import courtscheduler.domain.CourtSchedule;
-import courtscheduler.domain.MatchAssignment;
+import courtscheduler.domain.Match;
 
 
 global HardSoftScoreHolder scoreHolder;
@@ -48,12 +48,25 @@ global HardSoftScoreHolder scoreHolder;
 // teams can't play if they're not in the same conference
 rule "obviousConstraints"
     when
-        MatchAssignment(team1.teamId == team2.teamId)
-        or MatchAssignment(team1.conference != team2.conference)
+        // something happens
+        Match(team1 == team2)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
+
+// can't have two teams playing if they don't have the same gender, grade, and level
+rule "genderGradeLevelAreSame"
+    when
+        // something happens
+        Match($team1 : team1, $team2 : team2)
+        eval(false)
+    then
+        // do something
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+// can only have up to N matches at the same time on the same day
 
 
 // ############################################################################

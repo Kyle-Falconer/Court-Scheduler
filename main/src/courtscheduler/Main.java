@@ -1,7 +1,5 @@
 package courtscheduler;
 
-//import courtscheduler.persistence.XlsxReader;
-
 import courtscheduler.domain.CourtSchedule;
 import courtscheduler.persistence.XlsxReader;
 import org.optaplanner.core.api.solver.Solver;
@@ -9,6 +7,8 @@ import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
 import org.optaplanner.core.impl.solution.Solution;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Scanner;
 
 
@@ -21,31 +21,41 @@ public class Main {
 
     protected static int LOG = 2;
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
+
 
         if (LOG >= 1) {
             System.out.println("Court Scheduler");
             System.out.println("============================================================");
         }
 
-		// initialize solver
-        // http://docs.jboss.org/drools/release/5.5.0.Final/drools-planner-docs/html_single/index.html#d0e1961
-        XmlSolverFactory solverFactory = new XmlSolverFactory("/courtscheduler/solver/SolverConfig.xml");
+        if (LOG >= 3) {
+            System.out.println("Current working directory = " + System.getProperty("user.dir"));
+            ClassLoader cl = ClassLoader.getSystemClassLoader();
+
+            System.out.println("Current classpaths: ");
+                    URL[] urls = ((URLClassLoader) cl).getURLs();
+            for (URL url : urls) {
+                System.out.println(url.getFile());
+            }
+        }
+
+        // This filename needs to be relative to the application's classpath
+        String solverConfigFilename = getOptArg(args, 2, "/courtscheduler/solver/SolverConfig.xml");
+
+        // initialize solver
+        XmlSolverFactory solverFactory = loadConfig(solverConfigFilename);
+
         SolverConfig solverConfig = solverFactory.getSolverConfig();
         Solver solver = solverConfig.buildSolver();
 
-        if (LOG >= 2 ){
+        if (LOG >= 2) {
             System.out.println("\n\nconfiguration loaded...");
         }
 
-        String in_filename;
-        if (args.length < 1){
-            System.out.print("Please enter the path of the input file: ");    // FIXME - should be more human.
-            Scanner s = new Scanner(System.in);
-            in_filename = s.next();
-        } else {
-            in_filename = args[0];
-        }
+        String in_filename = forceGetArg(args, 0, "Please enter the path of the input file: ");
+        String out_filename = getOptArg(args, 1, "output.xlsx");
+
 
         XlsxReader xlsx = new XlsxReader(in_filename);
         CourtSchedule testSchedule = new CourtSchedule(xlsx.readExcelFile());   // code smells!! FIXME
@@ -57,7 +67,55 @@ public class Main {
 		//testSchedule.generatePlaceholderMatches();
 		testSchedule.writeXlsx("output.xlsx");
 
-		// output best solution
-		// TODO
+        // output best solution
+        // TODO
+    }
+
+    private static XmlSolverFactory loadConfig(String defaultConfigXmlFilename) {
+        XmlSolverFactory configed = null;
+        String solverConfigFilename = defaultConfigXmlFilename;
+        while (configed == null) {
+            // http://docs.jboss.org/drools/release/5.5.0.Final/drools-planner-docs/html_single/index.html#d0e1961
+            try {
+                configed = new XmlSolverFactory(solverConfigFilename);
+            } catch (IllegalArgumentException iae) {
+                System.out.println("Could not find the solver configuration file: " + solverConfigFilename);
+                configed = null;
+                solverConfigFilename = promptGetString("Please enter the class path of the solver configuration file: ");
+            }
+        }
+        return configed;
+    }
+
+    private static String promptGetString(String prompt) {
+        String result = null;
+        while (result == null) {
+            System.out.print(prompt);
+            Scanner s = new Scanner(System.in);
+            result = s.next();
+            if (result.equals("")) {
+                result = null;
+            }
+        }
+        return result;
+    }
+
+    private static String getOptArg(String[] args, int argIndex, String defaultValue) {
+        String result = defaultValue;
+        if (args.length >= argIndex + 1 && args[argIndex].length() > 1) {
+            result = args[argIndex];
+            // TODO: check for file extension and add the .xlsx extension if needed
+        }
+        return result;
+    }
+
+    private static String forceGetArg(String[] args, int argIndex, String prompt) {
+        String result;
+        if (args.length < argIndex + 1) {
+            result = promptGetString(prompt);
+        } else {
+            result = args[argIndex];
+        }
+        return result;
     }
 }

@@ -2,7 +2,7 @@
 <solver>
   <!--<environmentMode>FAST_ASSERT</environmentMode>-->
   <solutionClass>courtscheduler.domain.CourtSchedule</solutionClass>
-  <planningEntityClass>courtscheduler.domain.MatchAssignment</planningEntityClass>
+  <planningEntityClass>courtscheduler.domain.Match</planningEntityClass>
 
   <scoreDirectorFactory>
     <scoreDefinitionType>HARD_SOFT</scoreDefinitionType>
