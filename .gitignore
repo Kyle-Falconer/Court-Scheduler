@@ -18,3 +18,8 @@
 .DS_Store
 *.orig
 
+# java compiled
+*.class
+
+# Court Scheduler output
+output.xlsx

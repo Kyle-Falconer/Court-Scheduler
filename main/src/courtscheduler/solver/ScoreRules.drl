@@ -21,7 +21,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 import courtscheduler.domain.CourtSchedule;
-import courtscheduler.domain.MatchAssignment;
+import courtscheduler.domain.Match;
 
 
 global HardSoftScoreHolder scoreHolder;
@@ -48,7 +48,7 @@ global HardSoftScoreHolder scoreHolder;
 rule "noMirrorMatch"
     when
         // something happens
-        MatchAssignment(team1 == team2)
+        Match(team1 == team2)
     then
         // do something
         scoreHolder.addHardConstraintMatch(kcontext, -1);
@@ -59,7 +59,7 @@ end
 rule "genderGradeLevelAreSame"
     when
         // something happens
-        MatchAssignment($team1 : team1, $team2 : team2)
+        Match($team1 : team1, $team2 : team2)
         eval(false)
     then
         // do something
