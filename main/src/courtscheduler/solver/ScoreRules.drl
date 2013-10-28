@@ -44,32 +44,39 @@ global HardSoftScoreHolder scoreHolder;
 // For hard constraints, this will probably be zero (because each violation of a hard
 //    constraint will result in subtracting from the solution's hard score).
 
-// can't have the same team playing themselves
-// teams can't play if they're not in the same conference
-rule "obviousConstraints"
+// THIS DOES NOT HANDLE THE CASE WHERE A TEAM HAS (BACK TO BACK AND DOUBLE HEADERS) SET TO "TRUE"
+// Not sure if this is a necessary constraint?
+
+// teams should not play twice on one day if they do not want double headers or back to back games
+rule "noTwoGameDay"
     when
-        // something happens
-        Match(t1 == t2)
+        $Match1 : Match($t1 : t1)
+        $Match2 : Match(t1 == $t1)
+        Team(teamName == $t1, DoubleHeader == false, BackToBack == false)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -1);
-end
-
-
-// can't have two teams playing if they don't have the same gender, grade, and level
-rule "genderGradeLevelAreSame"
-    when
-        // something happens
-        Match($team1 : t1, $t2 : t2)
-        eval(false)
-    then
-        // do something
-        scoreHolder.addHardConstraintMatch(kcontext, -1);
-end
-
-// can only have up to N matches at the same time on the same day
+        scoreHolder.addHardConstraintMatch(kcontext, -1)
 
 
 // ############################################################################
 // Soft constraints
 // ############################################################################
+
+// team likes double headers
+rule "doubleHeader"
+    when
+        $Match1 : Match($t1 : t1, $date : Date, $time : Time)
+        $Match2 : Match(t1 == $t1, Date = $date, Time != $time + 2)
+        Team(teamName : $t1, DoubleHeader == true)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, DoubleHeaderPreference.getWeight())
+
+// team likes back to back
+rule "backToBack"
+    when
+        $Match1 : Match($t1 : t1, $date : Date, $time : Time)
+        $Match2 : Match(t1 == $t1, Date = $date, Time != $time + 1)
+        Team(teamName : $t1, BackToBack == true)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, BackToBackPreference.getWeight())
+
 

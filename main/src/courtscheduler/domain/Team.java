@@ -159,4 +159,11 @@ public class Team {
 		List<Integer> t2BadTeams = t2.getSharedTeams().getSharedTeamList();
 		return !t1BadTeams.contains(t2.getTeamId()) && !t2BadTeams.contains(t1.getTeamId());
 	}
+    public boolean getDoubleHeader(){
+        return this.getDoubleHeaderPreference().likesDoubleHeaders();
+
+    }
+    public boolean getBackToBack(){
+        return this.getBackToBackPreference().isLikesBackToBack();
+    }
 }

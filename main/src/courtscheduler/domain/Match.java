@@ -48,4 +48,10 @@ public class Match {
         date.setDayOfWeek(DayOfWeek.valueOfCalendar(dateScale.get(Calendar.DAY_OF_WEEK)));
         return date;
     }
+    public Integer getTime(){
+        return this.getMatchSlot().getTime();
+    }
+    public Integer getDate(){
+        return this.getMatchSlot().getDay();
+    }
 }
