@@ -280,7 +280,7 @@ public abstract class XlsxReader {
         //schedule.setGenderList();
         //schedule.setGradeList();
         //schedule.setLevelList();
-		schedule.setMatchAssignmentList(new ArrayList<MatchAssignment>());
+		schedule.setMatchAssignmentList(new ArrayList<Match>());
         return schedule;
     }
 

@@ -42,7 +42,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     //private List<Level> levelList;
     //private List<Requests> requestsList;
 
-    public List<MatchAssignment> matchAssignmentList;
+    public List<Match> matchAssignmentList;
 
 
     public void setCourtScheduleInfo(CourtScheduleInfo courtScheduleInfo) {
@@ -118,12 +118,12 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         return levelList;
     }*/
 
-    public void setMatchAssignmentList(List<MatchAssignment> matchAssignmentList) {
+    public void setMatchAssignmentList(List<Match> matchAssignmentList) {
         this.matchAssignmentList = matchAssignmentList;
     }
 
     @PlanningEntityCollectionProperty
-    public List<MatchAssignment> getMatchAssignments(){
+    public List<Match> getMatchAssignments(){
         return matchAssignmentList;
     }
     /**
@@ -163,7 +163,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         header.createCell(4).setCellValue("Date");
 
 
-        for(MatchAssignment matchAssignment : matchAssignmentList) {
+        for(Match matchAssignment : matchAssignmentList) {
             cellNumber = 0;
 			rowNumber++;
             Row dataRow = sheet.createRow(rowNumber);
@@ -197,7 +197,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 		for (Team t1 : teamList) {
 			for (Team t2 : teamList) {
 				if (t1.getTeamId() < t2.getTeamId()) {
-					MatchAssignment next = new MatchAssignment();
+					Match next = new Match();
 					next.setTeam1(t1);
 					next.setTeam2(t2);
 					// get a random match
