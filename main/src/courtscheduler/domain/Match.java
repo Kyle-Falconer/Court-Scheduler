@@ -1,17 +1,9 @@
 package courtscheduler.domain;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
-import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
-import org.optaplanner.core.api.domain.solution.PlanningSolution;
-import org.optaplanner.core.api.domain.value.ValueRangeProvider;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.impl.solution.Solution;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 
 import java.util.Calendar;
-
-import org.optaplanner.core.api.domain.entity.PlanningEntity;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,49 +15,35 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 @PlanningEntity
 public class Match {
 
-    private Team t1;
-    private Team t2;
+    // defining properties: teams
+    private Team team1;
+    private Team team2;
     MatchAvailability avail;   // calculated based on the intersection of the teams' availabilities
-    private Integer day;
-    private Integer time;
-    private Integer court;
+    private MatchSlot matchSlot;
 
+    public void setMatchSlot(MatchSlot matchSlot) {
+        this.matchSlot = matchSlot;
+    }
+    @PlanningVariable(valueRangeProviderRefs = "matchSlot", strengthComparatorClass = MatchStrengthComparator.class)
+    public MatchSlot getMatchSlot() {
+        return this.matchSlot;
+    }
+    public Match() {}
+    public Match(Team team1, Team team2){
+        this.team1 = team1;
+        this.team2 = team2;
+        avail = new MatchAvailability(team1.getAvailability(), team2.getAvailability());
+    }
 
-    public Match(Team t1, Team t2){
-        this.t1 = t1;
-        this.t2 = t2;
-        avail = new MatchAvailability(t1.getAvailability(), t2.getAvailability());
-    }
-    @PlanningVariable(valueRangeProviderRefs = {"dayRange"})
-    public Integer getDay(){
-        return this.day;
-    }
-    @PlanningVariable(valueRangeProviderRefs = {"timeRange"})
-    public Integer getTime(){
-        return this.time;
-    }
-    @PlanningVariable(valueRangeProviderRefs = {"courtRange"})
-    public Integer getCourt(){
-        return this.court;
-    }
-    public void setDay(Integer day){
-        this.day=day;
-    }
-    public void setTime(Integer time){
-        this.time=time;
-    }
-    public void setCourt(Integer court){
-        this.court=court;
-    }
     public Team getT1(){
-        return this.t1;
+        return this.team1;
     }
     public Team getT2(){
-        return this.t2;
+        return this.team2;
     }
     public MatchDate getMatchDate(Calendar dateScale){
         MatchDate date = new MatchDate();
-        dateScale.add(Calendar.DATE,day);
+        dateScale.add(Calendar.DATE,matchSlot.getDay());
         date.setCal(dateScale);
         date.setDayOfWeek(DayOfWeek.valueOfCalendar(dateScale.get(Calendar.DAY_OF_WEEK)));
         return date;

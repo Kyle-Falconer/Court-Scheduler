@@ -1,7 +1,7 @@
 package courtscheduler.solver.move;
 
 import courtscheduler.domain.Match;
-import courtscheduler.domain.MatchAssignment;
+import courtscheduler.domain.MatchSlot;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 
 /**
@@ -11,20 +11,10 @@ import org.optaplanner.core.impl.score.director.ScoreDirector;
  * Time: 5:30 PM
  */
 public class CourtScheduleMoveHelper {
-    public static void moveDay(ScoreDirector scoreDirector, Match match, Integer day) {
-        scoreDirector.beforeVariableChanged(match, "day");
-        match.setDay(day);
-        scoreDirector.afterVariableChanged(match, "day");
-    }
-    public static void moveTime(ScoreDirector scoreDirector,Match match, Integer time) {
-        scoreDirector.beforeVariableChanged(match, "time");
-        match.setTime(time);
-        scoreDirector.afterVariableChanged(match, "time");
-    }
-    public static void moveCourt(ScoreDirector scoreDirector, Match match, Integer court) {
-        scoreDirector.beforeVariableChanged(match, "court");
-        match.setCourt(court);
-        scoreDirector.afterVariableChanged(match, "court");
+    public static void moveMatchSlot(ScoreDirector scoreDirector, Match match, MatchSlot matchSlot) {
+        scoreDirector.beforeVariableChanged(match, "matchSlot");
+        match.setMatchSlot(matchSlot);
+        scoreDirector.afterVariableChanged(match, "matchSlot");
     }
 
     private CourtScheduleMoveHelper() {

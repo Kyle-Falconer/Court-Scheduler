@@ -1,7 +1,7 @@
 package courtscheduler.solver.move;
 
 import courtscheduler.domain.Match;
-import courtscheduler.domain.MatchAssignment;
+import courtscheduler.domain.MatchSlot;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -22,36 +22,30 @@ import java.util.List;
 public class MatchChangeMove implements Move {
 
     private Match toMatch;
-    private Integer day;
-    private Integer time;
-    private Integer court;
-    public MatchChangeMove(Match toMatch, Integer day, Integer time, Integer court){
+    private MatchSlot matchSlot;
+    public MatchChangeMove(Match toMatch, MatchSlot matchSlot){
         this.toMatch = toMatch;
-        this.day=day;
-        this.time=time;
-        this.court=court;
+        this.matchSlot = matchSlot;
     }
 
     @Override
     public boolean isMoveDoable(ScoreDirector scoreDirector) {
         // cannot move to same position
         // see http://docs.jboss.org/drools/release/6.0.0.CR5/optaplanner-docs/html/moveAndNeighborhoodSelection.html#d0e5896
-        return !ObjectUtils.equals(toMatch.getDay(), day) ||
-                !ObjectUtils.equals(toMatch.getTime(),time )||
-                !ObjectUtils.equals(toMatch.getCourt(),court);
+        return !ObjectUtils.equals(toMatch.getMatchSlot().getDay(), matchSlot.getDay()) ||
+                !ObjectUtils.equals(toMatch.getMatchSlot().getTime(), matchSlot.getTime())||
+                !ObjectUtils.equals(toMatch.getMatchSlot().getCourt(), matchSlot.getCourt());
     }
 
     @Override
     public Move createUndoMove(ScoreDirector scoreDirector) {
-        return new MatchChangeMove(toMatch,day,time,court);
+        return new MatchChangeMove(toMatch, matchSlot);
     }
 
     @Override
     public void doMove(ScoreDirector scoreDirector) {
         //TODO: implement move rotation (currently just cycles every thing at once rather than every possibility
-        CourtScheduleMoveHelper.moveDay(scoreDirector, toMatch, day);
-        CourtScheduleMoveHelper.moveTime(scoreDirector, toMatch, time);
-        CourtScheduleMoveHelper.moveCourt(scoreDirector, toMatch, court);
+        CourtScheduleMoveHelper.moveMatchSlot(scoreDirector, toMatch, matchSlot);
     }
 
     @Override
@@ -62,9 +56,9 @@ public class MatchChangeMove implements Move {
     @Override
     public List<Integer> getPlanningValues() {
         ArrayList<Integer> values = new ArrayList<Integer>();
-        values.add(day);
-        values.add(time);
-        values.add(court);
+        values.add(matchSlot.getDay());
+        values.add(matchSlot.getTime());
+        values.add(matchSlot.getCourt());
         return values;
     }
 
@@ -75,9 +69,7 @@ public class MatchChangeMove implements Move {
             MatchChangeMove other = (MatchChangeMove) o;
             return new EqualsBuilder()
                     .append(toMatch, other.toMatch)
-                    .append(day, other.day)
-                    .append(time, other.time)
-                    .append(court, other.court)
+                    .append(matchSlot, other.matchSlot)
                     .isEquals();
         } else {
             return false;
@@ -87,13 +79,11 @@ public class MatchChangeMove implements Move {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(toMatch)
-                .append(day)
-                .append(time)
-                .append(court)
+                .append(matchSlot)
                 .toHashCode();
     }
 
     public String toString() {
-        return toMatch+"=>"+day+":"+time+":"+court;
+        return toMatch+"=>"+matchSlot;
     }
 }

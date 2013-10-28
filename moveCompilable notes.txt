@@ -6,7 +6,7 @@ XlsxReader: added in call to put team's ID into their own dont play list.
 Match: added Integers date,time,court and add/set functions for each
 CourtSchedule: Added List<Integer>'s dayList,timeList,courtList, and get/set methods for them.
 CourtSchedule: commented out setting of MatchAssignment (depricated?)
-Match: added in get functions for t1 and t2
+Match: added in get functions for team1 and team2
 CourtSchedule: edited writeXlsx function to loop through matchList rather than MatchAssign List, and matchDate/court/time to the Integer values in match
 MatchChangeMove: Removed MatchAssignment, added Integers day,time,court
 MatchChangeMove: doMove split to 3 functions, but is NOT finished, needs be worked to pick appropriate function for each shift.

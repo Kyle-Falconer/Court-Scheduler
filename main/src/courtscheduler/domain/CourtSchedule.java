@@ -9,6 +9,7 @@ import org.joda.time.LocalDate;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.value.ValueRangeProvider;
+import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.solution.Solution;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
@@ -127,7 +128,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         for(int i=0;i<teamList.size();i++){
             for(int j=0; j<teamList.size();j++){
 				if (Team.canPlay(teamList.get(i), teamList.get(j))) {
-                	matches.add(new Match(teamList.get(i),teamList.get(j)));
+                    Match nextMatch = new Match(teamList.get(i),teamList.get(j));
+                    nextMatch.setMatchSlot(new MatchSlot(-1, -1, -1));
+                	matches.add(nextMatch);
 				}
             }
         }
@@ -182,9 +185,11 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     public void setMatchList(List<Match> matchList) {
         this.matchList = matchList;
     }
-
     public List<Match> getMatchList() {
         return matchList;
+    }
+    public Match getNextMatch(){
+        return matchList.remove(0);
     }
 
     public void setConferenceList(List<Conference> conferenceList) {
@@ -198,15 +203,12 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     public int getNumberOfConferenceDays(){
         return Days.daysBetween(conferenceStartDate, conferenceStartDate).getDays();
     }
-    @ValueRangeProvider(id = "dayRange")
     public List<Integer> getDayList(){
         return this.dayList;
     }
-    @ValueRangeProvider(id = "timeRange")
     public List<Integer> getTimeList(){
         return this.timeList;
     }
-    @ValueRangeProvider(id = "courtRange")
     public List<Integer> getCourtList(){
         return this.courtList;
     }
@@ -305,11 +307,11 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
             dataRow.createCell(cellNumber++).setCellValue(teamName1);
             String teamName2 = match.getT2().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName2);
-            Integer courtId = match.getCourt();
+            Integer courtId = match.getMatchSlot().getCourt();
             dataRow.createCell(cellNumber++).setCellValue(courtId);
-            Integer matchTime = match.getTime();
+            Integer matchTime = match.getMatchSlot().getTime();
             dataRow.createCell(cellNumber++).setCellValue(matchTime);
-            Integer matchDate = match.getDay();
+            Integer matchDate = match.getMatchSlot().getDay();
             dataRow.createCell(cellNumber++).setCellValue(matchDate);
         }
 
@@ -369,5 +371,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         //facts.addAll(levelList);
         // Do not add the planning entity's (matchAssignmentList) because that will be done automatically
         return facts;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+    @ValueRangeProvider(id = "matchSlot")
+    public List<MatchSlot> getMatchSlots() {
+        return new ArrayList<MatchSlot>();
     }
 }
