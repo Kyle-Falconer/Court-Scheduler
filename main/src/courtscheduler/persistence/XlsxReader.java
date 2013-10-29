@@ -72,34 +72,48 @@ public class XlsxReader {
             if(columnCounter == 0){
                 int index = cell.toString().indexOf(".");
                 teamId = Integer.parseInt(cell.toString().substring(0,index));
+                team.setTeamId(teamId);
             }
-            if(columnCounter == 1)
+            else if(columnCounter == 1)
                 x = cell.toString();
-            if(columnCounter == 2)
+
+            else if(columnCounter == 2){
                 teamName = cell.toString();
-            if(columnCounter == 3)
+                team.setTeamName(teamName);
+            }
+            else if(columnCounter == 3) {
                 year =  cell.toString();
-            if(columnCounter == 4)
+                team.setYear(year);
+            }
+            else if(columnCounter == 4) {
                 gender = cell.toString();
-            if(columnCounter == 5){
+                team.setGender(gender);
+            }
+            else if(columnCounter == 5){
                 int index = cell.toString().indexOf(".");
                 grade = Integer.parseInt(cell.toString().substring(0,index));
+                team.setGrade(grade);
             }
-            if(columnCounter == 6)
+            else if(columnCounter == 6){
                 level = cell.toString();
-            if(columnCounter == 7)
+                team.setLevel(level);
+            }
+            else if(columnCounter == 7){
                 requests = cell.toString();
-            if(columnCounter == 8)
+                //debug(team.getTeamId().toString()+":"+requests);
+                processRequestConstraints(team, requests);
+            }
+            else if(columnCounter == 8)
                 notSameTimeAs = cell.toString();
 
-            team.setTeamId(teamId);
-            team.setTeamName(teamName);
-            team.setYear(year);
-            team.setGender(gender);
-            team.setGrade(grade);
-            team.setLevel(level);
 
-            processRequestConstraints(team, requests);
+
+
+
+
+
+
+
             //team.setRequests(requests);
 
 
@@ -111,8 +125,9 @@ public class XlsxReader {
 
     private static void processRequestConstraints(Team team, String requests) {
 
-        String splitToken = ":"; // This needs to be updated with whatever Shane wants to use to separate the requests
+        String splitToken = ","; // This needs to be updated with whatever Shane wants to use to separate the requests
         String[] requestArray = requests.split(splitToken);
+        //debug(requests);
 
         List<MatchTime> offTimeList = new ArrayList<MatchTime>();//dateConstraint, deprecate
         List<Integer> playOnceTeamList = new ArrayList<Integer>();
@@ -122,6 +137,7 @@ public class XlsxReader {
         PreferredDates prefDates = team.getPreferredDates();
         SharedTeams dontPlay=team.getSharedTeams();
         dontPlay.addSharedTeam(team.getTeamId());
+        SharedTeams notSameTime= new SharedTeams();
         for(String request : requestArray) {
 
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
@@ -142,6 +158,9 @@ public class XlsxReader {
                     badDates.addDate(badDates.findDate(dates[0]));
                 }
                 team.setDateConstraint(badDates);
+
+            }
+            else if(request.contentEquals("")){
 
             }
 
@@ -240,11 +259,25 @@ public class XlsxReader {
                 likesDoubleHeaders = true;
 
             // BACK TO BACK PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(request.startsWith("B2B"))
+            else if(request.startsWith("B2B")){
                 likesBackToBack = true;
+            }
+            else if(request.startsWith("nst")){
+                request.replace("nst","");
+                Integer teamId=null;
+                try{
+                    teamId=Integer.parseInt(request);
+                }
+                catch(NumberFormatException nfe){
+                    debug("Team"+team.getTeamId()+"nst constraint teamId error."+request);
+                }
+                notSameTime.addSharedTeam(teamId);
+            }
+
             else{
 				debug("Unknown constraint:" + request);
             }
+
         }
 
         team.setOffTimes(new OffTimes(offTimeList));
