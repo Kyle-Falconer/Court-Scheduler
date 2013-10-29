@@ -14,7 +14,7 @@
       Official benchmark maximumSecondsSpend allowed on:
       - ge0ffrey's main pc: sprint 11, medium 700, long 42000
     -->
-    <maximumSecondsSpend>700</maximumSecondsSpend>
+    <maximumSecondsSpend>200</maximumSecondsSpend>
     <!--<scoreAttained>-0hard/-999999soft</scoreAttained>-->
   </termination>
   <constructionHeuristic>
@@ -24,7 +24,7 @@
   <localSearch>
     <unionMoveSelector>
       <moveListFactory>
-        <cacheType>PHASE</cacheType>
+        <cacheType>JUST_IN_TIME</cacheType>
         <moveListFactoryClass>courtscheduler.solver.move.MatchChangeMoveFactory</moveListFactoryClass>
       </moveListFactory>
       <!--<moveListFactory>

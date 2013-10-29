@@ -9,7 +9,6 @@ import org.joda.time.LocalDate;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.value.ValueRangeProvider;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.solution.Solution;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
@@ -48,18 +47,17 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     // configurables
     private LocalDate conferenceStartDate;
     private LocalDate conferenceEndDate;
+    private int numberOfConferenceDays;
     private int numberOfCourts;
     private int timeslotMidnightOffsetInMinutes;
     private int numberOfTimeSlotsPerDay;
     private int timeslotDurationInMinutes;
 
     public List<Match> matchAssignmentList;
+    public List<MatchSlot> matchSlots;
 
     private Match[][][] schedule;
     private List<Match> matchList;
-    private List<Integer> dayList;
-    private List<Integer> timeList;
-    private List<Integer> courtList;
     private Calendar firstDay;
 
     public CourtSchedule(){
@@ -75,8 +73,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         timeslotMidnightOffsetInMinutes = 420;  // 7am
         numberOfTimeSlotsPerDay = 16;  // end at ~8:30pm
         timeslotDurationInMinutes = 50;
+        numberOfConferenceDays = getNumberOfConferenceDays();
 
-        schedule = new Match[getNumberOfConferenceDays()][numberOfTimeSlotsPerDay][numberOfCourts];
+        schedule = new Match[numberOfConferenceDays][numberOfTimeSlotsPerDay][numberOfCourts];
 
 
         this.teamList = teamList;
@@ -123,11 +122,12 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         }
         setMatchDateList(Arrays.asList(date));
 
-        //Match
+        //Round-Robin construction of initial match list.
         List<Match> matches= new ArrayList<Match>();
         for(int i=0;i<teamList.size();i++){
-            for(int j=0; j<teamList.size();j++){
+            for(int j=i+1; j<teamList.size();j++){
 				if (Team.canPlay(teamList.get(i), teamList.get(j))) {
+
                     Match nextMatch = new Match(teamList.get(i),teamList.get(j));
                     nextMatch.setMatchSlot(new MatchSlot(-1, -1, -1));
                 	matches.add(nextMatch);
@@ -135,6 +135,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
             }
         }
         setMatchList(matches);
+
+        // make the preliminary schedule
+        preliminarySchedule(matches);
 
         //conference
         List<Conference> conferences= new ArrayList<Conference>();
@@ -148,6 +151,43 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         }
         setConferenceList(conferences);
     }
+
+    private void preliminarySchedule(List<Match> matches) {
+        // generate the match slots if needed
+        getMatchSlots();
+
+
+        // in each match in the matchlist assign a matchslot
+        // if one of the teams in Match is already playing on day n, increment n until a day is found
+        // if a timeslot is not found (already playing on every day) then increment the timeslot by 2 and set n to 0
+
+        for (int matchIndex = 0; matchIndex < this.matchList.size(); matchIndex++) {
+            int dayIndex = 0;
+            for (int matchslotIndex = 0; matchslotIndex < this.matchSlots.size(); matchslotIndex++) {
+                if (this.matchSlots.get(matchslotIndex).getDay() == dayIndex) {
+                    Match tempMatch = this.matchList.get(matchIndex);
+                    if (!eitherTeamIsPlayingOnDay(tempMatch, dayIndex)) {
+                        tempMatch.setMatchSlot(this.matchSlots.get(matchslotIndex));
+                        break;
+                    }
+                    dayIndex++;
+                }
+            }
+
+        }
+        System.out.println("build preliminary schedule");
+
+    }
+
+    private boolean eitherTeamIsPlayingOnDay(Match match, int dayIndex){
+        for (Match m : matchList) {
+            if (m.containsTeamsFrom(match) && m.getMatchSlot().getDay() == dayIndex) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public void setCourtScheduleInfo(CourtScheduleInfo courtScheduleInfo) {
         this.courtScheduleInfo = courtScheduleInfo;
@@ -201,26 +241,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     }
 
     public int getNumberOfConferenceDays(){
-        return Days.daysBetween(conferenceStartDate, conferenceStartDate).getDays();
+        return Days.daysBetween(conferenceStartDate, conferenceEndDate).getDays();
     }
-    public List<Integer> getDayList(){
-        return this.dayList;
-    }
-    public List<Integer> getTimeList(){
-        return this.timeList;
-    }
-    public List<Integer> getCourtList(){
-        return this.courtList;
-    }
-    public void setDayList(List<Integer> dayList){
-        this.dayList=dayList;
-    }
-    public void setTimeList(List<Integer> timeList){
-        this.timeList=timeList;
-    }
-    public void setCourtList(List<Integer> courtList){
-        this.courtList=courtList;
-    }
+
 
     public void setFirstDay(Calendar firstDay){
         this.firstDay=firstDay;
@@ -329,20 +352,6 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         }
     }
 
-	public void generatePlaceholderMatches(Team[] teams) {
-        // TODO: optimize
-		for (Team t1 : teams) {
-			for (Team t2 : teams) {
-				if (t1.getTeamId() < t2.getTeamId()) {
-					Match next = new Match(t1, t2);
-
-
-                    // TODO: verify conference is ok, that they can play each other.
-					matchAssignmentList.add(next);
-				}
-			}
-		}
-	}
 
     /**
      * Called by the {@link org.optaplanner.core.impl.score.director.drools.DroolsScoreDirector} when the {@link org.optaplanner.core.impl.solution.Solution} needs to be inserted
@@ -372,8 +381,20 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         // Do not add the planning entity's (matchAssignmentList) because that will be done automatically
         return facts;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
     @ValueRangeProvider(id = "matchSlot")
     public List<MatchSlot> getMatchSlots() {
-        return new ArrayList<MatchSlot>();
+        // FIXME: pass every available match slot so that the list of moves can be used against this list of match slots
+        if (matchSlots == null || matchSlots.size() == 0){
+            matchSlots = new ArrayList<MatchSlot>();
+            for (int dayIndex = 0; dayIndex < numberOfConferenceDays; dayIndex++)  {
+                for (int slotIndex = 0; slotIndex < numberOfTimeSlotsPerDay; slotIndex++)  {
+                    for (int courtIndex = 0; courtIndex < numberOfCourts; courtIndex++)  {
+                        matchSlots.add(new MatchSlot(dayIndex, slotIndex, courtIndex));
+                    }
+                }
+            }
+        }
+        return matchSlots;
     }
 }

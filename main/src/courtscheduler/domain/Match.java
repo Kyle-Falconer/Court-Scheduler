@@ -54,4 +54,8 @@ public class Match {
     public Integer getDate(){
         return this.getMatchSlot().getDay();
     }
+    public boolean containsTeamsFrom(Match other) {
+        return this.team1.equals(other.team1) || this.team1.equals(other.team2) ||
+                this.team2.equals(other.team1) || this.team2.equals(other.team2);
+    }
 }

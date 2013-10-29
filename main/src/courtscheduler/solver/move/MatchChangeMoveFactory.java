@@ -18,7 +18,7 @@ import java.util.List;
  * Time: 10:48 PM
  * To change this template use File | Settings | File Templates.
  */
-public class MatchChangeMoveFactory  implements MoveListFactory {
+public class MatchChangeMoveFactory implements MoveListFactory {
 
 
     private MovableMatchSelectionFilter filter = new MovableMatchSelectionFilter();
@@ -28,14 +28,12 @@ public class MatchChangeMoveFactory  implements MoveListFactory {
         List<Move> moveList = new ArrayList<Move>();
         List<Match> matchList = courtSchedule.getMatchList();
         List<MatchSlot> slotList = courtSchedule.getMatchSlots();
-        for (Match match:matchList) {
-            //if (filter.accept(courtSchedule, matchAssignment)) {
-            for(MatchSlot slot : slotList){
-                        moveList.add(new MatchChangeMove(match,slot));
-                // add
-                // add match to open timeslot
-
+        for (Match match : matchList) {
+            // if (filter.accept(courtSchedule, match)) {
+            for (MatchSlot slot : slotList) {
+                moveList.add(new MatchChangeMove(match, slot));
             }
+            //}
         }
         return moveList;
     }
