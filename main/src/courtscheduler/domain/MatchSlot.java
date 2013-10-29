@@ -14,9 +14,9 @@ public class MatchSlot extends AbstractPersistable {
 
 
     public MatchSlot(int day, int time, int court) {
-        this.day = day;
-        this.time = time;
-        this.court = court;
+        this.day = new Integer(day);
+        this.time = new Integer(time);
+        this.court = new Integer(court);
     }
 
     public Integer getDay(){

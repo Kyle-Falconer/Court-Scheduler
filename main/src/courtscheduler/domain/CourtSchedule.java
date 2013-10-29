@@ -137,7 +137,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         setMatchList(matches);
 
         // make the preliminary schedule
-        preliminarySchedule(matches);
+        setPreliminarySchedule();
 
         //conference
         List<Conference> conferences= new ArrayList<Conference>();
@@ -150,12 +150,12 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
             }
         }
         setConferenceList(conferences);
+
     }
 
-    private void preliminarySchedule(List<Match> matches) {
+    private void setPreliminarySchedule() {
         // generate the match slots if needed
         getMatchSlots();
-
 
         // in each match in the matchlist assign a matchslot
         // if one of the teams in Match is already playing on day n, increment n until a day is found
@@ -165,9 +165,8 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
             int dayIndex = 0;
             for (int matchslotIndex = 0; matchslotIndex < this.matchSlots.size(); matchslotIndex++) {
                 if (this.matchSlots.get(matchslotIndex).getDay() == dayIndex) {
-                    Match tempMatch = this.matchList.get(matchIndex);
-                    if (!eitherTeamIsPlayingOnDay(tempMatch, dayIndex)) {
-                        tempMatch.setMatchSlot(this.matchSlots.get(matchslotIndex));
+                    if (!eitherTeamIsPlayingOnDay(this.matchList.get(matchIndex), dayIndex)) {
+                        this.matchList.get(matchIndex).setMatchSlot(this.matchSlots.get(matchslotIndex));
                         break;
                     }
                     dayIndex++;
