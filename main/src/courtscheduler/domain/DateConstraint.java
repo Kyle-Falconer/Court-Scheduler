@@ -1,7 +1,5 @@
 package courtscheduler.domain;
 
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
-
 import java.util.Calendar;
 import java.util.List;
 
@@ -13,26 +11,26 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class DateConstraint extends Constraint{
-    private boolean Dates[][];
+    private boolean dates[][];
 
     //constructors
     public DateConstraint(){
-        Dates= new boolean[365][24];
+        dates = new boolean[365][24];
     }
     public DateConstraint(int days, int times){
-        Dates= new boolean[days][times];
+        dates = new boolean[days][times];
     }
 
     //get functions
     public boolean[][] getDates(){
-        return this.Dates;
+        return this.dates;
     }
 
 
 
     //set functions
     public void setDates(boolean[][] badDates){
-        this.Dates=badDates;
+        this.dates =badDates;
     }
 
     //merge functions
@@ -40,7 +38,9 @@ public class DateConstraint extends Constraint{
         DateConstraint merge= new DateConstraint(dates1.length,dates1[0].length);
         for(int i=0;i<dates1.length;i++){
             for(int j=0;j<dates1[i].length;j++){
-                merge.Dates[i][j]=dates1[i][j]||this.Dates[i][j];
+                //Shouldnt this below be "and" instead of "or"?
+                //Trying to find out when two teams are available should be AND instead of OR -Will and Michael
+                merge.dates[i][j]=dates1[i][j]&&this.dates[i][j];
             }
         }
         return merge;
@@ -49,14 +49,17 @@ public class DateConstraint extends Constraint{
     //add functions
     //day/general adding
     public void addDate(int day, boolean[] times){
-        for(int i=0;i<this.Dates.length;i++){
+        //We changed this to dates[0].length because i was being used to represent the time dimension below.
+        //dates[0] will return an array of times, which will allow i to go from 0 to 24 - Will & Michael
+        for(int i=0;i<this.dates[0].length;i++){
             //and if true=ok, or if false=ok
-            this.Dates[day][i]= (times[i]||this.Dates[day][i]);
+
+            this.dates[day][i]= (times[i]||this.dates[day][i]);
         }
     }
     //specific slot add
     public void addTime(int day, int time){
-        this.Dates[day][time]=true;
+        this.dates[day][time]=true;
     }
 
     //wrappers for other input types
@@ -66,8 +69,10 @@ public class DateConstraint extends Constraint{
         this.addDate(day, noTimes);
     }
     //no day
-    public void addRestrictedTimes(boolean[] times){
-        for(int i=0; i<this.Dates.length;i++){
+    //We changed the name to fit in with the addTime format. addTimes makes more sense
+    //when describing what the method actually does - W&M
+    public void addTimes(boolean[] times){
+        for(int i=0; i<this.dates.length;i++){
             this.addDate(i,times);
         }
     }
@@ -86,7 +91,7 @@ public class DateConstraint extends Constraint{
     //conversion methods for times
     //int[] (0-24 with 1=1:00, size should not exceed 24, but need not be in order or full) ->boolean[]
     public boolean[] makeTimeArray(int[] times){
-        boolean[] timeArray = new boolean[this.Dates[0].length];
+        boolean[] timeArray = new boolean[this.dates[0].length];
         for(int i=0;i<times.length;i++){
             timeArray[times[i]]=true;
         }
@@ -113,26 +118,27 @@ public class DateConstraint extends Constraint{
 
     //conversion methods for days
     //Calendar date ->int date
-    public int findDate(Calendar Date){
-        return Date.get(Calendar.DAY_OF_YEAR);
+    public int findDate(Calendar date){
+        return date.get(Calendar.DAY_OF_YEAR);
     }
 
     //matchDate -> int day (calls calendar find date)
-    public int findDate(MatchDate Date){
-        return findDate(Date.getCal());
+    public int findDate(MatchDate date){
+        return findDate(date.getCal());
     }
+
     //string date->int day (calls calendar find date)
-    public int findDate(String Date){
+    public int findDate(String date){
         Calendar bCal = Calendar.getInstance();
-        String[] bDate= Date.split("/");
+        String[] bDate= date.split("/");
         bCal.set(Integer.valueOf(bDate[2]),Integer.valueOf(bDate[0]),Integer.valueOf(bDate[1]));
         return findDate(bCal);
     }
     //array of matchDate inputs -> array of int days
-    public int[] findDates(List<MatchDate> Dates){
-        int[] days= new int[Dates.size()];
-        for(int i=0;i<Dates.size();i++){
-            days[i]=Dates.get(i).getCal().get(Calendar.DAY_OF_YEAR);
+    public int[] findDates(List<MatchDate> dates){
+        int[] days = new int[dates.size()];
+        for(int i = 0; i < dates.size(); i++){
+            days[i] = dates.get(i).getCal().get(Calendar.DAY_OF_YEAR);
         }
         return days;
 
@@ -140,9 +146,9 @@ public class DateConstraint extends Constraint{
     //Calender range -> int[] days
     public int[] findDateRange(Calendar startDate, Calendar endDate){
         int dayCount=endDate.get(Calendar.DAY_OF_YEAR)-startDate.get(Calendar.DAY_OF_YEAR);
-        int[] days= new int[dayCount];
-        for(int i=0;i<dayCount;i++){
-            days[i]=startDate.get(Calendar.DAY_OF_YEAR);
+        int[] days = new int[dayCount];
+        for(int i = 0;i<dayCount;i++){
+            days[i] = startDate.get(Calendar.DAY_OF_YEAR);
             startDate.add(Calendar.DATE,1);
         }
         return days;
@@ -152,9 +158,18 @@ public class DateConstraint extends Constraint{
         String[] sDate= startDate.split("/");
         String[] eDate= endDate.split("/");
         Calendar sCal= Calendar.getInstance();
-        sCal.set(Integer.valueOf(sDate[2]),Integer.valueOf(sDate[0]),Integer.valueOf(sDate[1]));
-        Calendar eCal= Calendar.getInstance();
-        eCal.set(Integer.valueOf(eDate[2]),Integer.valueOf(eDate[0]),Integer.valueOf(eDate[1]));
-        return this.findDateRange(sCal,eCal);
+        //W&M - added try-catch block
+        try {
+            sCal.set(Integer.valueOf(sDate[2]),Integer.valueOf(sDate[0]),Integer.valueOf(sDate[1]));
+            Calendar eCal= Calendar.getInstance();
+            eCal.set(Integer.valueOf(eDate[2]),Integer.valueOf(eDate[0]),Integer.valueOf(eDate[1]));
+            return this.findDateRange(sCal,eCal);
+        }
+        catch(NumberFormatException e){
+            //this may need to be handled better - W&M
+            e.printStackTrace();
+            return new int[0];
+        }
+
     }
 }
