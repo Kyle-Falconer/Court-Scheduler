@@ -6,8 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/optaplanner.iml" filepath="$PROJECT_DIR$/optaplanner.iml" />
       <module fileurl="file://$PROJECT_DIR$/optaplanner-benchmark/optaplanner-benchmark.iml" filepath="$PROJECT_DIR$/optaplanner-benchmark/optaplanner-benchmark.iml" />
       <module fileurl="file://$PROJECT_DIR$/optaplanner-core/optaplanner-core.iml" filepath="$PROJECT_DIR$/optaplanner-core/optaplanner-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/optaplanner-distribution/optaplanner-distribution.iml" filepath="$PROJECT_DIR$/optaplanner-distribution/optaplanner-distribution.iml" />
-      <module fileurl="file://$PROJECT_DIR$/optaplanner-docs/optaplanner-docs.iml" filepath="$PROJECT_DIR$/optaplanner-docs/optaplanner-docs.iml" />
       <module fileurl="file://$PROJECT_DIR$/optaplanner-examples/optaplanner-examples.iml" filepath="$PROJECT_DIR$/optaplanner-examples/optaplanner-examples.iml" />
       <module fileurl="file://$PROJECT_DIR$/optaplanner-webexamples/optaplanner-webexamples.iml" filepath="$PROJECT_DIR$/optaplanner-webexamples/optaplanner-webexamples.iml" />
     </modules>

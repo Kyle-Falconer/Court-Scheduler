@@ -22,6 +22,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 import courtscheduler.domain.CourtSchedule;
 import courtscheduler.domain.Match;
+import courtscheduler.domain.Team;
 
 
 global HardSoftScoreHolder scoreHolder;
@@ -54,7 +55,11 @@ rule "noTwoGameDay"
         $Match2 : Match(t1 == $t1)
         Team(teamName == $t1, DoubleHeader == false, BackToBack == false)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -1)
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+
+/*
 
 
 // ############################################################################
@@ -69,6 +74,7 @@ rule "doubleHeader"
         Team(teamName : $t1, DoubleHeader == true)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, DoubleHeaderPreference.getWeight())
+end
 
 // team likes back to back
 rule "backToBack"
@@ -78,5 +84,5 @@ rule "backToBack"
         Team(teamName : $t1, BackToBack == true)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, BackToBackPreference.getWeight())
-
-
+end
+*/

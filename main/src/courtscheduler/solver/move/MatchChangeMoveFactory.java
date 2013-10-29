@@ -32,6 +32,8 @@ public class MatchChangeMoveFactory  implements MoveListFactory {
             //if (filter.accept(courtSchedule, matchAssignment)) {
             for(MatchSlot slot : slotList){
                         moveList.add(new MatchChangeMove(match,slot));
+                // add
+                // add match to open timeslot
 
             }
         }
