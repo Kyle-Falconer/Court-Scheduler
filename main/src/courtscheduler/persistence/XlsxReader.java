@@ -148,8 +148,8 @@ public class XlsxReader {
             // CANT PLAY UNTIL AFTER CERTAIN TIME //
             else if(request.startsWith("after")){
                 // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-                if(request.contains("pm") || request.contains("p.m.")
-                        ||request.contains("am")||request.contains("a.m.")){
+                if(request.toLowerCase().contains("pm") || request.toLowerCase().contains("p.m.")
+                        ||request.toLowerCase().contains("am")||request.toLowerCase().contains("a.m.")){
 
 					debug("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
                 }
@@ -157,14 +157,14 @@ public class XlsxReader {
                 request = getMilitaryTime(request);
                 MatchTime offTime = new MatchTime("0:00", request);
                 offTimeList.add(offTime);
-                badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
+                badDates.addTimes(badDates.makeTimeArray(offTime));
             }
 
-            // CANT PLAY UNTIL BEFORE CERTAIN TIME //
+            // CAN ONLY PLAY BEFORE CERTAIN TIME //
             else if(request.startsWith("before")){
                 // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-                if(request.contains("pm") || request.contains("p.m.")
-                    ||request.contains("am")||request.contains("a.m.")){
+                if(request.toLowerCase().contains("pm") || request.toLowerCase().contains("p.m.")
+                    ||request.toLowerCase().contains("am")||request.toLowerCase().contains("a.m.")){
 
 					debug("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
                 }
@@ -172,19 +172,19 @@ public class XlsxReader {
                 request = getMilitaryTime(request);
                 MatchTime offTime = new MatchTime(request, "0:00");
                 offTimeList.add(offTime);
-                badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
+                badDates.addTimes(badDates.makeTimeArray(offTime));
             }
 
             // CANT PLAY BETWEEN CERTAIN TIME //
             else if(request.startsWith("xr")) {
                 String[] times = request.split("-");
-                if(times[0].contains("pm") || times[0].contains("p.m.")
-                        ||times[0].contains("am")||times[0].contains("a.m.")){
+                if(times[0].toLowerCase().contains("pm") || times[0].toLowerCase().contains("p.m.")
+                        ||times[0].toLowerCase().contains("am")||times[0].toLowerCase().contains("a.m.")){
 
                     debug("Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);
                 }
-                if(times[1].contains("pm") || times[1].contains("p.m.")
-                        ||times[1].contains("am")||times[1].contains("a.m.")){
+                if(times[1].toLowerCase().contains("pm") || times[1].toLowerCase().contains("p.m.")
+                        ||times[1].toLowerCase().contains("am")||times[1].toLowerCase().contains("a.m.")){
 
 					debug("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request);
                 }
@@ -192,7 +192,7 @@ public class XlsxReader {
                 times[1]=getMilitaryTime(times[1]);
                 MatchTime offTime = new MatchTime(times[0], times[1]);
                 offTimeList.add(offTime);
-                badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
+                badDates.addTimes(badDates.makeTimeArray(offTime));
             }
 
             // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY //
@@ -210,11 +210,16 @@ public class XlsxReader {
                 else{
                     prefDates.addDate(prefDates.findDate(dates[0]));
                 }
-                team.setDateConstraint(prefDates);
+               // team.setDateConstraint(prefDates);
+               // W&M - We changed ^ to :
+                team.setPreferredDates(prefDates);
             }
             //DONT PLAY THESE TEAMS
             else if(request.startsWith("xplay")) {
                 //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
+
+                //needs to be reworked, no for look means it only accounts for 1 team. - W&M
+                // it is also unclear what the index . in line 224 is used for. - W&M
                 request.replace("xplay", "");
                 int index = request.indexOf(".");
                 Integer teamId=null;
@@ -228,6 +233,9 @@ public class XlsxReader {
             }
             // TEAM REQUEST TO PLAY ANOTHER TEAM ONLY ONCE
             else if(request.startsWith("playOnce")) {
+
+                //Also needs to have a loop, only accounts for one team. - W&M
+
                 //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
                 request.replace("playOnce", "");
                 int index = request.indexOf(".");
@@ -246,7 +254,7 @@ public class XlsxReader {
 				debug("Unknown constraint:" + request);
             }
         }
-
+        //this may be redundant now. - W&M
         team.setOffTimes(new OffTimes(offTimeList));
         team.setPreferredDates(prefDates);
 		team.setDateConstraint(badDates);
