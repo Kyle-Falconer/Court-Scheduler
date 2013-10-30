@@ -5,8 +5,11 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.io.*;
 
@@ -53,7 +56,7 @@ public class CourtScheduleIO {
     }
 
 
-    public void writeXlsx(List<Match> matches, String filepath) {
+    public void writeXlsx(List<Match> matches, LocalDate firstDay, String filepath) {
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Conference 1");
@@ -84,11 +87,12 @@ public class CourtScheduleIO {
             String teamName2 = match.getT2().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName2);
 
-            String day = match.getDayOfWeekString();
+			// date
+			Integer matchDateIndex = match.getMatchSlot().getDay();
+			LocalDate matchDate = firstDay.plusDays(matchDateIndex);
+            String day = matchDate.dayOfWeek().getAsText();
             dataRow.createCell(cellNumber++).setCellValue(day);
-
-            Integer matchDate = match.getMatchSlot().getDay();
-            dataRow.createCell(cellNumber++).setCellValue(matchDate);
+            dataRow.createCell(cellNumber++).setCellValue(matchDate.toString());
 
             Integer matchTime = match.getMatchSlot().getTime();
             dataRow.createCell(cellNumber++).setCellValue(matchTime);
@@ -170,12 +174,11 @@ public class CourtScheduleIO {
                 notSameTimeAs = cell.toString();
 
 
-            //team.setRequests(requests);
+
 
 
             columnCounter+=1;
         }
-
         teamList.add(team);
     }
 
@@ -189,6 +192,7 @@ public class CourtScheduleIO {
         List<Integer> playOnceTeamList = new ArrayList<Integer>();
         boolean likesDoubleHeaders = false;//flat bool
         boolean likesBackToBack = false;//flat bool
+		MatchAvailability availability = team.getAvailability();
         DateConstraint badDates = team.getDateConstraint();
         PreferredDates prefDates = team.getPreferredDates();
         SharedTeams dontPlay=team.getSharedTeams();

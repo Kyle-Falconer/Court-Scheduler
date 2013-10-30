@@ -56,10 +56,6 @@ public class Match {
         return date;
     }
 
-    public String getDayOfWeekString(){
-        return "Monday"; //FIXME
-    }
-
     public Integer getTime() {
         return this.getMatchSlot().getTime();
     }
@@ -72,4 +68,20 @@ public class Match {
         return this.team1.equals(other.team1) || this.team1.equals(other.team2) ||
                 this.team2.equals(other.team1) || this.team2.equals(other.team2);
     }
+
+	public String toString() {
+		return new StringBuilder()
+				.append("[")
+				.append(team1.getTeamId())
+				.append("v")
+				.append(team2.getTeamId())
+				.append(" ")
+				.append(matchSlot)
+				.append("]")
+				.toString();
+	}
+
+	public boolean getCanPlayInCurrentSlot() {
+		return avail.canPlayIn(matchSlot);
+	}
 }

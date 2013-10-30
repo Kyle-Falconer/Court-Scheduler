@@ -58,6 +58,13 @@ rule "noTwoGameDay"
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
+rule "availability"
+	when
+		Match(CanPlayInCurrentSlot == false)
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
 
 /*
 

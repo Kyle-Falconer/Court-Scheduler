@@ -20,8 +20,11 @@ public class MovableMatchSelectionFilter implements SelectionFilter<Match> {
     }
 
     public boolean accept(CourtSchedule courtSchedule, Match match) {
-        MatchDate matchDate = match.getMatchDate(courtSchedule.getFirstDay());
+        /*
+		MatchDate matchDate = match.getMatchDate(courtSchedule.getFirstDay());
         return courtSchedule.getCourtScheduleInfo().isInPlanningWindow(matchDate);
+        */
+		return true; // FIXME do we even still need this?
     }
 
 

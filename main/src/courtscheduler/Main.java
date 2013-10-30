@@ -65,19 +65,12 @@ public class Main {
             // solve the problem (gee, it sounds so easy when you put it like that)
             solver.setPlanningProblem(testSchedule);
             solver.solve();
-            Solution bestSolution = solver.getBestSolution();
-            //testSchedule.generatePlaceholderMatches();
+			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
 
-
-            utils.writeXlsx(testSchedule.getMatchList(), out_filename);
+            utils.writeXlsx(bestSolution.getMatchList(), bestSolution.getConferenceStartDate(), out_filename);
         } catch(Exception e){
-            System.out.print(e); //FIXME
+            e.printStackTrace(); //FIXME
         }
-
-
-
-        // output best solution
-        // TODO
     }
 
     private static XmlSolverFactory loadConfig(String defaultConfigXmlFilename) {

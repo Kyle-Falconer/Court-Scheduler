@@ -25,6 +25,7 @@ public class Team {
 
     public Team() {
 		sharedTeams = new SharedTeams();
+		this.avail = new MatchAvailability();
     }
 
     public void setTeamId(Integer teamId) {
@@ -146,12 +147,6 @@ public class Team {
 
     public MatchAvailability getAvailability() {
         return this.avail;
-    }
-
-    public void compileMatchAvaiilability(){
-        this.avail.badDates=this.getDateConstraint();
-        this.avail.prefDates=this.getPreferredDates();
-        this.avail.dontPlay=this.getSharedTeams();
     }
 
 	public static boolean canPlay(Team t1, Team t2) {

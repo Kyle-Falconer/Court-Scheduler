@@ -31,15 +31,11 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     private HardSoftScore score;
     private CourtScheduleInfo courtScheduleInfo;
 
-    private List<Team> teamList;  // Value Range Providers
+    private List<Team> teamList;
     private List<MatchTime> matchTimeList;
     private List<MatchDate> matchDateList;
 
     private List<Conference> conferenceList;
-    //private List<Gender> genderList;
-    //private List<Grade> gradeList;
-    //private List<Level> levelList;
-    //private List<Requests> requestsList;
 
     // configurables
     private LocalDate conferenceStartDate;
@@ -55,7 +51,6 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
     private Match[][][] schedule;
     private List<Match> matchList;
-    private Calendar firstDay;
 
     public CourtSchedule(){
 
@@ -71,6 +66,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         numberOfTimeSlotsPerDay = 16;  // end at ~8:30pm
         timeslotDurationInMinutes = 50;
         numberOfConferenceDays = getNumberOfConferenceDays();
+		DateConstraint.initializeConferenceSize(numberOfConferenceDays, numberOfTimeSlotsPerDay);
 
         schedule = new Match[numberOfConferenceDays][numberOfTimeSlotsPerDay][numberOfCourts];
 
@@ -249,39 +245,6 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         return Days.daysBetween(conferenceStartDate, conferenceEndDate).getDays();
     }
 
-
-    public void setFirstDay(Calendar firstDay){
-        this.firstDay=firstDay;
-    }
-    public Calendar getFirstDay(){
-        return this.firstDay;
-    }
-
-
-    /*public void setGenderList(List<Gender> genderList) {
-        this.genderList = genderList;
-    }
-
-    public List<Gender> getGenderList() {
-        return genderList;
-    }
-
-    public void setGradeList(List<Grade> gradeList) {
-        this.gradeList = gradeList;
-    }
-
-    public List<Grade> getGradeList() {
-        return gradeList;
-    }
-
-    public void setLevelList(List<Level> levelList) {
-        this.levelList = levelList;
-    }
-
-    public List<Level> getLevelList() {
-        return levelList;
-    }*/
-
     public void setMatchAssignmentList(List<Match> matchList) {
         this.matchAssignmentList = matchAssignmentList;
     }
@@ -356,5 +319,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         }
         return matchSlots;
     }
+
+	public LocalDate getConferenceStartDate() {
+		return conferenceStartDate;
+	}
 
 }
