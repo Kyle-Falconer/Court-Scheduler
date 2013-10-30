@@ -55,8 +55,6 @@ public class CourtScheduleIO {
 
     public void writeXlsx(List<Match> matches, String filepath) {
 
-        this.matchList = matches;
-
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Conference 1");
         //Create a new row in current sheet
@@ -72,20 +70,32 @@ public class CourtScheduleIO {
         header.createCell(5).setCellValue("TIME");
         header.createCell(6).setCellValue("COURT");
 
-        for(Match match : matchList) {
+        for(Match match : matches) {
             cellNumber = 0;
             rowNumber++;
             Row dataRow = sheet.createRow(rowNumber);
+
             String teamName1 = match.getT1().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName1);
+
+            String vs = "vs.";
+            dataRow.createCell(cellNumber++).setCellValue(vs);
+
             String teamName2 = match.getT2().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName2);
-            Integer courtId = match.getMatchSlot().getCourt();
-            dataRow.createCell(cellNumber++).setCellValue(courtId);
+
+            String day = match.getDayOfWeekString();
+            dataRow.createCell(cellNumber++).setCellValue(day);
+
+            Integer matchDate = match.getMatchSlot().getDay();
+            dataRow.createCell(cellNumber++).setCellValue(matchDate);
+
             Integer matchTime = match.getMatchSlot().getTime();
             dataRow.createCell(cellNumber++).setCellValue(matchTime);
-            Integer matchDate = match.getMatchSlot().getDay();
-            dataRow.createCell(cellNumber).setCellValue(matchDate);
+
+            Integer courtId = match.getMatchSlot().getCourt();
+            dataRow.createCell(cellNumber++).setCellValue(courtId);
+
         }
 
         try {
@@ -158,13 +168,6 @@ public class CourtScheduleIO {
             }
             else if(columnCounter == 8)
                 notSameTimeAs = cell.toString();
-
-
-
-
-
-
-
 
 
             //team.setRequests(requests);

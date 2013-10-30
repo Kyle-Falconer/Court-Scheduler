@@ -119,20 +119,12 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         }
         setMatchDateList(Arrays.asList(date));
 
+
         //Round-Robin construction of initial match list.
-        List<Match> matches= new ArrayList<Match>();
-        for(int i=0;i<teamList.size();i++){
-            for(int j=i+1; j<teamList.size();j++){
-				if (Team.canPlay(teamList.get(i), teamList.get(j))) {
+        matchList = roundRobin(teamList);
 
-                    Match nextMatch = new Match(teamList.get(i),teamList.get(j));
-                    nextMatch.setMatchSlot(new MatchSlot(-1, -1, -1));
-                	matches.add(nextMatch);
-				}
-            }
-        }
-        setMatchList(matches);
-
+        // generate the match slots if needed
+        getMatchSlots();
         // make the preliminary schedule
         setPreliminarySchedule();
 
@@ -150,9 +142,26 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
     }
 
+    private List<Match> roundRobin(List<Team> teamList) {
+        List<Match> matches= new ArrayList<Match>();
+        for(int i=0;i<teamList.size();i++){
+            for(int j=i+1; j<teamList.size();j++){
+                if (Team.canPlay(teamList.get(i), teamList.get(j))) {
+                    Match nextMatch = new Match(teamList.get(i),teamList.get(j));
+                    nextMatch.setMatchSlot(new MatchSlot(-1, -1, -1));
+                    matches.add(nextMatch);
+                }
+            }
+        }
+        return matches;
+    }
+
     private void setPreliminarySchedule() {
+
         // generate the match slots if needed
-        getMatchSlots();
+        if (this.matchSlots == null){
+            getMatchSlots();
+        }
 
         // in each match in the matchlist assign a matchslot
         // if one of the teams in Match is already playing on day n, increment n until a day is found
@@ -171,7 +180,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
             }
 
         }
-        System.out.println("build preliminary schedule");
+        System.out.println("built preliminary schedule");
 
     }
 

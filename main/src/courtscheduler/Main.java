@@ -71,7 +71,7 @@ public class Main {
 
             utils.writeXlsx(testSchedule.getMatchList(), out_filename);
         } catch(Exception e){
-            //nothing FIXME
+            System.out.print(e); //FIXME
         }
 
 
