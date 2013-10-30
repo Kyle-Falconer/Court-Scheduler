@@ -1,9 +1,6 @@
 package courtscheduler.domain;
 
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
@@ -305,52 +302,6 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         this.score = score;
     }
 
-    public void writeXlsx(String filepath) {
-
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Conference 1");
-        //Create a new row in current sheet
-        int rowNumber = 0;
-        int cellNumber = 0;
-        Row header = sheet.createRow(rowNumber);
-        //cell.setCellValue("CourtScheduler");
-        header.createCell(0).setCellValue("Team 1");
-        header.createCell(1).setCellValue("Team 2");
-        header.createCell(2).setCellValue("Court");
-        header.createCell(3).setCellValue("Time");
-        header.createCell(4).setCellValue("Date");
-
-
-        for(Match match : matchList) {
-            cellNumber = 0;
-			rowNumber++;
-            Row dataRow = sheet.createRow(rowNumber);
-            String teamName1 = match.getT1().getTeamName();
-            dataRow.createCell(cellNumber++).setCellValue(teamName1);
-            String teamName2 = match.getT2().getTeamName();
-            dataRow.createCell(cellNumber++).setCellValue(teamName2);
-            Integer courtId = match.getMatchSlot().getCourt();
-            dataRow.createCell(cellNumber++).setCellValue(courtId);
-            Integer matchTime = match.getMatchSlot().getTime();
-            dataRow.createCell(cellNumber++).setCellValue(matchTime);
-            Integer matchDate = match.getMatchSlot().getDay();
-            dataRow.createCell(cellNumber++).setCellValue(matchDate);
-        }
-
-        try {
-            FileOutputStream out =
-                    new FileOutputStream(new File(filepath));
-            workbook.write(out);
-            out.close();
-            System.out.println("Excel written successfully to " + filepath + ".");
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     /**
      * Called by the {@link org.optaplanner.core.impl.score.director.drools.DroolsScoreDirector} when the {@link org.optaplanner.core.impl.solution.Solution} needs to be inserted
@@ -396,4 +347,5 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         }
         return matchSlots;
     }
+
 }

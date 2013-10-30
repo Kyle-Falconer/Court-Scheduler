@@ -1,7 +1,7 @@
 package courtscheduler;
 
 import courtscheduler.domain.CourtSchedule;
-import courtscheduler.persistence.XlsxReader;
+import courtscheduler.persistence.CourtScheduleIO;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
@@ -57,15 +57,24 @@ public class Main {
         String out_filename = getOptArg(args, 1, "output.xlsx");
 
 
-        XlsxReader xlsx = new XlsxReader(in_filename);
-        CourtSchedule testSchedule = new CourtSchedule(xlsx.readExcelFile());   // code smells!! FIXME
+        CourtScheduleIO utils = new CourtScheduleIO();
+        CourtSchedule testSchedule;
+        try{
+            testSchedule= new CourtSchedule(utils.readXlsx(in_filename));
 
-		// solve the problem (gee, it sounds so easy when you put it like that)
-		solver.setPlanningProblem(testSchedule);
-		solver.solve();
-		Solution bestSolution = solver.getBestSolution();
-		//testSchedule.generatePlaceholderMatches();
-		testSchedule.writeXlsx("output.xlsx");
+            // solve the problem (gee, it sounds so easy when you put it like that)
+            solver.setPlanningProblem(testSchedule);
+            solver.solve();
+            Solution bestSolution = solver.getBestSolution();
+            //testSchedule.generatePlaceholderMatches();
+
+
+            utils.writeXlsx(testSchedule.getMatchList(), out_filename);
+        } catch(Exception e){
+            //nothing FIXME
+        }
+
+
 
         // output best solution
         // TODO

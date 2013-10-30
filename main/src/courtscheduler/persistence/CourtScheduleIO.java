@@ -6,35 +6,38 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.*;
 
-public class XlsxReader {
+public class CourtScheduleIO {
 
-    private static ArrayList<Team> teamList = new ArrayList<Team>();
-    private String filename;
 
-    public XlsxReader  (String filename){
-        this.filename = filename;
+    private List<Match> matchList;
+    private static List<Team> teamList;
+
+    public CourtScheduleIO(){
+        matchList = new ArrayList<Match>();
+        teamList = new ArrayList<Team>();
     }
 
-	public ArrayList<Team> readExcelFile() throws Exception {
-		
-		File file = new File(filename);
-	    FileInputStream fis = new FileInputStream(file);
-	    XSSFWorkbook wb = new XSSFWorkbook(fis);
-	    
-	    // Get worksheet by index
-	    XSSFSheet sh = wb.getSheetAt(0);
-	    
-	    Integer rowCounter = 2;
-	    Integer rowCount = sh.getLastRowNum();
 
-	    System.out.println(new java.util.Date() + "[INFO] Worksheet Name: " + sh.getSheetName());
-	    System.out.println(new java.util.Date() + "[INFO] Worksheet has " + (rowCount - 1) + " lines of data.");
-		    
+    public List<Team> readXlsx(String filename)throws Exception {
+
+
+        File file = new File(filename);
+        FileInputStream fis = new FileInputStream(file);
+        XSSFWorkbook wb = new XSSFWorkbook(fis);
+
+        // Get worksheet by index
+        XSSFSheet sh = wb.getSheetAt(0);
+
+        Integer rowCounter = 2;
+        Integer rowCount = sh.getLastRowNum();
+
+        System.out.println(new java.util.Date() + "[INFO] Worksheet Name: " + sh.getSheetName());
+        System.out.println(new java.util.Date() + "[INFO] Worksheet has " + (rowCount - 1) + " lines of data.");
+
         while (rowCounter <= rowCount){
             Row currentRow = sh.getRow(rowCounter);
             processRow(currentRow);
@@ -47,7 +50,57 @@ public class XlsxReader {
         System.out.println(new java.util.Date() + "[INFO] Processing finished."); // Converted document: \"test.csv\"");
 
         return teamList;
-	}
+    }
+
+
+    public void writeXlsx(List<Match> matches, String filepath) {
+
+        this.matchList = matches;
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Conference 1");
+        //Create a new row in current sheet
+        int rowNumber = 0;
+        int cellNumber = 0;
+        Row header = sheet.createRow(rowNumber);
+        //cell.setCellValue("CourtScheduler");
+        header.createCell(0).setCellValue("TEAM");
+        header.createCell(1).setCellValue(" ");
+        header.createCell(2).setCellValue("OPPONENT");
+        header.createCell(3).setCellValue("DAY");
+        header.createCell(4).setCellValue("DATE");
+        header.createCell(5).setCellValue("TIME");
+        header.createCell(6).setCellValue("COURT");
+
+        for(Match match : matchList) {
+            cellNumber = 0;
+            rowNumber++;
+            Row dataRow = sheet.createRow(rowNumber);
+            String teamName1 = match.getT1().getTeamName();
+            dataRow.createCell(cellNumber++).setCellValue(teamName1);
+            String teamName2 = match.getT2().getTeamName();
+            dataRow.createCell(cellNumber++).setCellValue(teamName2);
+            Integer courtId = match.getMatchSlot().getCourt();
+            dataRow.createCell(cellNumber++).setCellValue(courtId);
+            Integer matchTime = match.getMatchSlot().getTime();
+            dataRow.createCell(cellNumber++).setCellValue(matchTime);
+            Integer matchDate = match.getMatchSlot().getDay();
+            dataRow.createCell(cellNumber).setCellValue(matchDate);
+        }
+
+        try {
+            FileOutputStream out =
+                    new FileOutputStream(new File(filepath));
+            workbook.write(out);
+            out.close();
+            System.out.println("Excel written successfully to " + filepath + ".");
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static void processRow(Row currentRow) {
 
@@ -146,11 +199,11 @@ public class XlsxReader {
                 //parse the date and use it to create a new DateConstraint object
                 String[] dates = request.split("-");
                 if(dates[0].split("/").length<3){
-					debug("Team" + team.getTeamId() + "xd constraint date 1 is too short.(" + request);
+                    debug("Team" + team.getTeamId() + "xd constraint date 1 is too short.(" + request);
                 }
                 if(dates.length>1){
                     if(dates[1].split("/").length<3){
-						debug("Team" + team.getTeamId() + "xd constraint date 2 is too short." + request);
+                        debug("Team" + team.getTeamId() + "xd constraint date 2 is too short." + request);
                     }
                     badDates.addDates(badDates.findDateRange(dates[0],dates[1]));
                 }
@@ -170,7 +223,7 @@ public class XlsxReader {
                 if(request.contains("pm") || request.contains("p.m.")
                         ||request.contains("am")||request.contains("a.m.")){
 
-					debug("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
+                    debug("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
                 }
                 request.replace("after", "");
                 request = getMilitaryTime(request);
@@ -183,9 +236,9 @@ public class XlsxReader {
             else if(request.startsWith("before")){
                 // incomplete; need to ensure that each time has pm or am so that it can be converted to military
                 if(request.contains("pm") || request.contains("p.m.")
-                    ||request.contains("am")||request.contains("a.m.")){
+                        ||request.contains("am")||request.contains("a.m.")){
 
-					debug("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
+                    debug("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
                 }
                 request.replace("before", "");
                 request = getMilitaryTime(request);
@@ -205,7 +258,7 @@ public class XlsxReader {
                 if(times[1].contains("pm") || times[1].contains("p.m.")
                         ||times[1].contains("am")||times[1].contains("a.m.")){
 
-					debug("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request);
+                    debug("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request);
                 }
                 times[0]=getMilitaryTime(times[0]);
                 times[1]=getMilitaryTime(times[1]);
@@ -218,7 +271,7 @@ public class XlsxReader {
             else if(request.startsWith("pd")) {
                 String[] dates = request.split("-");
                 if(dates[0].split("/").length<3){
-					debug("Team" + team.getTeamId() + "pd constraint date 1 is too short.(" + request);
+                    debug("Team" + team.getTeamId() + "pd constraint date 1 is too short.(" + request);
                 }
                 if(dates.length>1){
                     if(dates[1].split("/").length<3){
@@ -241,7 +294,7 @@ public class XlsxReader {
                     teamId = Integer.parseInt(request.substring(0,index));
                 }
                 catch(NumberFormatException nfe){
-					debug("Team" + team.getTeamId() + "xplay constraint teamID error." + request);
+                    debug("Team" + team.getTeamId() + "xplay constraint teamID error." + request);
                 }
                 dontPlay.addSharedTeam(teamId);
             }
@@ -258,7 +311,7 @@ public class XlsxReader {
             else if(request.startsWith("DH"))
                 likesDoubleHeaders = true;
 
-            // BACK TO BACK PREFERENCE REQUEST (DEFAULTED TO false) //
+                // BACK TO BACK PREFERENCE REQUEST (DEFAULTED TO false) //
             else if(request.startsWith("B2B")){
                 likesBackToBack = true;
             }
@@ -275,18 +328,18 @@ public class XlsxReader {
             }
 
             else{
-				debug("Unknown constraint:" + request);
+                debug("Unknown constraint:" + request);
             }
 
         }
 
         team.setOffTimes(new OffTimes(offTimeList));
         team.setPreferredDates(prefDates);
-		team.setDateConstraint(badDates);
+        team.setDateConstraint(badDates);
         team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));
         team.setDoubleHeaderPreference(new DoubleHeaderPreference(likesDoubleHeaders));
         team.setBackToBackPreference(new BackToBackPreference(likesBackToBack));
-		team.setSharedTeams(dontPlay);
+        team.setSharedTeams(dontPlay);
     }
 
     private static String getMilitaryTime(String time) {
@@ -311,30 +364,31 @@ public class XlsxReader {
     }
 
 
-	public short getColumnWidth(File file) throws Exception {
-		
-	    FileInputStream fis = new FileInputStream(file);
-	    XSSFWorkbook wb = new XSSFWorkbook(fis);
-	    
-	    // Get worksheet by index
-	    XSSFSheet sh = wb.getSheetAt(0);
-	    
-	    short columnWidth = 0;
-		Integer rowCounter = 0;
-	    Integer rowCount = sh.getLastRowNum();    
-	    
-	    while (rowCounter <= rowCount){
-	    	Row currentRow = sh.getRow(rowCounter);
-	    	short columnCount = currentRow.getLastCellNum();
-	    	
-	    	if(columnCount > columnWidth)
-	    		columnWidth = columnCount;
-	    }
-	    
-	    return columnWidth;
-	}
+    public short getColumnWidth(File file) throws Exception {
 
-	private static void debug(String debugMessage) {
-		System.out.println(debugMessage);
-	}
+        FileInputStream fis = new FileInputStream(file);
+        XSSFWorkbook wb = new XSSFWorkbook(fis);
+
+        // Get worksheet by index
+        XSSFSheet sh = wb.getSheetAt(0);
+
+        short columnWidth = 0;
+        Integer rowCounter = 0;
+        Integer rowCount = sh.getLastRowNum();
+
+        while (rowCounter <= rowCount){
+            Row currentRow = sh.getRow(rowCounter);
+            short columnCount = currentRow.getLastCellNum();
+
+            if(columnCount > columnWidth)
+                columnWidth = columnCount;
+        }
+
+        return columnWidth;
+    }
+
+    private static void debug(String debugMessage) {
+        System.out.println(debugMessage);
+    }
+
 }
