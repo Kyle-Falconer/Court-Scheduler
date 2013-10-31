@@ -81,7 +81,7 @@ public class DateConstraint extends Constraint{
 		boolean[][] dates2 = b.dates;
         for(int i=0;i<dates1.length;i++){
             for(int j=0;j<dates1[i].length;j++){
-                this.dates[i][j]=dates1[i][j] || this.dates[i][j];
+                this.dates[i][j]=dates1[i][j] || dates2[i][j];
             }
         }
     }
@@ -89,7 +89,7 @@ public class DateConstraint extends Constraint{
     //add functions
     //day/general adding
     public void addDate(int day, boolean[] times){
-        for(int i=0;i<this.dates.length;i++){
+        for(int i=0;i<this.dates[0].length;i++){
             //and if true=ok, or if false=ok
             this.dates[day][i]= (times[i]||this.dates[day][i]);
         }
@@ -143,12 +143,10 @@ public class DateConstraint extends Constraint{
     public boolean[] makeTimeArray(String startTime, String endTime){
         String[] start= startTime.split(":");
         String[] end= endTime.split(":");
-        return makeTimeArray(Integer.getInteger(start[0]),Integer.getInteger(end[0]));
+        return makeTimeArray(Integer.valueOf(start[0]),Integer.valueOf(end[0]));
     }
     public boolean[] makeTimeArray(MatchTime time){
-        String[] start= time.getStartTime().split(":");
-        String[] end= time.getEndTime().split(":");
-        return makeTimeArray(Integer.getInteger(start[0]),Integer.getInteger(end[0]));
+        return makeTimeArray(time.getStartTime(),time.getEndTime());
     }
 
     //conversion methods for days

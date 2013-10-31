@@ -21,6 +21,10 @@ public class Team {
 
 
     public Team() {
+        doubleHeaderPreference = new DoubleHeaderPreference(false);
+        backToBackPreference = new BackToBackPreference(false);
+        offTimes=new OffTimes();
+        playOnceRequests= new PlayOnceRequests();
 		this.avail = new MatchAvailability();
     }
 
@@ -116,12 +120,9 @@ public class Team {
         this.playOnceRequests = playOnceRequests;
     }
 
-	public DateConstraint getPreferredDates() {
-		return this.avail.prefDates;
-	}
-	public DateConstraint getBadDates() {
-		return this.avail.prefDates;
-	}
+    public DateConstraint getPreferredDates() {
+        return this.avail.prefDates;
+    }
 
     @Override
     public String toString() {
@@ -144,4 +145,7 @@ public class Team {
     public boolean getBackToBack(){
         return this.getBackToBackPreference().isLikesBackToBack();
     }
+	public DateConstraint getBadDates() {
+		return this.avail.badDates;
+	}
 }

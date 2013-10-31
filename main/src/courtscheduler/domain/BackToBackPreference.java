@@ -14,6 +14,9 @@ public class BackToBackPreference extends Constraint{
 	public BackToBackPreference(boolean likesBackToBack) {
 		this.likesBackToBack = likesBackToBack;
 	}
+    public void toggleBackToBack(){
+        this.likesBackToBack=!this.likesBackToBack;
+    }
     public boolean isLikesBackToBack() {
         return likesBackToBack;
     }

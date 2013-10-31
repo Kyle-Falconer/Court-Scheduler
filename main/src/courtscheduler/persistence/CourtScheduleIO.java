@@ -200,137 +200,54 @@ public class CourtScheduleIO {
         dontPlay.addSharedTeam(team.getTeamId());
         SharedTeams notSameTime= new SharedTeams();
         for(String request : requestArray) {
-			request = request.trim();
+
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
-
-            if(StringUtils.startsWithIgnoreCase(request, "xd")) {
-                //parse the date and use it to create a new DateConstraint object
-                String[] dates = request.split("-");
-                if(dates[0].split("/").length<3){
-                    debug("Team" + team.getTeamId() + "xd constraint date 1 is too short.(" + request);
-                }
-                if(dates.length>1){
-                    if(dates[1].split("/").length<3){
-                        debug("Team" + team.getTeamId() + "xd constraint date 2 is too short." + request);
-                    }
-                    badDates.setStringDates(dates[0].substring(2).trim(), dates[1], false);
-                }
-                else{
-                    badDates.setStringDate(dates[0].substring(2).trim(), false);
-                }
-
+            request=request.toLowerCase();
+            request=request.trim();
+            if(request.startsWith("xd")) {
+                badDates=requestOffDate(request,team,badDates);
             }
             else if(request.contentEquals("")){
-
             }
 
             // CANT PLAY UNTIL AFTER CERTAIN TIME //
-            else if(StringUtils.startsWithIgnoreCase(request, "after")){
-                // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-                if(request.contains("pm") || request.contains("p.m.")
-                        ||request.contains("am")||request.contains("a.m.")){
-
-                    debug("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
-                }
-                request.replace("after", "");
-                request = getMilitaryTime(request);
-                MatchTime offTime = new MatchTime("0:00", request);
-                offTimeList.add(offTime);
-                badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
+            else if(request.startsWith("after")){
+                badDates=requestAfterTime(request, team, badDates);
             }
 
             // CANT PLAY UNTIL BEFORE CERTAIN TIME //
-            else if(StringUtils.startsWithIgnoreCase(request, "before")){
-                // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-                if(request.contains("pm") || request.contains("p.m.")
-                        ||request.contains("am")||request.contains("a.m.")){
-
-                    debug("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
-                }
-                request.replace("before", "");
-                request = getMilitaryTime(request);
-                MatchTime offTime = new MatchTime(request, "0:00");
-                offTimeList.add(offTime);
-                badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
+            else if(request.startsWith("before")){
+                badDates=requestBeforeTime(request,team,badDates);
             }
 
             // CANT PLAY BETWEEN CERTAIN TIME //
-            else if(StringUtils.startsWithIgnoreCase(request, "xr")) {
-                String[] times = request.split("-");
-                if(times[0].contains("pm") || times[0].contains("p.m.")
-                        ||times[0].contains("am")||times[0].contains("a.m.")){
-
-                    debug("Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);
-                }
-                if(times[1].contains("pm") || times[1].contains("p.m.")
-                        ||times[1].contains("am")||times[1].contains("a.m.")){
-
-                    debug("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request);
-                }
-                times[0]=getMilitaryTime(times[0]);
-                times[1]=getMilitaryTime(times[1]);
-                MatchTime offTime = new MatchTime(times[0], times[1]);
-                offTimeList.add(offTime);
-                badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
+            else if(request.startsWith("xr")) {
+                badDates=requestOffTime(request, team, badDates);
             }
 
             // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY //
-            else if(StringUtils.startsWithIgnoreCase(request, "pd")) {
-                String[] dates = request.split("-");
-                if(dates[0].split("/").length<3){
-                    debug("Team" + team.getTeamId() + "pd constraint date 1 is too short.(" + request);
-                }
-                if(dates.length>1){
-                    if(dates[1].split("/").length<3){
-                        debug("Team"+team.getTeamId()+"pd constraint date 2 is too short."+request);
-                    }
-                    prefDates.addDates(prefDates.findDateRange(dates[0],dates[1]));
-                }
-                else{
-                    prefDates.addDate(prefDates.findDate(dates[0]));
-                }
+            else if(request.startsWith("pd")) {
+                prefDates=requestPreferredDate(request,team,prefDates);
             }
             //DONT PLAY THESE TEAMS
-            else if(StringUtils.startsWithIgnoreCase(request, "xplay")) {
-                //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
-                request.replace("xplay", "");
-                int index = request.indexOf(".");
-                Integer teamId=null;
-                try{
-                    teamId = Integer.parseInt(request.substring(0,index));
-                }
-                catch(NumberFormatException nfe){
-                    debug("Team" + team.getTeamId() + "xplay constraint teamID error." + request);
-                }
-                dontPlay.addSharedTeam(teamId);
+            else if(request.startsWith("xplay")) {
+                dontPlay=requestDontPlay(request, team, dontPlay);
             }
             // TEAM REQUEST TO PLAY ANOTHER TEAM ONLY ONCE
-            else if(StringUtils.startsWithIgnoreCase(request, "playOnce")) {
-                //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
-                request.replace("playOnce", "");
-                int index = request.indexOf(".");
-                Integer teamId = Integer.parseInt(request.substring(0,index));
-                playOnceTeamList.add(teamId);
+            else if(request.startsWith("playonce")) {
+                playOnceTeamList=requestPlayOnce(request, team,playOnceTeamList);
             }
 
             // DOUBLE HEADER PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(StringUtils.startsWithIgnoreCase(request, "DH"))
+            else if(request.startsWith("DH"))
                 likesDoubleHeaders = true;
 
                 // BACK TO BACK PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(StringUtils.startsWithIgnoreCase(request, "B2B")){
+            else if(request.startsWith("B2B")){
                 likesBackToBack = true;
             }
-            else if(StringUtils.startsWithIgnoreCase(request, "nst")){
-                request.replace("nst","");
-                Integer teamId=null;
-                try{
-                    teamId=Integer.parseInt(request);
-                }
-                catch(NumberFormatException nfe){
-                    debug("Team"+team.getTeamId()+"nst constraint teamId error."+request);
-                }
-                notSameTime.addSharedTeam(teamId);
+            else if(request.startsWith("nst")){
+                notSameTime=requestNotSameTime(request, team, notSameTime);
             }
 
             else{
@@ -345,16 +262,145 @@ public class CourtScheduleIO {
         team.setBackToBackPreference(new BackToBackPreference(likesBackToBack));
     }
 
+    public static DateConstraint requestOffDate(String request, Team team, DateConstraint badDates){
+        //parse the date and use it to create a new DateConstraint object
+        request=request.replace("xd ","");
+        String[] dates = request.split("-");
+        if(dates[0].split("/").length<3){
+            debug("Team" + team.getTeamId() + "xd constraint date 1 is too short.(" + request);
+        }
+        if(dates.length>1){
+            if(dates[1].split("/").length<3){
+                debug("Team" + team.getTeamId() + "xd constraint date 2 is too short." + request);
+            }
+            badDates.setStringDates(dates[0], dates[1], false);
+        }
+        else{
+            badDates.setStringDate(dates[0], false);
+        }
+        return badDates;
+    }
+
+    public static DateConstraint requestAfterTime(String request, Team team, DateConstraint badDates){
+        // incomplete; need to ensure that each time has pm or am so that it can be converted to military
+        if(request.contains("pm") || request.contains("p.m.")
+                ||request.contains("am")||request.contains("a.m.")){
+
+            debug("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
+        }
+        request=request.replace("after ", "");
+        request = getMilitaryTime(request);
+        MatchTime offTime = new MatchTime("0:00", request);
+        //offTimeList.add(offTime);
+        badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
+        return badDates;
+    }
+
+    public static DateConstraint requestBeforeTime(String request, Team team, DateConstraint badDates){
+        // incomplete; need to ensure that each time has pm or am so that it can be converted to military
+        if(request.contains("pm") || request.contains("p.m.")
+                ||request.contains("am")||request.contains("a.m.")){
+
+            debug("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
+        }
+        request=request.replace("before ", "");
+        request = getMilitaryTime(request);
+        MatchTime offTime = new MatchTime(request, "0:00");
+        //offTimeList.add(offTime);
+        badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
+        return badDates;
+    }
+
+    public static DateConstraint requestOffTime(String request, Team team, DateConstraint badDates){
+        request=request.replace("xr ","");
+        String[] times = request.split("-");
+        if(times[0].contains("pm") || times[0].contains("p.m.")
+                ||times[0].contains("am")||times[0].contains("a.m.")){
+
+            debug("Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);
+        }
+        if(times[1].contains("pm") || times[1].contains("p.m.")
+                ||times[1].contains("am")||times[1].contains("a.m.")){
+
+            debug("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request);
+        }
+        times[0]=getMilitaryTime(times[0]);
+        times[1]=getMilitaryTime(times[1]);
+        MatchTime offTime = new MatchTime(times[0], times[1]);
+        //offTimeList.add(offTime);
+        badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
+        return badDates;
+    }
+
+    public static List<Integer> requestPlayOnce(String request, Team team, List<Integer> playOnceTeamList){
+        //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
+        request=request.replace("playonce ", "");
+        int index = request.indexOf(".");
+        Integer teamId = Integer.parseInt(request.substring(0,index));
+        playOnceTeamList.add(teamId);
+        return playOnceTeamList;
+    }
+
+    public static DateConstraint requestPreferredDate(String request, Team team, DateConstraint prefDates){
+        request=request.replace("pd ","");
+        String[] dates = request.split("-");
+        if(dates[0].split("/").length<3){
+            debug("Team" + team.getTeamId() + "pd constraint date 1 is too short.(" + request);
+        }
+        if(dates.length>1){
+            if(dates[1].split("/").length<3){
+                debug("Team"+team.getTeamId()+"pd constraint date 2 is too short."+request);
+            }
+            prefDates.addDates(prefDates.findDateRange(dates[0],dates[1]));
+        }
+        else{
+            prefDates.addDate(prefDates.findDate(dates[0]));
+        }
+        return prefDates;
+
+    }
+
+    private static SharedTeams requestDontPlay(String request, Team team, SharedTeams dontPlay){
+        //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
+        request=request.replace("xplay ", "");
+        int index = request.indexOf(".");
+        Integer teamId=null;
+        try{
+            teamId = Integer.parseInt(request.substring(0,index));
+        }
+        catch(NumberFormatException nfe){
+            debug("Team" + team.getTeamId() + "xplay constraint teamID error." + request);
+        }
+        dontPlay.addSharedTeam(teamId);
+        return dontPlay;
+    }
+
+    private static SharedTeams requestNotSameTime(String request, Team team, SharedTeams notSameTime){
+        request=request.replace("nst ","");
+        Integer teamId=null;
+        try{
+            teamId=Integer.parseInt(request);
+        }
+        catch(NumberFormatException nfe){
+            debug("Team"+team.getTeamId()+"nst constraint teamId error."+request);
+        }
+        notSameTime.addSharedTeam(teamId);
+        return notSameTime;
+    }
+
     private static String getMilitaryTime(String time) {
 
         if(time.contains("pm") || time.contains("p.m.")) {
             time = time.replace("pm", "");
             time = time.replace("p.m.", "");
-
+            time=time.trim();
+            String[] t = time.split(":");
             try {
-                Integer timeInt = Integer.parseInt(time);
-                timeInt += 12;
-                return timeInt.toString();
+                Integer timeInt = Integer.parseInt(t[0]);
+                if(timeInt != 12){
+                    timeInt += 12;
+                }
+                return timeInt.toString()+":"+t[1];
             }catch (NumberFormatException e) {
                 return "";
             }
