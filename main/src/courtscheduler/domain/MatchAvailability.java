@@ -20,6 +20,7 @@ public class MatchAvailability {
     public MatchAvailability(){
 		badDates = new DateConstraint();
 		prefDates = new DateConstraint();
+		dontPlay = new SharedTeams();
     }
 
     public MatchAvailability(MatchAvailability m1, MatchAvailability m2){
@@ -29,10 +30,6 @@ public class MatchAvailability {
 		// a team that shares players with one of the teams
 		badDates = new DateConstraint(m1.badDates, m2.badDates);
     }
-
-	public SharedTeams getSharedTeams() {
-		return dontPlay;
-	}
 
 	public boolean canPlayIn(MatchSlot matchSlot) {
 		return badDates.isTrue(matchSlot);

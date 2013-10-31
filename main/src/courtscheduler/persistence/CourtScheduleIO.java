@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jfree.util.StringUtils;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
@@ -193,16 +194,16 @@ public class CourtScheduleIO {
         boolean likesDoubleHeaders = false;//flat bool
         boolean likesBackToBack = false;//flat bool
 		MatchAvailability availability = team.getAvailability();
-        DateConstraint badDates = team.getDateConstraint();
-        PreferredDates prefDates = team.getPreferredDates();
+        DateConstraint badDates = team.getBadDates();
+        DateConstraint prefDates = team.getPreferredDates();
         SharedTeams dontPlay=team.getSharedTeams();
         dontPlay.addSharedTeam(team.getTeamId());
         SharedTeams notSameTime= new SharedTeams();
         for(String request : requestArray) {
-
+			request = request.trim();
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
 
-            if(request.startsWith("xd")) {
+            if(StringUtils.startsWithIgnoreCase(request, "xd")) {
                 //parse the date and use it to create a new DateConstraint object
                 String[] dates = request.split("-");
                 if(dates[0].split("/").length<3){
@@ -212,12 +213,11 @@ public class CourtScheduleIO {
                     if(dates[1].split("/").length<3){
                         debug("Team" + team.getTeamId() + "xd constraint date 2 is too short." + request);
                     }
-                    badDates.addDates(badDates.findDateRange(dates[0],dates[1]));
+                    badDates.setStringDates(dates[0].substring(2).trim(), dates[1], false);
                 }
                 else{
-                    badDates.addDate(badDates.findDate(dates[0]));
+                    badDates.setStringDate(dates[0].substring(2).trim(), false);
                 }
-                team.setDateConstraint(badDates);
 
             }
             else if(request.contentEquals("")){
@@ -225,7 +225,7 @@ public class CourtScheduleIO {
             }
 
             // CANT PLAY UNTIL AFTER CERTAIN TIME //
-            else if(request.startsWith("after")){
+            else if(StringUtils.startsWithIgnoreCase(request, "after")){
                 // incomplete; need to ensure that each time has pm or am so that it can be converted to military
                 if(request.contains("pm") || request.contains("p.m.")
                         ||request.contains("am")||request.contains("a.m.")){
@@ -240,7 +240,7 @@ public class CourtScheduleIO {
             }
 
             // CANT PLAY UNTIL BEFORE CERTAIN TIME //
-            else if(request.startsWith("before")){
+            else if(StringUtils.startsWithIgnoreCase(request, "before")){
                 // incomplete; need to ensure that each time has pm or am so that it can be converted to military
                 if(request.contains("pm") || request.contains("p.m.")
                         ||request.contains("am")||request.contains("a.m.")){
@@ -255,7 +255,7 @@ public class CourtScheduleIO {
             }
 
             // CANT PLAY BETWEEN CERTAIN TIME //
-            else if(request.startsWith("xr")) {
+            else if(StringUtils.startsWithIgnoreCase(request, "xr")) {
                 String[] times = request.split("-");
                 if(times[0].contains("pm") || times[0].contains("p.m.")
                         ||times[0].contains("am")||times[0].contains("a.m.")){
@@ -275,7 +275,7 @@ public class CourtScheduleIO {
             }
 
             // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY //
-            else if(request.startsWith("pd")) {
+            else if(StringUtils.startsWithIgnoreCase(request, "pd")) {
                 String[] dates = request.split("-");
                 if(dates[0].split("/").length<3){
                     debug("Team" + team.getTeamId() + "pd constraint date 1 is too short.(" + request);
@@ -289,10 +289,9 @@ public class CourtScheduleIO {
                 else{
                     prefDates.addDate(prefDates.findDate(dates[0]));
                 }
-                team.setDateConstraint(prefDates);
             }
             //DONT PLAY THESE TEAMS
-            else if(request.startsWith("xplay")) {
+            else if(StringUtils.startsWithIgnoreCase(request, "xplay")) {
                 //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
                 request.replace("xplay", "");
                 int index = request.indexOf(".");
@@ -306,7 +305,7 @@ public class CourtScheduleIO {
                 dontPlay.addSharedTeam(teamId);
             }
             // TEAM REQUEST TO PLAY ANOTHER TEAM ONLY ONCE
-            else if(request.startsWith("playOnce")) {
+            else if(StringUtils.startsWithIgnoreCase(request, "playOnce")) {
                 //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
                 request.replace("playOnce", "");
                 int index = request.indexOf(".");
@@ -315,14 +314,14 @@ public class CourtScheduleIO {
             }
 
             // DOUBLE HEADER PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(request.startsWith("DH"))
+            else if(StringUtils.startsWithIgnoreCase(request, "DH"))
                 likesDoubleHeaders = true;
 
                 // BACK TO BACK PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(request.startsWith("B2B")){
+            else if(StringUtils.startsWithIgnoreCase(request, "B2B")){
                 likesBackToBack = true;
             }
-            else if(request.startsWith("nst")){
+            else if(StringUtils.startsWithIgnoreCase(request, "nst")){
                 request.replace("nst","");
                 Integer teamId=null;
                 try{
@@ -341,12 +340,9 @@ public class CourtScheduleIO {
         }
 
         team.setOffTimes(new OffTimes(offTimeList));
-        team.setPreferredDates(prefDates);
-        team.setDateConstraint(badDates);
         team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));
         team.setDoubleHeaderPreference(new DoubleHeaderPreference(likesDoubleHeaders));
         team.setBackToBackPreference(new BackToBackPreference(likesBackToBack));
-        team.setSharedTeams(dontPlay);
     }
 
     private static String getMilitaryTime(String time) {

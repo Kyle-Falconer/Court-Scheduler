@@ -38,13 +38,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     private List<Conference> conferenceList;
 
     // configurables
-    private LocalDate conferenceStartDate;
-    private LocalDate conferenceEndDate;
-    private int numberOfConferenceDays;
-    private int numberOfCourts;
-    private int timeslotMidnightOffsetInMinutes;
-    private int numberOfTimeSlotsPerDay;
-    private int timeslotDurationInMinutes;
+    private CourtScheduleInfo info;
 
     public List<Match> matchAssignmentList;
     public List<MatchSlot> matchSlots;
@@ -56,19 +50,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
     }
 
-    public CourtSchedule(List<Team> teamList){
-
-        // FIXME -- these should be configurable!
-        conferenceStartDate = new LocalDate( 2014, 01, 1);
-        conferenceEndDate = new LocalDate( 2014, 06, 1);
-        numberOfCourts = 3;
-        timeslotMidnightOffsetInMinutes = 420;  // 7am
-        numberOfTimeSlotsPerDay = 16;  // end at ~8:30pm
-        timeslotDurationInMinutes = 50;
-        numberOfConferenceDays = getNumberOfConferenceDays();
-		DateConstraint.initializeConferenceSize(numberOfConferenceDays, numberOfTimeSlotsPerDay);
-
-        schedule = new Match[numberOfConferenceDays][numberOfTimeSlotsPerDay][numberOfCourts];
+    public CourtSchedule(List<Team> teamList, CourtScheduleInfo info){
+        this.info = info;
+        schedule = new Match[info.getNumberOfConferenceDays()][info.getNumberOfTimeSlotsPerDay()][info.getNumberOfCourts()];
 
 
         this.teamList = teamList;
@@ -241,9 +225,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         return conferenceList;
     }
 
-    public int getNumberOfConferenceDays(){
-        return Days.daysBetween(conferenceStartDate, conferenceEndDate).getDays();
-    }
+
 
     public void setMatchAssignmentList(List<Match> matchList) {
         this.matchAssignmentList = matchAssignmentList;
@@ -309,9 +291,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         // FIXME: pass every available match slot so that the list of moves can be used against this list of match slots
         if (matchSlots == null || matchSlots.size() == 0){
             matchSlots = new ArrayList<MatchSlot>();
-            for (int dayIndex = 0; dayIndex < numberOfConferenceDays; dayIndex++)  {
-                for (int slotIndex = 0; slotIndex < numberOfTimeSlotsPerDay; slotIndex++)  {
-                    for (int courtIndex = 0; courtIndex < numberOfCourts; courtIndex++)  {
+            for (int dayIndex = 0; dayIndex < info.getNumberOfConferenceDays(); dayIndex++)  {
+                for (int slotIndex = 0; slotIndex < info.getNumberOfTimeSlotsPerDay(); slotIndex++)  {
+                    for (int courtIndex = 0; courtIndex < info.getNumberOfCourts(); courtIndex++)  {
                         matchSlots.add(new MatchSlot(dayIndex, slotIndex, courtIndex));
                     }
                 }
@@ -319,9 +301,5 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         }
         return matchSlots;
     }
-
-	public LocalDate getConferenceStartDate() {
-		return conferenceStartDate;
-	}
 
 }

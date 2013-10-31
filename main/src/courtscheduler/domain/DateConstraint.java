@@ -1,5 +1,11 @@
 package courtscheduler.domain;
 
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -11,13 +17,14 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class DateConstraint extends Constraint{
-	private static int conferenceDays;
-	private static int timeSlotsPerDay;
     private boolean dates[][];
+
+	private static CourtScheduleInfo info;
+	private static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("M/d/yy");
 
     //constructors
     public DateConstraint(){
-        dates = new boolean[conferenceDays][timeSlotsPerDay];
+        dates = new boolean[info.getNumberOfConferenceDays()][info.getNumberOfTimeSlotsPerDay()];
     }
 	public DateConstraint(DateConstraint a, DateConstraint b) {
 		this();
@@ -25,23 +32,53 @@ public class DateConstraint extends Constraint{
 	}
 
     //get functions
-    public boolean[][] getDates(){
-        return this.dates;
+    public boolean getDate(int day, int timeSlot){
+		// This is inverted because Java auto-initializes all boolean arrays to hold all false.
+		// So, since we assume they can play all times by default, we use "false" to mean it's okay,
+		// and "true" to mean they can't play then.
+		// Confusing, I know, but the performance benefit is nontrivial. --MS
+        return !this.dates[day][timeSlot];
     }
 	public boolean isTrue(MatchSlot matchSlot) {
-		return dates[matchSlot.getDay()][matchSlot.getTime()];
+		return this.getDate(matchSlot.getDay(), matchSlot.getTime());
 	}
 
 
     //set functions
-    public void setDates(boolean[][] badDates){
-        this.dates =badDates;
+    public void setDate(int day, int timeSlot, boolean canPlay){
+        this.dates[day][timeSlot] = !canPlay;
     }
+
+	public void setStringDate(String date, boolean canPlay) {
+		LocalDate localDate = LocalDate.parse(date, dateFormat);
+		int dayOfConference = Days.daysBetween(info.getStartingDay(), localDate).getDays();
+		this.markContiguousDays(dayOfConference, !canPlay, 1);
+	}
+
+	public void setStringDates(String start, String end, boolean canPlay) {
+		LocalDate periodStartDate = LocalDate.parse(start, dateFormat);
+		int dayOfConference = Days.daysBetween(info.getStartingDay(), periodStartDate).getDays();
+		LocalDate periodEndDate = LocalDate.parse(end, dateFormat);
+		int numOfDays = Days.daysBetween(periodStartDate, periodEndDate).getDays();
+		this.markContiguousDays(dayOfConference, !canPlay, numOfDays+1);
+	}
+
+	private void markContiguousDays(int dayOfConference, boolean canPlay, int dayCount) {
+		for (int i = 0; i < dayCount; i++) {
+			boolean[] markedArray = new boolean[info.getNumberOfTimeSlotsPerDay()];
+			// mark array as "can't play" for the entire day
+			for (int j = 0; j < markedArray.length; j++) {
+				markedArray[j] = canPlay;
+			}
+			dates[dayOfConference+i] = markedArray;
+			System.out.println("Can't play on day " + (dayOfConference+i));
+		}
+	}
 
     //merge functions
     private void mergeDates(DateConstraint a, DateConstraint b){
-		boolean[][] dates1 = a.getDates();
-		boolean[][] dates2 = b.getDates();
+		boolean[][] dates1 = a.dates;
+		boolean[][] dates2 = b.dates;
         for(int i=0;i<dates1.length;i++){
             for(int j=0;j<dates1[i].length;j++){
                 this.dates[i][j]=dates1[i][j] || this.dates[i][j];
@@ -161,8 +198,7 @@ public class DateConstraint extends Constraint{
         return this.findDateRange(sCal,eCal);
     }
 
-	public static void initializeConferenceSize(int conferenceDays, int timeSlotsPerDay) {
-		DateConstraint.conferenceDays = conferenceDays;
-		DateConstraint.timeSlotsPerDay = timeSlotsPerDay;
+	public static void setInfo(CourtScheduleInfo info) {
+		DateConstraint.info = info;
 	}
 }

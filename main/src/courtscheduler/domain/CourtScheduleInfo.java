@@ -1,5 +1,8 @@
 package courtscheduler.domain;
 
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+
 import java.util.Calendar;
 
 /**
@@ -10,25 +13,39 @@ import java.util.Calendar;
  * To change this template use File | Settings | File Templates.
  */
 public class CourtScheduleInfo {
+	private LocalDate startingDay;
+	private LocalDate endingDay;
+	private int numberOfCourts;
+	private int timeslotMidnightOffsetInMinutes;
+	private int numberOfTimeSlotsPerDay;
+	private int timeslotDurationInMinutes;
 
-    private Match firstMatchDateTime;
-    private Match lastMatchDateTime;
-    private Calendar firstDay;
+ 	public CourtScheduleInfo(String filepath) {
+		// TODO read these from a file
+		startingDay = new LocalDate( 2014, 01, 1);
+		endingDay = new LocalDate( 2014, 06, 1);
+		numberOfCourts = 3;
+		timeslotMidnightOffsetInMinutes = 420;  // 7am
+		numberOfTimeSlotsPerDay = 16;  // end at ~8:30pm
+		timeslotDurationInMinutes = 50;
+		DateConstraint.setInfo(this);
 
-    public void setFirstMatchDateTime(Match firstMatchDateTime) {
-        this.firstMatchDateTime = firstMatchDateTime;
-    }
-    public void setLastMatchDateTime(Match lastMatchDateTime){
-        this.lastMatchDateTime = lastMatchDateTime;
-    }
-    public void setFirstDay(Calendar firstDay){
-        this.firstDay=firstDay;
-    }
+	}
 
+	public int getNumberOfConferenceDays() {
+		return Days.daysBetween(startingDay, endingDay).getDays();
+	}
 
-    public boolean isInPlanningWindow(MatchDate matchDate) {
-        return  firstMatchDateTime.getMatchDate(firstDay).compareTo(matchDate)>= 0  && lastMatchDateTime.getMatchDate(firstDay).compareTo(matchDate) < 1  ;
-    }
-
-
+	public LocalDate getStartingDay() {
+		return startingDay;
+	}
+	public LocalDate getEndingDay() {
+		return endingDay;
+	}
+	public int getNumberOfTimeSlotsPerDay() {
+		return numberOfTimeSlotsPerDay;
+	}
+	public int getNumberOfCourts() {
+		return numberOfCourts;
+	}
 }

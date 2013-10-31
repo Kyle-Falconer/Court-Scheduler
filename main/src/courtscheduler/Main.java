@@ -1,7 +1,11 @@
 package courtscheduler;
 
 import courtscheduler.domain.CourtSchedule;
+import courtscheduler.domain.CourtScheduleInfo;
+import courtscheduler.domain.DateConstraint;
 import courtscheduler.persistence.CourtScheduleIO;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
@@ -43,6 +47,9 @@ public class Main {
         // This filename needs to be relative to the application's classpath
         String solverConfigFilename = getOptArg(args, 2, "/courtscheduler/solver/SolverConfig.xml");
 
+		// initialize CourtSchedule configuration
+		CourtScheduleInfo info = new CourtScheduleInfo("config.ini");
+
         // initialize solver
         XmlSolverFactory solverFactory = loadConfig(solverConfigFilename);
 
@@ -60,14 +67,14 @@ public class Main {
         CourtScheduleIO utils = new CourtScheduleIO();
         CourtSchedule testSchedule;
         try{
-            testSchedule= new CourtSchedule(utils.readXlsx(in_filename));
+            testSchedule= new CourtSchedule(utils.readXlsx(in_filename), info);
 
             // solve the problem (gee, it sounds so easy when you put it like that)
             solver.setPlanningProblem(testSchedule);
             solver.solve();
 			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
 
-            utils.writeXlsx(bestSolution.getMatchList(), bestSolution.getConferenceStartDate(), out_filename);
+            utils.writeXlsx(bestSolution.getMatchList(), info.getStartingDay(), out_filename);
         } catch(Exception e){
             e.printStackTrace(); //FIXME
         }
