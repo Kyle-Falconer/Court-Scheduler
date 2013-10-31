@@ -18,7 +18,9 @@ public class Match {
 
     // defining properties: teams
     private Team team1;
+    private Integer team1Id;
     private Team team2;
+    private Integer team2Id;
     MatchAvailability avail;   // calculated based on the intersection of the teams' availabilities
     private MatchSlot matchSlot;
 
@@ -37,6 +39,8 @@ public class Match {
     public Match(Team team1, Team team2) {
         this.team1 = team1;
         this.team2 = team2;
+        this.team1Id = team1.getTeamId();
+        this.team2Id = team2.getTeamId();
         avail = new MatchAvailability(team1.getAvailability(), team2.getAvailability());
     }
 
@@ -44,8 +48,16 @@ public class Match {
         return this.team1;
     }
 
+    public Integer getTeam1Id(){
+        return this.team1Id;
+    }
+
     public Team getT2() {
         return this.team2;
+    }
+
+    public Integer getTeam2Id(){
+        return this.team2Id;
     }
 
     public MatchDate getMatchDate(Calendar dateScale) {
