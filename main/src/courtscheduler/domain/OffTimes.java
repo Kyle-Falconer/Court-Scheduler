@@ -12,10 +12,16 @@ import java.util.List;
  */
 public class OffTimes extends Constraint{
 
-    List<MatchTime> offTimeList = new ArrayList<MatchTime>();
+    List<MatchTime> offTimeList;
 
-	public OffTimes(List<MatchTime> offTimeList) {
-		this.offTimeList = offTimeList;
+    public OffTimes(){
+        offTimeList=new ArrayList<MatchTime>();
+    }
+    public OffTimes(List<MatchTime> offTimeList){
+        this.offTimeList=offTimeList;
+    }
+	public void setOffTimes(List<MatchTime> offTimeList) {
+		offTimeList.addAll(offTimeList);
 	}
 
     public List<MatchTime> getOffTimeList() {

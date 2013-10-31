@@ -14,6 +14,9 @@ public class DoubleHeaderPreference extends Constraint {
 	public DoubleHeaderPreference(boolean likesDoubleHeaders) {
 		this.likesDoubleHeaders = likesDoubleHeaders;
 	}
+    public void toggleDoubleHeader(){
+        this.likesDoubleHeaders=!this.likesDoubleHeaders;
+    }
 
     public boolean likesDoubleHeaders() {
         return likesDoubleHeaders;

@@ -18,7 +18,7 @@ public class Team {
     private OffTimes offTimes;
     private SharedTeams sharedTeams;
     private PlayOnceRequests playOnceRequests;
-    private PreferredDates preferredDates;
+    private DateConstraint preferredDates;
 
     private MatchAvailability avail;
 
@@ -26,12 +26,12 @@ public class Team {
     public Team() {
 		sharedTeams = new SharedTeams();
         dateConstraint= new DateConstraint();
-        //doubleHeaderPreference = new DoubleHeaderPreference();
-        //backToBackPreference = new BackToBackPreference();
-        //offTimes=new OffTimes();
+        doubleHeaderPreference = new DoubleHeaderPreference(false);
+        backToBackPreference = new BackToBackPreference(false);
+        offTimes=new OffTimes();
         sharedTeams=new SharedTeams();
-        //playOnceRequests= new PlayOnceRequests();
-        //preferredDates=new PreferredDates();
+        playOnceRequests= new PlayOnceRequests();
+        preferredDates=new DateConstraint();
 		this.avail = new MatchAvailability();
     }
 
@@ -139,11 +139,11 @@ public class Team {
         this.playOnceRequests = playOnceRequests;
     }
 
-    public PreferredDates getPreferredDates() {
+    public DateConstraint getPreferredDates() {
         return preferredDates;
     }
 
-    public void setPreferredDates(PreferredDates preferredDates) {
+    public void setPreferredDates(DateConstraint preferredDates) {
         this.preferredDates = preferredDates;
     }
 

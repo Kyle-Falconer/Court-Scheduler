@@ -194,7 +194,7 @@ public class CourtScheduleIO {
         boolean likesBackToBack = false;//flat bool
 		MatchAvailability availability = team.getAvailability();
         DateConstraint badDates = team.getDateConstraint();
-        PreferredDates prefDates = team.getPreferredDates();
+        DateConstraint prefDates = team.getPreferredDates();
         SharedTeams dontPlay=team.getSharedTeams();
         dontPlay.addSharedTeam(team.getTeamId());
         SharedTeams notSameTime= new SharedTeams();
@@ -343,7 +343,7 @@ public class CourtScheduleIO {
         return playOnceTeamList;
     }
 
-    public static PreferredDates requestPreferredDate(String request, Team team, PreferredDates prefDates){
+    public static DateConstraint requestPreferredDate(String request, Team team, DateConstraint prefDates){
         request=request.replace("pd ","");
         String[] dates = request.split("-");
         if(dates[0].split("/").length<3){
@@ -399,7 +399,9 @@ public class CourtScheduleIO {
             String[] t = time.split(":");
             try {
                 Integer timeInt = Integer.parseInt(t[0]);
-                timeInt += 12;
+                if(timeInt != 12){
+                    timeInt += 12;
+                }
                 return timeInt.toString()+":"+t[1];
             }catch (NumberFormatException e) {
                 return "";

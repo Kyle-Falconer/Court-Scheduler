@@ -12,11 +12,17 @@ import java.util.List;
  */
 public class PlayOnceRequests extends Constraint {
 
-    List<Integer> playOnceTeamList = new ArrayList<Integer>();
+    List<Integer> playOnceTeamList;
 
-	public PlayOnceRequests(List<Integer> playOnceTeamList) {
-		this.playOnceTeamList = playOnceTeamList;
-	}
+    public PlayOnceRequests() {
+        this.playOnceTeamList = new ArrayList<Integer>();
+    }
+    public PlayOnceRequests(List<Integer> playOnceTeamList) {
+        this.playOnceTeamList = playOnceTeamList;
+    }
+    public void setPlayOnceRequests(List<Integer> playOnceTeamList) {
+        this.playOnceTeamList = playOnceTeamList;
+    }
 
     public List<Integer> getPlayOnceTeamList() {
         return playOnceTeamList;
