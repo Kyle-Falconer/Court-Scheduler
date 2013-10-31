@@ -25,6 +25,13 @@ public class Team {
 
     public Team() {
 		sharedTeams = new SharedTeams();
+        dateConstraint= new DateConstraint();
+        //doubleHeaderPreference = new DoubleHeaderPreference();
+        //backToBackPreference = new BackToBackPreference();
+        //offTimes=new OffTimes();
+        sharedTeams=new SharedTeams();
+        //playOnceRequests= new PlayOnceRequests();
+        //preferredDates=new PreferredDates();
 		this.avail = new MatchAvailability();
     }
 
