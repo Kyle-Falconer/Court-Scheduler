@@ -79,13 +79,13 @@ public class CourtScheduleIO {
             rowNumber++;
             Row dataRow = sheet.createRow(rowNumber);
 
-            String teamName1 = match.getT1().getTeamName();
+            String teamName1 = match.getTeam1().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName1);
 
             String vs = "vs.";
             dataRow.createCell(cellNumber++).setCellValue(vs);
 
-            String teamName2 = match.getT2().getTeamName();
+            String teamName2 = match.getTeam2().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName2);
 
 			// date

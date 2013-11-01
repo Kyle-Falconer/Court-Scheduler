@@ -44,7 +44,7 @@ public class Match {
         avail = new MatchAvailability(team1.getAvailability(), team2.getAvailability());
     }
 
-    public Team getT1() {
+    public Team getTeam1() {
         return this.team1;
     }
 
@@ -52,7 +52,7 @@ public class Match {
         return this.team1Id;
     }
 
-    public Team getT2() {
+    public Team getTeam2() {
         return this.team2;
     }
 
