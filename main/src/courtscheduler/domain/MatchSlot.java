@@ -12,7 +12,6 @@ public class MatchSlot extends AbstractPersistable {
     private Integer time;
     private Integer court;
 
-
     public MatchSlot(int day, int time, int court) {
         this.day = new Integer(day);
         this.time = new Integer(time);
@@ -41,4 +40,12 @@ public class MatchSlot extends AbstractPersistable {
     public String toString() {
         return "(" + day + ":" + time + ":" + court + ")";
     }
+
+	public boolean equals(Object other) {
+		if (other.getClass() != MatchSlot.class) {
+			return false;
+		}
+		MatchSlot o = (MatchSlot) other;
+		return this.getTime() == o.getTime() && this.getDay() == o.getDay() && this.getCourt() == o.getCourt();
+	}
 }

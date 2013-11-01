@@ -51,16 +51,28 @@ public class DateConstraint extends Constraint{
 
 	public void setStringDate(String date, boolean canPlay) {
 		LocalDate localDate = LocalDate.parse(date, dateFormat);
-		int dayOfConference = Days.daysBetween(info.getStartingDay(), localDate).getDays();
-		this.markContiguousDays(dayOfConference, !canPlay, 1);
+
+		if (info.dayIsInConference(localDate)) {
+			int dayOfConference = Days.daysBetween(info.getStartingDay(), localDate).getDays();
+			this.markContiguousDays(dayOfConference, !canPlay, 1);
+		}
+		else {
+			System.err.println("Day " + date + " is not in conference");
+		}
 	}
 
 	public void setStringDates(String start, String end, boolean canPlay) {
 		LocalDate periodStartDate = LocalDate.parse(start, dateFormat);
-		int dayOfConference = Days.daysBetween(info.getStartingDay(), periodStartDate).getDays();
 		LocalDate periodEndDate = LocalDate.parse(end, dateFormat);
-		int numOfDays = Days.daysBetween(periodStartDate, periodEndDate).getDays();
-		this.markContiguousDays(dayOfConference, !canPlay, numOfDays+1);
+
+		if (info.dayIsInConference(periodStartDate) && info.dayIsInConference(periodEndDate)) {
+			int dayOfConference = Days.daysBetween(info.getStartingDay(), periodStartDate).getDays();
+			int numOfDays = Days.daysBetween(periodStartDate, periodEndDate).getDays();
+			this.markContiguousDays(dayOfConference, !canPlay, numOfDays+1);
+		}
+		else {
+			System.err.println("Day " + start + " or " + end + " is not in conference");
+		}
 	}
 
 	private void markContiguousDays(int dayOfConference, boolean canPlay, int dayCount) {

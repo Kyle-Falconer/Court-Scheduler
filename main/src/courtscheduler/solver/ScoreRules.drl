@@ -47,7 +47,7 @@ global HardSoftScoreHolder scoreHolder;
 
 // THIS DOES NOT HANDLE THE CASE WHERE A TEAM HAS (BACK TO BACK AND DOUBLE HEADERS) SET TO "TRUE"
 // Not sure if this is a necessary constraint?
-
+                  /*
 // teams should not play twice on one day if they do not want double headers or back to back games
 rule "noTwoGameDayTeam1"
     when
@@ -67,15 +67,24 @@ rule "noTwoGameDayTeam2"
         Team(teamId == $team2Id, DoubleHeader == false, BackToBack == false)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
-end
+end             */
 
+// when a team is playing when they aren't available, that's bad
 rule "availability"
 	when
 		Match(CanPlayInCurrentSlot == false)
 	then
-		scoreHolder.addHardConstraintMatch(kcontext, -1);
+		scoreHolder.addHardConstraintMatch(kcontext, -10);
 end
 
+// when there are two matches with the same matchslot, and they aren't the same, that's bad
+rule "overlappingGames"
+	when
+    	Match($team1 : team1, $matchSlot : matchSlot)
+    	Match(team1 != $team1, matchSlot == $matchSlot)
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -20);
+end
 
 /*
 

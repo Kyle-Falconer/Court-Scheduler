@@ -44,7 +44,8 @@ public class CourtScheduleIO {
 
         while (rowCounter <= rowCount){
             Row currentRow = sh.getRow(rowCounter);
-            processRow(currentRow);
+			if (currentRow != null && currentRow.getLastCellNum() > 0)
+            	processRow(currentRow);
             rowCounter+=1;
         }
 
@@ -118,7 +119,6 @@ public class CourtScheduleIO {
     }
 
     private static void processRow(Row currentRow) {
-
         short columnCount = currentRow.getLastCellNum();
         int columnCounter = 0;
 
