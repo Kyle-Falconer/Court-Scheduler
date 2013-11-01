@@ -59,6 +59,7 @@
     <module>optaplanner-benchmark</module>
     <module>optaplanner-examples</module>
     <module>optaplanner-webexamples</module>
+      <module>writeXlsx</module>
   </modules>
 
     <dependencies>

@@ -64,6 +64,17 @@ public class CourtScheduleIO {
         int cellNumber = 0;
         Row header = sheet.createRow(rowNumber);
         //cell.setCellValue("CourtScheduler");
+
+        header.createCell(0).setCellValue("THE COURTS");
+        header.createCell(2).setCellValue("Game Schedule");
+        rowNumber = rowNumber + 2;
+
+        // Team firstTeamOnList = matchList.getTeam1();
+        //int conf = firstTeamOnList.getConference();
+        header.createCell(0).setCellValue("Conference:");
+        header.createCell(1).setCellValue("conf");
+        rowNumber = rowNumber + 2;
+
         header.createCell(0).setCellValue("TEAM");
         header.createCell(1).setCellValue(" ");
         header.createCell(2).setCellValue("OPPONENT");
@@ -78,6 +89,7 @@ public class CourtScheduleIO {
             Row dataRow = sheet.createRow(rowNumber);
             String teamName1 = match.getT1().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName1);
+            dataRow.createCell(cellNumber++).setCellValue("vs");
             String teamName2 = match.getT2().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName2);
             Integer courtId = match.getMatchSlot().getCourt();

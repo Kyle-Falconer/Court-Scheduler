@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/optaplanner-core/optaplanner-core.iml" filepath="$PROJECT_DIR$/optaplanner-core/optaplanner-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/optaplanner-examples/optaplanner-examples.iml" filepath="$PROJECT_DIR$/optaplanner-examples/optaplanner-examples.iml" />
       <module fileurl="file://$PROJECT_DIR$/optaplanner-webexamples/optaplanner-webexamples.iml" filepath="$PROJECT_DIR$/optaplanner-webexamples/optaplanner-webexamples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/writeXlsx.java/writeXlsx.java.iml" filepath="$PROJECT_DIR$/writeXlsx.java/writeXlsx.java.iml" />
     </modules>
   </component>
 </project>
