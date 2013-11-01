@@ -37,7 +37,6 @@
       <module name="optaplanner-docs" target="1.6" />
       <module name="optaplanner-examples" target="1.6" />
       <module name="optaplanner-webexamples" target="1.6" />
-      <module name="writeXlsx" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>

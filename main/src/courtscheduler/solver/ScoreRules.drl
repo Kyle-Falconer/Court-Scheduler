@@ -49,14 +49,52 @@ global HardSoftScoreHolder scoreHolder;
 // Not sure if this is a necessary constraint?
 
 // teams should not play twice on one day if they do not want double headers or back to back games
-rule "noTwoGameDay"
+rule "noTwoGameDayTeam1"
     when
-        $Match1 : Match($t1 : t1)
-        $Match2 : Match(t1 == $t1)
-        Team(teamName == $t1, DoubleHeader == false, BackToBack == false)
+        Match($team1 : team1, $date : Date, $team1Id : team1Id, $matchSlot : matchSlot)
+        Match(team1 == $team1, Date == $date, matchSlot != $matchSlot) or Match(team2 == $team1, Date == $date, matchSlot != $matchSlot)
+
+        Team(teamId == $team1Id, DoubleHeader == false, BackToBack == false)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -1);
+        scoreHolder.addHardConstraintMatch(kcontext, -15);
 end
+
+rule "noTwoGameDayTeam2"
+    when
+        Match($team2 : team2, $date : Date, $team2Id : team2Id, $matchSlot : matchSlot)
+        Match(team1 == $team2, Date == $date, matchSlot != $matchSlot) or Match(team2 == $team2, Date == $date, matchSlot != $matchSlot)
+
+        Team(teamId == $team2Id, DoubleHeader == false, BackToBack == false)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -15);
+end
+
+// when a team is playing when they aren't available, that's bad
+rule "availability"
+	when
+		Match(CanPlayInCurrentSlot == false)
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -10);
+end
+
+// when there are two matches with the same matchslot, and they aren't the same, that's bad
+rule "overlappingGamesTeam1"
+	when
+    	Match($team1 : team1, $matchSlot : matchSlot)
+    	Match(team1 != $team1, matchSlot == $matchSlot)
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -20);
+end
+
+rule "overlappingGamesTeam2"
+    when
+        Match($team2 : team2, $matchSlot : matchSlot)
+        Match(team2 != $team2, matchSlot == $matchSlot)
+    then
+    	scoreHolder.addHardConstraintMatch(kcontext, -20);
+end
+
+
 
 
 /*

@@ -14,17 +14,18 @@ public class Team {
 
     private DoubleHeaderPreference doubleHeaderPreference;
     private BackToBackPreference backToBackPreference;
-    private DateConstraint dateConstraint;
     private OffTimes offTimes;
-    private SharedTeams sharedTeams;
     private PlayOnceRequests playOnceRequests;
-    private PreferredDates preferredDates;
 
     private MatchAvailability avail;
 
 
     public Team() {
-		sharedTeams = new SharedTeams();
+        doubleHeaderPreference = new DoubleHeaderPreference(false);
+        backToBackPreference = new BackToBackPreference(false);
+        offTimes=new OffTimes();
+        playOnceRequests= new PlayOnceRequests();
+		this.avail = new MatchAvailability();
     }
 
     public void setTeamId(Integer teamId) {
@@ -99,14 +100,6 @@ public class Team {
         this.backToBackPreference = backToBackPreference;
     }
 
-    public DateConstraint getDateConstraint() {
-        return dateConstraint;
-    }
-
-    public void setDateConstraint(DateConstraint dateConstraint) {
-        this.dateConstraint = dateConstraint;
-    }
-
     public OffTimes getOffTimes() {
         return offTimes;
     }
@@ -116,11 +109,7 @@ public class Team {
     }
 
     public SharedTeams getSharedTeams() {
-        return sharedTeams;
-    }
-
-    public void setSharedTeams(SharedTeams sharedTeams) {
-        this.sharedTeams = sharedTeams;
+        return avail.dontPlay;
     }
 
     public PlayOnceRequests getPlayOnceRequests() {
@@ -131,12 +120,8 @@ public class Team {
         this.playOnceRequests = playOnceRequests;
     }
 
-    public PreferredDates getPreferredDates() {
-        return preferredDates;
-    }
-
-    public void setPreferredDates(PreferredDates preferredDates) {
-        this.preferredDates = preferredDates;
+    public DateConstraint getPreferredDates() {
+        return this.avail.prefDates;
     }
 
     @Override
@@ -146,12 +131,6 @@ public class Team {
 
     public MatchAvailability getAvailability() {
         return this.avail;
-    }
-
-    public void compileMatchAvaiilability(){
-        this.avail.badDates=this.getDateConstraint();
-        this.avail.prefDates=this.getPreferredDates();
-        this.avail.dontPlay=this.getSharedTeams();
     }
 
 	public static boolean canPlay(Team t1, Team t2) {
@@ -166,4 +145,7 @@ public class Team {
     public boolean getBackToBack(){
         return this.getBackToBackPreference().isLikesBackToBack();
     }
+	public DateConstraint getBadDates() {
+		return this.avail.badDates;
+	}
 }

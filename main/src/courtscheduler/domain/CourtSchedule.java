@@ -31,48 +31,28 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     private HardSoftScore score;
     private CourtScheduleInfo courtScheduleInfo;
 
-    private List<Team> teamList;  // Value Range Providers
+    private List<Team> teamList;
     private List<MatchTime> matchTimeList;
     private List<MatchDate> matchDateList;
 
     private List<Conference> conferenceList;
-    //private List<Gender> genderList;
-    //private List<Grade> gradeList;
-    //private List<Level> levelList;
-    //private List<Requests> requestsList;
 
     // configurables
-    private LocalDate conferenceStartDate;
-    private LocalDate conferenceEndDate;
-    private int numberOfConferenceDays;
-    private int numberOfCourts;
-    private int timeslotMidnightOffsetInMinutes;
-    private int numberOfTimeSlotsPerDay;
-    private int timeslotDurationInMinutes;
+    private CourtScheduleInfo info;
 
     public List<Match> matchAssignmentList;
     public List<MatchSlot> matchSlots;
 
     private Match[][][] schedule;
     private List<Match> matchList;
-    private Calendar firstDay;
 
     public CourtSchedule(){
 
     }
 
-    public CourtSchedule(List<Team> teamList){
-
-        // FIXME -- these should be configurable!
-        conferenceStartDate = new LocalDate( 2014, 01, 1);
-        conferenceEndDate = new LocalDate( 2014, 06, 1);
-        numberOfCourts = 3;
-        timeslotMidnightOffsetInMinutes = 420;  // 7am
-        numberOfTimeSlotsPerDay = 16;  // end at ~8:30pm
-        timeslotDurationInMinutes = 50;
-        numberOfConferenceDays = getNumberOfConferenceDays();
-
-        schedule = new Match[numberOfConferenceDays][numberOfTimeSlotsPerDay][numberOfCourts];
+    public CourtSchedule(List<Team> teamList, CourtScheduleInfo info){
+        this.info = info;
+        schedule = new Match[info.getNumberOfConferenceDays()][info.getNumberOfTimeSlotsPerDay()][info.getNumberOfCourts()];
 
 
         this.teamList = teamList;
@@ -119,20 +99,12 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         }
         setMatchDateList(Arrays.asList(date));
 
+
         //Round-Robin construction of initial match list.
-        List<Match> matches= new ArrayList<Match>();
-        for(int i=0;i<teamList.size();i++){
-            for(int j=i+1; j<teamList.size();j++){
-				if (Team.canPlay(teamList.get(i), teamList.get(j))) {
+        matchList = roundRobin(teamList);
 
-                    Match nextMatch = new Match(teamList.get(i),teamList.get(j));
-                    nextMatch.setMatchSlot(new MatchSlot(-1, -1, -1));
-                	matches.add(nextMatch);
-				}
-            }
-        }
-        setMatchList(matches);
-
+        // generate the match slots if needed
+        getMatchSlots();
         // make the preliminary schedule
         setPreliminarySchedule();
 
@@ -150,9 +122,26 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
     }
 
+    private List<Match> roundRobin(List<Team> teamList) {
+        List<Match> matches= new ArrayList<Match>();
+        for(int i=0;i<teamList.size();i++){
+            for(int j=i+1; j<teamList.size();j++){
+                if (Team.canPlay(teamList.get(i), teamList.get(j))) {
+                    Match nextMatch = new Match(teamList.get(i),teamList.get(j));
+                    nextMatch.setMatchSlot(new MatchSlot(-1, -1, -1));
+                    matches.add(nextMatch);
+                }
+            }
+        }
+        return matches;
+    }
+
     private void setPreliminarySchedule() {
+
         // generate the match slots if needed
-        getMatchSlots();
+        if (this.matchSlots == null){
+            getMatchSlots();
+        }
 
         // in each match in the matchlist assign a matchslot
         // if one of the teams in Match is already playing on day n, increment n until a day is found
@@ -171,7 +160,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
             }
 
         }
-        System.out.println("build preliminary schedule");
+        System.out.println("built preliminary schedule");
 
     }
 
@@ -236,42 +225,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         return conferenceList;
     }
 
-    public int getNumberOfConferenceDays(){
-        return Days.daysBetween(conferenceStartDate, conferenceEndDate).getDays();
-    }
 
-
-    public void setFirstDay(Calendar firstDay){
-        this.firstDay=firstDay;
-    }
-    public Calendar getFirstDay(){
-        return this.firstDay;
-    }
-
-
-    /*public void setGenderList(List<Gender> genderList) {
-        this.genderList = genderList;
-    }
-
-    public List<Gender> getGenderList() {
-        return genderList;
-    }
-
-    public void setGradeList(List<Grade> gradeList) {
-        this.gradeList = gradeList;
-    }
-
-    public List<Grade> getGradeList() {
-        return gradeList;
-    }
-
-    public void setLevelList(List<Level> levelList) {
-        this.levelList = levelList;
-    }
-
-    public List<Level> getLevelList() {
-        return levelList;
-    }*/
 
     public void setMatchAssignmentList(List<Match> matchList) {
         this.matchAssignmentList = matchAssignmentList;
@@ -337,9 +291,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         // FIXME: pass every available match slot so that the list of moves can be used against this list of match slots
         if (matchSlots == null || matchSlots.size() == 0){
             matchSlots = new ArrayList<MatchSlot>();
-            for (int dayIndex = 0; dayIndex < numberOfConferenceDays; dayIndex++)  {
-                for (int slotIndex = 0; slotIndex < numberOfTimeSlotsPerDay; slotIndex++)  {
-                    for (int courtIndex = 0; courtIndex < numberOfCourts; courtIndex++)  {
+            for (int dayIndex = 0; dayIndex < info.getNumberOfConferenceDays(); dayIndex++)  {
+                for (int slotIndex = 0; slotIndex < info.getNumberOfTimeSlotsPerDay(); slotIndex++)  {
+                    for (int courtIndex = 0; courtIndex < info.getNumberOfCourts(); courtIndex++)  {
                         matchSlots.add(new MatchSlot(dayIndex, slotIndex, courtIndex));
                     }
                 }

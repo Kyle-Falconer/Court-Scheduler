@@ -39,7 +39,7 @@ public class MatchChangeMove implements Move {
 
     @Override
     public Move createUndoMove(ScoreDirector scoreDirector) {
-        return new MatchChangeMove(toMatch, matchSlot);
+        return new MatchChangeMove(toMatch, toMatch.getMatchSlot());
     }
 
     @Override

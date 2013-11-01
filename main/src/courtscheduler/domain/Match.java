@@ -1,4 +1,5 @@
 package courtscheduler.domain;
+
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
@@ -24,38 +25,73 @@ public class Match {
     public void setMatchSlot(MatchSlot matchSlot) {
         this.matchSlot = matchSlot;
     }
+
     @PlanningVariable(valueRangeProviderRefs = "matchSlot", strengthComparatorClass = MatchStrengthComparator.class)
     public MatchSlot getMatchSlot() {
         return this.matchSlot;
     }
-    public Match() {}
-    public Match(Team team1, Team team2){
+
+    public Match() {
+    }
+
+    public Match(Team team1, Team team2) {
         this.team1 = team1;
         this.team2 = team2;
         avail = new MatchAvailability(team1.getAvailability(), team2.getAvailability());
     }
 
-    public Team getT1(){
+    public Team getTeam1() {
         return this.team1;
     }
-    public Team getT2(){
+
+    public Integer getTeam1Id(){
+        return this.team1.getTeamId();
+    }
+
+    public Team getTeam2() {
         return this.team2;
     }
-    public MatchDate getMatchDate(Calendar dateScale){
+
+    public Integer getTeam2Id(){
+        return this.team2.getTeamId();
+    }
+
+    public MatchDate getMatchDate(Calendar dateScale) {
         MatchDate date = new MatchDate();
-        dateScale.add(Calendar.DATE,matchSlot.getDay());
+        dateScale.add(Calendar.DATE, matchSlot.getDay());
         date.setCal(dateScale);
         date.setDayOfWeek(DayOfWeek.valueOfCalendar(dateScale.get(Calendar.DAY_OF_WEEK)));
         return date;
     }
-    public Integer getTime(){
+
+    public Integer getTime() {
         return this.getMatchSlot().getTime();
     }
-    public Integer getDate(){
+	public Integer getDate() {
         return this.getMatchSlot().getDay();
     }
+	public Integer getCourt() {
+		return this.getMatchSlot().getCourt();
+	}
+
     public boolean containsTeamsFrom(Match other) {
         return this.team1.equals(other.team1) || this.team1.equals(other.team2) ||
                 this.team2.equals(other.team1) || this.team2.equals(other.team2);
     }
+
+	public String toString() {
+		return new StringBuilder()
+				.append("[")
+				.append(team1.getTeamId())
+				.append("v")
+				.append(team2.getTeamId())
+				.append(" ")
+				.append(matchSlot)
+				.append("]")
+				.toString();
+	}
+
+	public boolean getCanPlayInCurrentSlot() {
+		return avail.canPlayIn(matchSlot);
+	}
 }
