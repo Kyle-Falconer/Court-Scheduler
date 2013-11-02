@@ -74,7 +74,7 @@ public class Main {
             solver.solve();
 			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
 
-            utils.writeXlsx(bestSolution.getMatchList(), info.getStartingDay(), out_filename);
+            utils.writeXlsx(bestSolution.getMatchList(), info, out_filename);
         } catch(Exception e){
             e.printStackTrace(); //FIXME
         }

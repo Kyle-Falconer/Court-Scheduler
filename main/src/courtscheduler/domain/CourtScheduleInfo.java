@@ -54,4 +54,20 @@ public class CourtScheduleInfo {
 	public int getFinalTimeSlotIndex() {
 		return numberOfTimeSlotsPerDay - 1;
 	}
+
+	public String getHumanReadableTime(int index) {
+		int minutesFromMidnight = timeslotMidnightOffsetInMinutes + (timeslotDurationInMinutes * index);
+		int hours = minutesFromMidnight / 60;
+		int minutes = minutesFromMidnight % 60;
+		String suffix;
+		if (hours < 12) {
+			suffix = "AM";
+		}
+		else {
+			suffix = "PM";
+			if (hours > 12)
+				hours -= 12;
+		}
+		return String.format("%d:%02d " + suffix, hours, minutes);
+	}
 }

@@ -17,6 +17,8 @@ public class CourtScheduleIO {
     private List<Match> matchList;
     private static List<Team> teamList;
 
+	private static final boolean DEBUG = true;
+
     public CourtScheduleIO(){
         matchList = new ArrayList<Match>();
         teamList = new ArrayList<Team>();
@@ -55,7 +57,7 @@ public class CourtScheduleIO {
     }
 
 
-    public void writeXlsx(List<Match> matches, LocalDate firstDay, String filepath) {
+    public void writeXlsx(List<Match> matches, CourtScheduleInfo info, String filepath) {
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Conference 1");
@@ -73,7 +75,7 @@ public class CourtScheduleIO {
         // Team firstTeamOnList = matchList.getTeam1();
         //int conf = firstTeamOnList.getConference();
         header.createCell(0).setCellValue("Conference:");
-        header.createCell(1).setCellValue("conf");
+        header.createCell(1).setCellValue("1");     // FIXME
         rowNumber = rowNumber + 2;
 
         header = sheet.createRow(rowNumber);
@@ -101,16 +103,26 @@ public class CourtScheduleIO {
 
 			// date
 			Integer matchDateIndex = match.getMatchSlot().getDay();
-			LocalDate matchDate = firstDay.plusDays(matchDateIndex);
+			LocalDate matchDate = info.getStartingDay().plusDays(matchDateIndex);
             String day = matchDate.dayOfWeek().getAsText();
             dataRow.createCell(cellNumber++).setCellValue(day);
-            dataRow.createCell(cellNumber++).setCellValue(matchDate.toString());
+			String date = matchDate.toString();
+			if (DEBUG == true) {
+				date = date + " [" + matchDateIndex + "]";
+			}
+            dataRow.createCell(cellNumber++).setCellValue(date);
 
             Integer matchTime = match.getMatchSlot().getTime();
-            dataRow.createCell(cellNumber++).setCellValue(matchTime);
+			String time = info.getHumanReadableTime(matchTime);
+			if (DEBUG == true) {
+				time = time + " [" + matchTime + "]";
+			}
+            dataRow.createCell(cellNumber++).setCellValue(time);
 
             Integer courtId = match.getMatchSlot().getCourt();
-            dataRow.createCell(cellNumber).setCellValue(courtId);
+			// normal people like their courts indexed from one, not zero,
+			// so add one if we're printing for the client
+            dataRow.createCell(cellNumber).setCellValue(courtId + (DEBUG ? 0 : 1));
 
         }
 
