@@ -29,22 +29,13 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     public static int NUMBER_OF_COURTS;
 
     private HardSoftScore score;
-    private CourtScheduleInfo courtScheduleInfo;
 
     private List<Team> teamList;
-    private List<MatchTime> matchTimeList;
-    private List<MatchDate> matchDateList;
-
-    private List<Conference> conferenceList;
+	private List<Match> matchList;
+	private List<MatchSlot> matchSlots;
 
     // configurables
     private CourtScheduleInfo info;
-
-    public List<Match> matchAssignmentList;
-    public List<MatchSlot> matchSlots;
-
-    private Match[][][] schedule;
-    private List<Match> matchList;
 
     public CourtSchedule(){
 
@@ -52,52 +43,8 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
     public CourtSchedule(List<Team> teamList, CourtScheduleInfo info){
         this.info = info;
-        schedule = new Match[info.getNumberOfConferenceDays()][info.getNumberOfTimeSlotsPerDay()][info.getNumberOfCourts()];
-
 
         this.teamList = teamList;
-        //time
-        MatchTime[] time = new MatchTime[24];
-        for(int i=0;i<24;i++){
-            MatchTime hourly= new MatchTime();
-            hourly.setStartTime(i+":00");
-            hourly.setEndTime(i+":50");
-            time[i]=hourly;
-        }
-        setMatchTimeList(Arrays.asList(time));
-
-        //date
-        MatchDate[] date = new MatchDate[31];
-        for(int i=0;i<31;i++){
-            MatchDate day= new MatchDate();
-            Calendar cal = Calendar.getInstance();
-            cal.set(2013, 9, i);
-            day.setCal(cal);
-            switch(i%7){
-                case(0):
-                    day.setDayOfWeek(DayOfWeek.MONDAY);
-                    break;
-                case(1):
-                    day.setDayOfWeek(DayOfWeek.TUESDAY);
-                    break;
-                case(2):
-                    day.setDayOfWeek(DayOfWeek.WEDNESDAY);
-                    break;
-                case(3):
-                    day.setDayOfWeek(DayOfWeek.THURSDAY);
-                    break;
-                case(4):
-                    day.setDayOfWeek(DayOfWeek.FRIDAY);
-                    break;
-                case(5):
-                    day.setDayOfWeek(DayOfWeek.SATURDAY);
-                    break;
-                case(6):
-                    day.setDayOfWeek(DayOfWeek.SUNDAY);
-            }
-            date[i]=day;
-        }
-        setMatchDateList(Arrays.asList(date));
 
 
         //Round-Robin construction of initial match list.
@@ -107,18 +54,6 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         getMatchSlots();
         // make the preliminary schedule
         setPreliminarySchedule();
-
-        //conference
-        List<Conference> conferences= new ArrayList<Conference>();
-        for(int i=0;i<teamList.size();i++){
-            for(int j=0;j<4;j++){
-                Conference conference = new Conference();
-                conference.setConference(j);
-                conference.setTeam(teamList.get(i));
-                conferences.add(conference);
-            }
-        }
-        setConferenceList(conferences);
 
     }
 
@@ -173,15 +108,6 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         return false;
     }
 
-
-    public void setCourtScheduleInfo(CourtScheduleInfo courtScheduleInfo) {
-        this.courtScheduleInfo = courtScheduleInfo;
-    }
-
-    public CourtScheduleInfo getCourtScheduleInfo() {
-        return courtScheduleInfo;
-    }
-
     public void setTeamList(List<Team> teamList) {
         this.teamList = teamList;
     }
@@ -189,22 +115,6 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     @ValueRangeProvider(id = "teamRange")
     public List<Team> getTeamList() {
         return teamList;
-    }
-
-    public void setMatchTimeList(List<MatchTime> matchTimeList) {
-        this.matchTimeList = matchTimeList;
-    }
-
-    public List<MatchTime> getMatchTimeList() {
-        return matchTimeList;
-    }
-
-    public void setMatchDateList(List<MatchDate> matchDateList) {
-        this.matchDateList = matchDateList;
-    }
-
-    public List<MatchDate> getMatchDateList() {
-        return matchDateList;
     }
 
     public void setMatchList(List<Match> matchList) {
@@ -215,20 +125,6 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     }
     public Match getNextMatch(){
         return matchList.remove(0);
-    }
-
-    public void setConferenceList(List<Conference> conferenceList) {
-        this.conferenceList = conferenceList;
-    }
-
-    public List<Conference> getConferenceList() {
-        return conferenceList;
-    }
-
-
-
-    public void setMatchAssignmentList(List<Match> matchList) {
-        this.matchAssignmentList = matchAssignmentList;
     }
 
     @PlanningEntityCollectionProperty
@@ -273,15 +169,9 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     @Override
     public Collection<? extends Object> getProblemFacts() {
         List<Object> facts = new ArrayList<Object>();
-        facts.add(courtScheduleInfo);
+        facts.add(info);
         facts.addAll(teamList);
         facts.addAll(matchList);
-        facts.addAll(matchDateList);
-        facts.addAll(matchTimeList);
-        facts.addAll(conferenceList);
-        //facts.addAll(genderList);
-        //facts.addAll(gradeList);
-        //facts.addAll(levelList);
         // Do not add the planning entity's (matchAssignmentList) because that will be done automatically
         return facts;  //To change body of implemented methods use File | Settings | File Templates.
     }

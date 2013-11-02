@@ -29,7 +29,6 @@ public class CourtScheduleInfo {
 		numberOfTimeSlotsPerDay = 16;  // end at ~8:30pm
 		timeslotDurationInMinutes = 50;
 		DateConstraint.setInfo(this);
-
 	}
 
 	public int getNumberOfConferenceDays() {
@@ -50,5 +49,9 @@ public class CourtScheduleInfo {
 	}
 	public boolean dayIsInConference(LocalDate date) {
 		return startingDay.isBefore(date) && endingDay.isAfter(date);
+	}
+
+	public int getFinalTimeSlotIndex() {
+		return numberOfTimeSlotsPerDay - 1;
 	}
 }

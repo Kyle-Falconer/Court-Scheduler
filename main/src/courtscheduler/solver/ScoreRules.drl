@@ -21,6 +21,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 import courtscheduler.domain.CourtSchedule;
+import courtscheduler.domain.CourtScheduleInfo;
 import courtscheduler.domain.Match;
 import courtscheduler.domain.Team;
 
@@ -47,12 +48,12 @@ global HardSoftScoreHolder scoreHolder;
 
 // THIS DOES NOT HANDLE THE CASE WHERE A TEAM HAS (BACK TO BACK AND DOUBLE HEADERS) SET TO "TRUE"
 // Not sure if this is a necessary constraint?
-
+/*
 // teams should not play twice on one day if they do not want double headers or back to back games
 rule "noTwoGameDayTeam1"
     when
-        Match($team1 : team1, $date : Date, $team1Id : team1Id, $matchSlot : matchSlot)
-        Match(team1 == $team1, Date == $date, matchSlot != $matchSlot) or Match(team2 == $team1, Date == $date, matchSlot != $matchSlot)
+        Match($team1 : team1, $team1Id : team1Id, $matchSlot : matchSlot)
+        Match(team1 == $team1, matchSlot != $matchSlot) or Match(team2 == $team1, Date == $date, matchSlot != $matchSlot)
 
         Team(teamId == $team1Id, DoubleHeader == false, BackToBack == false)
     then
@@ -68,7 +69,7 @@ rule "noTwoGameDayTeam2"
     then
         scoreHolder.addHardConstraintMatch(kcontext, -15);
 end
-
+*/
 // when a team is playing when they aren't available, that's bad
 rule "availability"
 	when
@@ -78,31 +79,34 @@ rule "availability"
 end
 
 // when there are two matches with the same matchslot, and they aren't the same, that's bad
-rule "overlappingGamesTeam1"
+rule "overlappingGames"
 	when
-    	Match($team1 : team1, $matchSlot : matchSlot)
-    	Match(team1 != $team1, matchSlot == $matchSlot)
+    	$match1 : Match($matchSlot : matchSlot)
+    	Match(matchSlot == $matchSlot, this != $match1)
 	then
 		scoreHolder.addHardConstraintMatch(kcontext, -20);
 end
 
-rule "overlappingGamesTeam2"
-    when
-        Match($team2 : team2, $matchSlot : matchSlot)
-        Match(team2 != $team2, matchSlot == $matchSlot)
-    then
-    	scoreHolder.addHardConstraintMatch(kcontext, -20);
-end
-
-
-
-
-/*
-
-
 // ############################################################################
 // Soft constraints
 // ############################################################################
+
+// prefer not to use the earliest time slot
+rule "noEarlyBird"
+	when
+		Match(time == 0)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -1);
+end
+// prefer not to use the latest time slot
+rule "noNightOwl"
+	when
+		CourtScheduleInfo($time : finalTimeSlotIndex)
+		Match(time == $time)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -1);
+end
+/*
 
 // team likes double headers
 rule "doubleHeader"
@@ -111,7 +115,7 @@ rule "doubleHeader"
         $Match2 : Match(t1 == $t1, Date = $date, Time != $time + 2)
         Team(teamName : $t1, DoubleHeader == true)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, DoubleHeaderPreference.getWeight())
+        scoreHolder.addSoftConstraintMatch(kcontext, DoubleHeaderPreference.getWeight());
 end
 
 // team likes back to back
@@ -121,6 +125,24 @@ rule "backToBack"
         $Match2 : Match(t1 == $t1, Date = $date, Time != $time + 1)
         Team(teamName : $t1, BackToBack == true)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, BackToBackPreference.getWeight())
+        scoreHolder.addSoftConstraintMatch(kcontext, BackToBackPreference.getWeight());
 end
 */
+
+/*
+// prefer to only schedule games with one gender on a particular day and court
+rule "gender"
+	when
+		Match($date : date, $court : court, $gender : gender)
+		Match(date == $date, court == $court, gender != $gender)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -3);
+end
+
+rule "basketHeight"
+	when
+		Match($bh : basketHeight, $date : date, $court : court)
+		Match(date == $date, court == $court, $bh != basketHeight)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -3);
+end*/

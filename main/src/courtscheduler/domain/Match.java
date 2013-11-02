@@ -73,11 +73,24 @@ public class Match {
 	public Integer getCourt() {
 		return this.getMatchSlot().getCourt();
 	}
+	public String getGender() {
+		return team1.getGender(); // FIXME
+	}
+
+	public Match getThis() {
+		// Why in the hell do we need this? So that the Drools Rules engine can access this.
+		// Yeah, it sucks, but it's a lot easier than writing the arcane invocations of DRL, so. --MS
+		return this;
+	}
 
     public boolean containsTeamsFrom(Match other) {
         return this.team1.equals(other.team1) || this.team1.equals(other.team2) ||
                 this.team2.equals(other.team1) || this.team2.equals(other.team2);
     }
+
+	public int getBasketHeight() {
+		return team1.getGrade(); // FIXME
+	}
 
 	public String toString() {
 		return new StringBuilder()
