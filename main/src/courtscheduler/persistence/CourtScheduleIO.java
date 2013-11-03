@@ -7,6 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
 
+import java.lang.NumberFormatException;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
@@ -48,7 +49,7 @@ public class CourtScheduleIO {
             rowCounter+=1;
         }
 
-        for(int x = 0; x < 7; x++)
+        for(int x = 0; x < rowCount-1; x++)
             System.out.println(teamList.get(x));
 
         System.out.println(new java.util.Date() + "[INFO] Processing finished."); // Converted document: \"test.csv\"");
@@ -159,9 +160,20 @@ public class CourtScheduleIO {
 
             Cell cell = currentRow.getCell(columnCounter);
 
+            if(cell != null) {
+                columnCounter++;
+                continue;  // if the cell is null just jump to the next iteration
+            }
+
             if(columnCounter == 0){
-                int index = cell.toString().indexOf(".");
-                teamId = Integer.parseInt(cell.toString().substring(0,index));
+                // I think this is unnecessary with the current format of the workbook ~ Michael
+                /*int index = cell.toString().indexOf(".");
+                teamId = Integer.parseInt(cell.toString().substring(0,index));*/
+                try {
+                    teamId = Integer.parseInt(cell.toString());
+                }catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
                 team.setTeamId(teamId);
             }
             else if(columnCounter == 1)
@@ -180,8 +192,14 @@ public class CourtScheduleIO {
                 team.setGender(gender);
             }
             else if(columnCounter == 5){
-                int index = cell.toString().indexOf(".");
-                grade = Integer.parseInt(cell.toString().substring(0,index));
+                // I don't think this is necessary given the current format of the workbook ~Michael
+                /*int index = cell.toString().indexOf(".");
+                grade = Integer.parseInt(cell.toString().substring(0,index));*/
+                try{
+                    grade = Integer.parseInt(cell.toString());
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
                 team.setGrade(grade);
             }
             else if(columnCounter == 6){
@@ -195,9 +213,6 @@ public class CourtScheduleIO {
             }
             else if(columnCounter == 8)
                 notSameTimeAs = cell.toString();
-
-
-
 
 
             columnCounter+=1;
@@ -221,61 +236,52 @@ public class CourtScheduleIO {
         SharedTeams dontPlay=team.getSharedTeams();
         dontPlay.addSharedTeam(team.getTeamId());
         SharedTeams notSameTime= new SharedTeams();
+
         for(String request : requestArray) {
 
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
             request=request.toLowerCase();
             request=request.trim();
-            if(request.startsWith("xd")) {
+            if(request.startsWith("xd"))
                 badDates=requestOffDate(request,team,badDates);
-            }
-            else if(request.contentEquals("")){
-            }
 
             // CANT PLAY UNTIL AFTER CERTAIN TIME //
-            else if(request.startsWith("after")){
+            else if(request.startsWith("after"))
                 badDates=requestAfterTime(request, team, badDates);
-            }
 
             // CANT PLAY UNTIL BEFORE CERTAIN TIME //
-            else if(request.startsWith("before")){
+            else if(request.startsWith("before"))
                 badDates=requestBeforeTime(request,team,badDates);
-            }
 
             // CANT PLAY BETWEEN CERTAIN TIME //
-            else if(request.startsWith("xr")) {
+            else if(request.startsWith("xr"))
                 badDates=requestOffTime(request, team, badDates);
-            }
 
             // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY //
-            else if(request.startsWith("pd")) {
+            else if(request.startsWith("pd"))
                 prefDates=requestPreferredDate(request,team,prefDates);
-            }
+
             //DONT PLAY THESE TEAMS
-            else if(request.startsWith("xplay")) {
+            else if(request.startsWith("xplay"))
                 dontPlay=requestDontPlay(request, team, dontPlay);
-            }
+
             // TEAM REQUEST TO PLAY ANOTHER TEAM ONLY ONCE
-            else if(request.startsWith("playonce")) {
+            else if(request.startsWith("playonce"))
                 playOnceTeamList=requestPlayOnce(request, team,playOnceTeamList);
-            }
 
             // DOUBLE HEADER PREFERENCE REQUEST (DEFAULTED TO false) //
             else if(request.startsWith("DH"))
                 likesDoubleHeaders = true;
 
                 // BACK TO BACK PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(request.startsWith("B2B")){
+            else if(request.startsWith("B2B"))
                 likesBackToBack = true;
-            }
-            else if(request.startsWith("nst")){
+
+            else if(request.startsWith("nst"))
                 notSameTime=requestNotSameTime(request, team, notSameTime);
-            }
 
-            else{
+            else
                 debug("Unknown constraint:" + request);
-            }
-
         }
 
         team.setOffTimes(new OffTimes(offTimeList));
