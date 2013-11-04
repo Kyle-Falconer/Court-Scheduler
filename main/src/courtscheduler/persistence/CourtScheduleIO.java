@@ -164,20 +164,17 @@ public class CourtScheduleIO {
 
             Cell cell = currentRow.getCell(columnCounter);
 
-            if(cell != null) {
+
+            if(cell == null) {
                 columnCounter++;
                 continue;  // if the cell is null just jump to the next iteration
             }
 
+
+
             if(columnCounter == 0){
-                // I think this is unnecessary with the current format of the workbook ~ Michael
-                /*int index = cell.toString().indexOf(".");
-                teamId = Integer.parseInt(cell.toString().substring(0,index));*/
-                try {
-                    teamId = Integer.parseInt(cell.toString());
-                }catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
+                int index = cell.toString().indexOf(".");
+                teamId = Integer.parseInt(cell.toString().substring(0,index));
                 team.setTeamId(teamId);
             }
             else if(columnCounter == 1)
@@ -196,14 +193,9 @@ public class CourtScheduleIO {
                 team.setGender(gender);
             }
             else if(columnCounter == 5){
-                // I don't think this is necessary given the current format of the workbook ~Michael
-                /*int index = cell.toString().indexOf(".");
-                grade = Integer.parseInt(cell.toString().substring(0,index));*/
-                try{
-                    grade = Integer.parseInt(cell.toString());
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
+
+                int index = cell.toString().indexOf(".");
+                grade = Integer.parseInt(cell.toString().substring(0,index));
                 team.setGrade(grade);
             }
             else if(columnCounter == 6){
