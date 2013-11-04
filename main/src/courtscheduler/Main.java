@@ -2,14 +2,10 @@ package courtscheduler;
 
 import courtscheduler.domain.CourtSchedule;
 import courtscheduler.domain.CourtScheduleInfo;
-import courtscheduler.domain.DateConstraint;
 import courtscheduler.persistence.CourtScheduleIO;
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
-import org.optaplanner.core.impl.solution.Solution;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -23,17 +19,17 @@ import java.util.Scanner;
  */
 public class Main {
 
-    protected static int LOG = 2;
+    public static int LOG_LEVEL = 2;
 
     public static void main(String[] args) throws Exception {
 
 
-        if (LOG >= 1) {
+        if (LOG_LEVEL >= 1) {
             System.out.println("Court Scheduler");
             System.out.println("============================================================");
         }
 
-        if (LOG >= 3) {
+        if (LOG_LEVEL >= 3) {
             System.out.println("Current working directory = " + System.getProperty("user.dir"));
             ClassLoader cl = ClassLoader.getSystemClassLoader();
 
@@ -56,7 +52,7 @@ public class Main {
         SolverConfig solverConfig = solverFactory.getSolverConfig();
         Solver solver = solverConfig.buildSolver();
 
-        if (LOG >= 2) {
+        if (LOG_LEVEL >= 2) {
             System.out.println("\n\nconfiguration loaded...");
         }
 
@@ -127,4 +123,5 @@ public class Main {
         }
         return result;
     }
+
 }

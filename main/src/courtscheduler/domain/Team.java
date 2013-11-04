@@ -126,7 +126,14 @@ public class Team {
 
     @Override
     public String toString() {
-      return teamId.toString() + "~" + teamName + "~" + year + "~" + gender + "~" + grade.toString() + "~" + level;
+        String teamId_ = teamId != null ?  teamId.toString()  : "";
+        String teamName_ = teamName != null ?  teamName  : "";
+        String year_ = year != null ?  year  : "";
+        String gender_ = gender != null ?  gender  : "";
+        String grade_ = grade != null ?  grade.toString()  : "";
+        String level_ = level != null ?  level  : "";
+
+      return teamId_ + "~" + teamName_ + "~" + year_ + "~" + gender_ + "~" + grade_ + "~" + level_;
     }
 
     public MatchAvailability getAvailability() {

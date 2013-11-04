@@ -1,5 +1,6 @@
 package courtscheduler.persistence;
 
+import courtscheduler.Main;
 import courtscheduler.domain.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -7,10 +8,9 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
 
-import java.lang.NumberFormatException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.*;
 
 public class CourtScheduleIO {
 
@@ -28,7 +28,6 @@ public class CourtScheduleIO {
 
     public List<Team> readXlsx(String filename)throws Exception {
 
-
         File file = new File(filename);
         FileInputStream fis = new FileInputStream(file);
         XSSFWorkbook wb = new XSSFWorkbook(fis);
@@ -39,20 +38,25 @@ public class CourtScheduleIO {
         Integer rowCounter = 2;
         Integer rowCount = sh.getLastRowNum();
 
-        System.out.println(new java.util.Date() + "[INFO] Worksheet Name: " + sh.getSheetName());
-        System.out.println(new java.util.Date() + "[INFO] Worksheet has " + (rowCount - 1) + " lines of data.");
+        if (Main.LOG_LEVEL >= 1 ) {
+            System.out.println(new java.util.Date() + "[INFO] Worksheet Name: " + sh.getSheetName());
+            System.out.println(new java.util.Date() + "[INFO] Worksheet has " + (rowCount - 1) + " lines of data.");
+        }
 
         while (rowCounter <= rowCount){
             Row currentRow = sh.getRow(rowCounter);
-			if (currentRow != null && currentRow.getLastCellNum() > 0)
-            	processRow(currentRow);
+			if (currentRow != null && currentRow.getLastCellNum() > 0){
+                teamList.add(processRow(currentRow));
+            }
             rowCounter+=1;
         }
 
-        for(int x = 0; x < rowCount-1; x++)
-            System.out.println(teamList.get(x));
-
-        System.out.println(new java.util.Date() + "[INFO] Processing finished."); // Converted document: \"test.csv\"");
+        if (Main.LOG_LEVEL >= 1) {
+            for (int x = 0; x < teamList.size(); x++) {
+                System.out.println(teamList.get(x));
+            }
+            System.out.println(new java.util.Date() + "[INFO] Processing finished.");
+        }
 
         return teamList;
     }
@@ -141,7 +145,7 @@ public class CourtScheduleIO {
         }
     }
 
-    private static void processRow(Row currentRow) {
+    private Team processRow(Row currentRow) {
         short columnCount = currentRow.getLastCellNum();
         int columnCounter = 0;
 
@@ -217,7 +221,7 @@ public class CourtScheduleIO {
 
             columnCounter+=1;
         }
-        teamList.add(team);
+        return team;
     }
 
     private static void processRequestConstraints(Team team, String requests) {
@@ -281,7 +285,7 @@ public class CourtScheduleIO {
                 notSameTime=requestNotSameTime(request, team, notSameTime);
 
             else
-                debug("Unknown constraint:" + request);
+                System.out.println("Unknown constraint:" + request);
         }
 
         team.setOffTimes(new OffTimes(offTimeList));
@@ -295,11 +299,11 @@ public class CourtScheduleIO {
         request=request.replace("xd ","");
         String[] dates = request.split("-");
         if(dates[0].split("/").length<3){
-            debug("Team" + team.getTeamId() + "xd constraint date 1 is too short.(" + request);
+            System.out.println("Team" + team.getTeamId() + "xd constraint date 1 is too short.(" + request);
         }
         if(dates.length>1){
             if(dates[1].split("/").length<3){
-                debug("Team" + team.getTeamId() + "xd constraint date 2 is too short." + request);
+                System.out.println("Team" + team.getTeamId() + "xd constraint date 2 is too short." + request);
             }
             badDates.setStringDates(dates[0], dates[1], false);
         }
@@ -314,7 +318,7 @@ public class CourtScheduleIO {
         if(request.contains("pm") || request.contains("p.m.")
                 ||request.contains("am")||request.contains("a.m.")){
 
-            debug("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
+            System.out.println("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
         }
         request=request.replace("after ", "");
         request = getMilitaryTime(request);
@@ -329,7 +333,7 @@ public class CourtScheduleIO {
         if(request.contains("pm") || request.contains("p.m.")
                 ||request.contains("am")||request.contains("a.m.")){
 
-            debug("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
+            System.out.println("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
         }
         request=request.replace("before ", "");
         request = getMilitaryTime(request);
@@ -345,12 +349,12 @@ public class CourtScheduleIO {
         if(times[0].contains("pm") || times[0].contains("p.m.")
                 ||times[0].contains("am")||times[0].contains("a.m.")){
 
-            debug("Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);
+            System.out.println("Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);
         }
         if(times[1].contains("pm") || times[1].contains("p.m.")
                 ||times[1].contains("am")||times[1].contains("a.m.")){
 
-            debug("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request);
+            System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request);
         }
         times[0]=getMilitaryTime(times[0]);
         times[1]=getMilitaryTime(times[1]);
@@ -373,11 +377,11 @@ public class CourtScheduleIO {
         request=request.replace("pd ","");
         String[] dates = request.split("-");
         if(dates[0].split("/").length<3){
-            debug("Team" + team.getTeamId() + "pd constraint date 1 is too short.(" + request);
+            System.out.println("Team" + team.getTeamId() + "pd constraint date 1 is too short.(" + request);
         }
         if(dates.length>1){
             if(dates[1].split("/").length<3){
-                debug("Team"+team.getTeamId()+"pd constraint date 2 is too short."+request);
+                System.out.println("Team"+team.getTeamId()+"pd constraint date 2 is too short."+request);
             }
             prefDates.addDates(prefDates.findDateRange(dates[0],dates[1]));
         }
@@ -397,7 +401,7 @@ public class CourtScheduleIO {
             teamId = Integer.parseInt(request.substring(0,index));
         }
         catch(NumberFormatException nfe){
-            debug("Team" + team.getTeamId() + "xplay constraint teamID error." + request);
+            System.out.println("Team" + team.getTeamId() + "xplay constraint teamID error." + request);
         }
         dontPlay.addSharedTeam(teamId);
         return dontPlay;
@@ -410,7 +414,7 @@ public class CourtScheduleIO {
             teamId=Integer.parseInt(request);
         }
         catch(NumberFormatException nfe){
-            debug("Team"+team.getTeamId()+"nst constraint teamId error."+request);
+            System.out.println("Team"+team.getTeamId()+"nst constraint teamId error."+request);
         }
         notSameTime.addSharedTeam(teamId);
         return notSameTime;
@@ -463,9 +467,4 @@ public class CourtScheduleIO {
 
         return columnWidth;
     }
-
-    private static void debug(String debugMessage) {
-        System.out.println(debugMessage);
-    }
-
 }
