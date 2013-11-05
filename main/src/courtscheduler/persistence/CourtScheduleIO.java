@@ -340,12 +340,12 @@ public class CourtScheduleIO {
         if(times[0].contains("pm") || times[0].contains("p.m.")
                 ||times[0].contains("am")||times[0].contains("a.m.")){
 
-            System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 1." + request);
+            System.out.println("Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);  // FIXME: is this the right error message?
         }
         if(times[1].contains("pm") || times[1].contains("p.m.")
                 ||times[1].contains("am")||times[1].contains("a.m.")){
 
-            System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request);
+            System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request); // FIXME: is this the right error message?
         }
         times[0]=getMilitaryTime(times[0]);
         times[1]=getMilitaryTime(times[1]);
@@ -372,7 +372,7 @@ public class CourtScheduleIO {
         }
         if(dates.length>1){
             if(dates[1].split("/").length<3){
-                System.out.println("Team" + team.getTeamId() + "pd constraint date 2 is too short." + request);
+                System.out.println("Team"+team.getTeamId()+"pd constraint date 2 is too short."+request);
             }
             prefDates.addDates(prefDates.findDateRange(dates[0],dates[1]));
         }
@@ -391,7 +391,7 @@ public class CourtScheduleIO {
             teamId = Integer.parseInt(request);
         }
         catch(NumberFormatException nfe){
-            System.out.println("Team" + team.getTeamId() + "xplay constraint teamID error." + request);
+            System.out.println("Team" + team.getTeamId() + "xplay constraint teamID error." + request); // FIXME: this is not human readable enough!
         }
         dontPlay.addSharedTeam(teamId);
         return dontPlay;
@@ -404,7 +404,7 @@ public class CourtScheduleIO {
             teamId=Integer.parseInt(request);
         }
         catch(NumberFormatException nfe){
-            System.out.println("Team" + team.getTeamId() + "nst constraint teamId error." + request);
+            System.out.println("Team"+team.getTeamId()+"nst constraint teamId error."+request); // FIXME: this is not human readable enough!
         }
         notSameTime.addSharedTeam(teamId);
         return notSameTime;
@@ -417,6 +417,10 @@ public class CourtScheduleIO {
             time = time.replace("p.m.", "");
             time=time.trim();
             String[] t = time.split(":");
+            if (t.length < 2) {
+                System.out.println("Time not formatted correctly: "+ time);
+                return "";
+            }
             try {
                 Integer timeInt = Integer.parseInt(t[0]);
                 if(timeInt != 12){
@@ -424,6 +428,12 @@ public class CourtScheduleIO {
                 }
                 return timeInt.toString()+":"+t[1];
             }catch (NumberFormatException e) {
+                System.out.println("Time not formatted correctly? "+
+                        "Could not read a number from: \""+ t[0]+"\", "+
+                        "given a time of "+time);
+                if (Main.LOG_LEVEL > 1) {
+                    e.printStackTrace();
+                }
                 return "";
             }
         }else {
