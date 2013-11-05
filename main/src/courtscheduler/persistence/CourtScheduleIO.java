@@ -9,6 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
 
 import java.io.*;
+import java.lang.NumberFormatException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +58,6 @@ public class CourtScheduleIO {
 
         return teamList;
     }
-
 
     public void writeXlsx(List<Match> matches, CourtScheduleInfo info, String filepath) {
 
@@ -147,8 +147,8 @@ public class CourtScheduleIO {
         int columnCounter = 0;
 
         Integer teamId = null;
-        String x = "";
         String teamName = "";
+        Integer conference = null;
         String year = "";
         String gender = "";
         Integer grade = null;
@@ -167,16 +167,21 @@ public class CourtScheduleIO {
                 continue;  // if the cell is null just jump to the next iteration
             }
 
-
-
             if(columnCounter == 0){
-                int index = cell.toString().indexOf(".");
-                teamId = Integer.parseInt(cell.toString().substring(0,index));
-                team.setTeamId(teamId);
+                try {
+                    int index = cell.toString().indexOf(".");
+                    teamId = Integer.parseInt(cell.toString().substring(0,index));
+                    conference = Integer.parseInt(cell.toString().substring(0,1));
+                    team.setTeamId(teamId);
+                    team.setConference(conference);
+                } catch (NumberFormatException e) {
+                    //not sure what we should do here, this means a team's id is not being captured
+                    e.printStackTrace();
+                }
             }
-            else if(columnCounter == 1)
-                x = cell.toString();
-
+            else if(columnCounter == 1) {
+                // used to be the "x" column..
+            }
             else if(columnCounter == 2){
                 teamName = cell.toString();
                 team.setTeamName(teamName);
@@ -190,10 +195,14 @@ public class CourtScheduleIO {
                 team.setGender(gender);
             }
             else if(columnCounter == 5){
-
-                int index = cell.toString().indexOf(".");
-                grade = Integer.parseInt(cell.toString().substring(0,index));
-                team.setGrade(grade);
+                try {
+                    int index = cell.toString().indexOf(".");
+                    grade = Integer.parseInt(cell.toString().substring(0,index));
+                    team.setGrade(grade);
+                } catch (NumberFormatException e) {
+                    // still don't know what to do about this, this is bad
+                    e.printStackTrace();
+                }
             }
             else if(columnCounter == 6){
                 level = cell.toString();
@@ -463,5 +472,26 @@ public class CourtScheduleIO {
         }
 
         return columnWidth;
+    }
+
+    private static void order(List<Match> matchList) {
+
+        Collections.sort(matchList, new Comparator() {
+
+            public int compare(Object o1, Object o2) {
+
+                Integer x1 = ((Match) o1).getDate();
+                Integer x2 = ((Match) o2).getDate();
+                int iComp = x1.compareTo(x2);
+
+                if (iComp != 0) {
+                    return iComp;
+                } else {
+                    Integer x1 = ((Match) o1).getTime();
+                    Integer x2 = ((Match) o2).getTime();
+                    return x1.compareTo(x2);
+                }
+            }
+        });
     }
 }
