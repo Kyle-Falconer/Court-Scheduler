@@ -12,14 +12,14 @@ import java.util.List;
  */
 public class SharedTeams extends Constraint {
 
-    List<Integer> sharedTeamList = new ArrayList<Integer>();
+    private List<Integer> sharedTeamList;
+
+	public SharedTeams() {
+		sharedTeamList = new ArrayList<Integer>();
+	}
 
     public List<Integer> getSharedTeamList() {
         return sharedTeamList;
-    }
-
-    public void setSharedTeamList(List<Integer> sharedTeamList) {
-        this.sharedTeamList = sharedTeamList;
     }
 
     public void addSharedTeam(Integer teamId){

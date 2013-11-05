@@ -229,8 +229,7 @@ public class CourtScheduleIO {
 		MatchAvailability availability = team.getAvailability();
         DateConstraint badDates = team.getBadDates();
         DateConstraint prefDates = team.getPreferredDates();
-        SharedTeams dontPlay=team.getSharedTeams();
-        dontPlay.addSharedTeam(team.getTeamId());
+        SharedTeams dontPlay=team.getDontPlay();
         SharedTeams notSameTime= new SharedTeams();
 
         for(String request : requestArray) {
@@ -341,7 +340,7 @@ public class CourtScheduleIO {
         if(times[0].contains("pm") || times[0].contains("p.m.")
                 ||times[0].contains("am")||times[0].contains("a.m.")){
 
-            System.out.println("Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);
+            System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 1." + request);
         }
         if(times[1].contains("pm") || times[1].contains("p.m.")
                 ||times[1].contains("am")||times[1].contains("a.m.")){
@@ -373,7 +372,7 @@ public class CourtScheduleIO {
         }
         if(dates.length>1){
             if(dates[1].split("/").length<3){
-                System.out.println("Team"+team.getTeamId()+"pd constraint date 2 is too short."+request);
+                System.out.println("Team" + team.getTeamId() + "pd constraint date 2 is too short." + request);
             }
             prefDates.addDates(prefDates.findDateRange(dates[0],dates[1]));
         }
@@ -387,10 +386,9 @@ public class CourtScheduleIO {
     private static SharedTeams requestDontPlay(String request, Team team, SharedTeams dontPlay){
         //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
         request=request.replace("xplay ", "");
-        int index = request.indexOf(".");
         Integer teamId=null;
         try{
-            teamId = Integer.parseInt(request.substring(0,index));
+            teamId = Integer.parseInt(request);
         }
         catch(NumberFormatException nfe){
             System.out.println("Team" + team.getTeamId() + "xplay constraint teamID error." + request);
@@ -406,7 +404,7 @@ public class CourtScheduleIO {
             teamId=Integer.parseInt(request);
         }
         catch(NumberFormatException nfe){
-            System.out.println("Team"+team.getTeamId()+"nst constraint teamId error."+request);
+            System.out.println("Team" + team.getTeamId() + "nst constraint teamId error." + request);
         }
         notSameTime.addSharedTeam(teamId);
         return notSameTime;

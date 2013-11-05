@@ -5,6 +5,7 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -106,5 +107,9 @@ public class Match {
 
 	public boolean getCanPlayInCurrentSlot() {
 		return avail.canPlayIn(matchSlot);
+	}
+
+	public List<Integer> getNotSameTimeAs() {
+		return avail.notSameTimeAs.getSharedTeamList();
 	}
 }

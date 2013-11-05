@@ -16,6 +16,7 @@ public class Team {
     private BackToBackPreference backToBackPreference;
     private OffTimes offTimes;
     private PlayOnceRequests playOnceRequests;
+	private SharedTeams dontPlay;
 
     private MatchAvailability avail;
 
@@ -23,9 +24,10 @@ public class Team {
     public Team() {
         doubleHeaderPreference = new DoubleHeaderPreference(false);
         backToBackPreference = new BackToBackPreference(false);
-        offTimes=new OffTimes();
-        playOnceRequests= new PlayOnceRequests();
+        offTimes = new OffTimes();
+        playOnceRequests = new PlayOnceRequests();
 		this.avail = new MatchAvailability();
+		dontPlay = new SharedTeams();
     }
 
     public void setTeamId(Integer teamId) {
@@ -108,8 +110,8 @@ public class Team {
         this.offTimes = offTimes;
     }
 
-    public SharedTeams getSharedTeams() {
-        return avail.dontPlay;
+    public SharedTeams getDontPlay() {
+        return dontPlay;
     }
 
     public PlayOnceRequests getPlayOnceRequests() {
@@ -141,8 +143,8 @@ public class Team {
     }
 
 	public static boolean canPlay(Team t1, Team t2) {
-		List<Integer> t1BadTeams = t1.getSharedTeams().getSharedTeamList();
-		List<Integer> t2BadTeams = t2.getSharedTeams().getSharedTeamList();
+		List<Integer> t1BadTeams = t1.getDontPlay().getSharedTeamList();
+		List<Integer> t2BadTeams = t2.getDontPlay().getSharedTeamList();
 		return !t1BadTeams.contains(t2.getTeamId()) && !t2BadTeams.contains(t1.getTeamId());
 	}
     public boolean getDoubleHeader(){

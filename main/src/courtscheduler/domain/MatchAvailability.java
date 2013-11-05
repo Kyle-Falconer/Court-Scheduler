@@ -13,14 +13,14 @@ public class MatchAvailability {
     Constraint[] constraints;
     DateConstraint badDates;
     DateConstraint prefDates;
-    SharedTeams dontPlay;
+	SharedTeams notSameTimeAs;
 
 
 
     public MatchAvailability(){
 		badDates = new DateConstraint();
 		prefDates = new DateConstraint();
-		dontPlay = new SharedTeams();
+		notSameTimeAs = new SharedTeams();
     }
 
     public MatchAvailability(MatchAvailability m1, MatchAvailability m2){

@@ -42,7 +42,7 @@ public class MatchSlot extends AbstractPersistable {
     }
 
 	public boolean equals(Object other) {
-		if (other.getClass() != MatchSlot.class) {
+		if (other == null || other.getClass() != MatchSlot.class) {
 			return false;
 		}
 		MatchSlot o = (MatchSlot) other;

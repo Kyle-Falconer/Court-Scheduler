@@ -106,6 +106,16 @@ rule "noNightOwl"
 	then
 		scoreHolder.addSoftConstraintMatch(kcontext, -1);
 end
+
+// prefer not to schedule teams at the same time as ones that share coaches
+rule "notSameTimeAs"
+	when
+		Match($teamlist : notSameTimeAs, $matchSlot : matchSlot)
+		Match($matchSlot == matchSlot && (team1.teamId memberOf $teamlist || team2.teamId memberOf $teamlist))
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -5);
+end
+
 /*
 
 // team likes double headers
