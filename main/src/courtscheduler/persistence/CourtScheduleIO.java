@@ -14,11 +14,8 @@ import java.util.List;
 
 public class CourtScheduleIO {
 
-
     private List<Match> matchList;
     private static List<Team> teamList;
-
-	private static final boolean DEBUG = true;
 
     public CourtScheduleIO(){
         matchList = new ArrayList<Match>();
@@ -112,14 +109,14 @@ public class CourtScheduleIO {
             String day = matchDate.dayOfWeek().getAsText();
             dataRow.createCell(cellNumber++).setCellValue(day);
 			String date = matchDate.toString();
-			if (DEBUG == true) {
+			if (Main.LOG_LEVEL > 1) {
 				date = date + " [" + matchDateIndex + "]";
 			}
             dataRow.createCell(cellNumber++).setCellValue(date);
 
             Integer matchTime = match.getMatchSlot().getTime();
 			String time = info.getHumanReadableTime(matchTime);
-			if (DEBUG == true) {
+			if (Main.LOG_LEVEL > 1) {
 				time = time + " [" + matchTime + "]";
 			}
             dataRow.createCell(cellNumber++).setCellValue(time);
@@ -127,7 +124,7 @@ public class CourtScheduleIO {
             Integer courtId = match.getMatchSlot().getCourt();
 			// normal people like their courts indexed from one, not zero,
 			// so add one if we're printing for the client
-            dataRow.createCell(cellNumber).setCellValue(courtId + (DEBUG ? 0 : 1));
+            dataRow.createCell(cellNumber).setCellValue(courtId + (Main.LOG_LEVEL > 1 ? 0 : 1));
 
         }
 
