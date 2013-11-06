@@ -84,10 +84,10 @@ public class Match implements Comparable<Match> {
 		return this;
 	}
 
-    public boolean containsTeamsFrom(Match other) {
-        return this.team1.equals(other.team1) || this.team1.equals(other.team2) ||
-                this.team2.equals(other.team1) || this.team2.equals(other.team2);
-    }
+	public boolean containsTeamsFrom(Match other) {
+		return this.team1.equals(other.team1) || this.team1.equals(other.team2)
+				|| this.team2.equals(other.team1) || this.team2.equals(other.team2);
+	}
 
 	public int getBasketHeight() {
 		return team1.getGrade(); // FIXME
@@ -137,4 +137,8 @@ public class Match implements Comparable<Match> {
     public int compareTo(Match o){
         return this.compareDateTimes(o);
     }
+
+	public boolean overlapsWith(MatchSlot other) {
+		return matchSlot.getDay().equals(other.getDay()) && matchSlot.getTime().equals(other.getTime());
+	}
 }

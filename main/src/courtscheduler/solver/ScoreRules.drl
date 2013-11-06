@@ -87,6 +87,15 @@ rule "overlappingGames"
 		scoreHolder.addHardConstraintMatch(kcontext, -20);
 end
 
+// a team can't be scheduled for the same time slot on different courts
+rule "oneGamePerTeam"
+	when
+    	$match1 : Match($matchSlot : matchSlot)
+    	Match(this != $match1 && containsTeamsFrom($match1) == true && overlapsWith($matchSlot) == true)
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -20);
+end
+
 // ############################################################################
 // Soft constraints
 // ############################################################################
