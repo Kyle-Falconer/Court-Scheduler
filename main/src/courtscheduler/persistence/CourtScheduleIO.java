@@ -11,6 +11,8 @@ import org.joda.time.LocalDate;
 import java.io.*;
 import java.lang.NumberFormatException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class CourtScheduleIO {
@@ -312,8 +314,8 @@ public class CourtScheduleIO {
 
     public static DateConstraint requestAfterTime(String request, Team team, DateConstraint badDates){
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-        if(request.contains("pm") || request.contains("p.m.")
-                ||request.contains("am")||request.contains("a.m.")){
+        if(!(request.contains("pm") || request.contains("p.m.")
+                ||request.contains("am")||request.contains("a.m."))){
 
             System.out.println("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
         }
@@ -327,8 +329,8 @@ public class CourtScheduleIO {
 
     public static DateConstraint requestBeforeTime(String request, Team team, DateConstraint badDates){
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-        if(request.contains("pm") || request.contains("p.m.")
-                ||request.contains("am")||request.contains("a.m.")){
+        if(!(request.contains("pm") || request.contains("p.m.")
+                ||request.contains("am")||request.contains("a.m."))){
 
             System.out.println("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
         }
@@ -487,8 +489,8 @@ public class CourtScheduleIO {
                 if (iComp != 0) {
                     return iComp;
                 } else {
-                    Integer x1 = ((Match) o1).getTime();
-                    Integer x2 = ((Match) o2).getTime();
+                    x1 = ((Match) o1).getTime();
+                    x2 = ((Match) o2).getTime();
                     return x1.compareTo(x2);
                 }
             }
