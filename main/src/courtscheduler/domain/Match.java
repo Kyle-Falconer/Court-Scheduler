@@ -15,7 +15,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @PlanningEntity
-public class Match {
+public class Match implements Comparable<Match> {
 
     // defining properties: teams
     private Team team1;
@@ -112,4 +112,29 @@ public class Match {
 	public List<Integer> getNotSameTimeAs() {
 		return avail.notSameTimeAs.getSharedTeamList();
 	}
+
+    public int compareDateTimes(Match o) {
+        Integer thisDate = this.getDate();
+        Integer otherDate = o.getDate();
+        int dateCompare = thisDate.compareTo(otherDate);
+
+        if (dateCompare != 0) {
+            return dateCompare;
+        } else {
+            thisDate = this.getTime();
+            otherDate = o.getTime();
+
+            int timeCompare = thisDate.compareTo(otherDate);
+            if (timeCompare != 0){
+                return timeCompare;
+            } else {
+                return this.getCourt().compareTo(o.getCourt());
+            }
+
+        }
+    }
+
+    public int compareTo(Match o){
+        return this.compareDateTimes(o);
+    }
 }

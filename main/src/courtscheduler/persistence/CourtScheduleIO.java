@@ -9,10 +9,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
 
 import java.io.*;
-import java.lang.NumberFormatException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class CourtScheduleIO {
@@ -62,6 +60,8 @@ public class CourtScheduleIO {
     }
 
     public void writeXlsx(List<Match> matches, CourtScheduleInfo info, String filepath) {
+
+        Collections.sort(matches);
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Conference 1");
@@ -476,24 +476,4 @@ public class CourtScheduleIO {
         return columnWidth;
     }
 
-    private static void order(List<Match> matchList) {
-
-        Collections.sort(matchList, new Comparator() {
-
-            public int compare(Object o1, Object o2) {
-
-                Integer x1 = ((Match) o1).getDate();
-                Integer x2 = ((Match) o2).getDate();
-                int iComp = x1.compareTo(x2);
-
-                if (iComp != 0) {
-                    return iComp;
-                } else {
-                    x1 = ((Match) o1).getTime();
-                    x2 = ((Match) o2).getTime();
-                    return x1.compareTo(x2);
-                }
-            }
-        });
-    }
 }

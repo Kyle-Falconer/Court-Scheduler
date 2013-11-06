@@ -1,16 +1,13 @@
 package courtscheduler.domain;
 
 
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.value.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.solution.Solution;
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.*;
 
 // import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -191,5 +188,4 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         }
         return matchSlots;
     }
-
 }
