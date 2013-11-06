@@ -1,5 +1,6 @@
 package courtscheduler.domain;
 
+import org.joda.time.LocalDate;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 
 import java.util.Calendar;
@@ -13,15 +14,15 @@ import java.util.Calendar;
  */
 public class MatchDate implements Comparable<MatchDate>{
 
-    private Calendar cal;
+    private LocalDate date;
     private DayOfWeek dayOfWeek;
 
-    public void setCal(Calendar cal) {
-        this.cal = cal;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
-    public Calendar getCal() {
-        return cal;
+    public LocalDate getDate() {
+        return date;
     }
 
     public void setDayOfWeek(DayOfWeek dayOfWeek) {
@@ -35,6 +36,6 @@ public class MatchDate implements Comparable<MatchDate>{
 
     @Override
     public int compareTo(MatchDate otherDate) {
-        return this.cal.compareTo(otherDate.getCal());  // FIXME:  is this sufficient?
+        return this.date.compareTo(otherDate.getDate());  // FIXME:  is this sufficient?
     }
 }

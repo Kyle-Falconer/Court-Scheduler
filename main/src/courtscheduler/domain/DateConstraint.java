@@ -5,8 +5,6 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
-
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -114,7 +112,7 @@ public class DateConstraint extends Constraint{
     //wrappers for other input types
     // no time
     public void addDate(int day){
-        boolean[] noTimes = makeTimeArray(0,24);
+        boolean[] noTimes = makeTimeArray(0,dates[0].length);
         this.addDate(day, noTimes);
     }
     //no day
@@ -163,49 +161,43 @@ public class DateConstraint extends Constraint{
 
     //conversion methods for days
     //Calendar date ->int date
-    public int findDate(Calendar Date){
-        return Date.get(Calendar.DAY_OF_YEAR);
-    }
 
     //matchDate -> int day (calls calendar find date)
     public int findDate(MatchDate Date){
-        return findDate(Date.getCal());
+        return findDate(Date.getDate());
     }
     //string date->int day (calls calendar find date)
     public int findDate(String Date){
-        Calendar bCal = Calendar.getInstance();
-        String[] bDate= Date.split("/");
-        bCal.set(Integer.valueOf(bDate[2]),Integer.valueOf(bDate[0]),Integer.valueOf(bDate[1]));
-        return findDate(bCal);
+        LocalDate date= LocalDate.parse(Date, dateFormat);
+        return findDate(date);
+    }
+    public int findDate(LocalDate Date){
+        return Days.daysBetween(info.getStartingDay(), Date).getDays();
     }
     //array of matchDate inputs -> array of int days
     public int[] findDates(List<MatchDate> Dates){
         int[] days= new int[Dates.size()];
         for(int i=0;i<Dates.size();i++){
-            days[i]=Dates.get(i).getCal().get(Calendar.DAY_OF_YEAR);
+            days[i]=findDate(Dates.get(i).getDate());
         }
         return days;
 
     }
     //Calender range -> int[] days
-    public int[] findDateRange(Calendar startDate, Calendar endDate){
-        int dayCount=endDate.get(Calendar.DAY_OF_YEAR)-startDate.get(Calendar.DAY_OF_YEAR);
-        int[] days= new int[dayCount];
-        for(int i=0;i<dayCount;i++){
-            days[i]=startDate.get(Calendar.DAY_OF_YEAR);
-            startDate.add(Calendar.DATE,1);
-        }
-        return days;
-    }
+
     //string range -> int[] days (calls calendar range)
     public int[] findDateRange(String startDate, String endDate){
-        String[] sDate= startDate.split("/");
-        String[] eDate= endDate.split("/");
-        Calendar sCal= Calendar.getInstance();
-        sCal.set(Integer.valueOf(sDate[2]),Integer.valueOf(sDate[0]),Integer.valueOf(sDate[1]));
-        Calendar eCal= Calendar.getInstance();
-        eCal.set(Integer.valueOf(eDate[2]),Integer.valueOf(eDate[0]),Integer.valueOf(eDate[1]));
-        return this.findDateRange(sCal,eCal);
+        LocalDate sdate= LocalDate.parse(startDate, dateFormat);
+        LocalDate edate= LocalDate.parse(endDate, dateFormat);
+        return this.findDateRange(sdate,edate);
+    }
+    public int[] findDateRange(LocalDate sdate, LocalDate edate){
+        int dayCount=Days.daysBetween(sdate, edate).getDays();
+        int[] days= new int[dayCount];
+        for(int i=0; i<dayCount; i++){
+            days[i]=findDate(sdate)+i;
+        }
+        return days;
     }
 
 	public static void setInfo(CourtScheduleInfo info) {

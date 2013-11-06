@@ -1,5 +1,6 @@
 package courtscheduler.domain;
 
+import org.joda.time.LocalDate;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
@@ -57,11 +58,11 @@ public class Match {
         return this.team2.getTeamId();
     }
 
-    public MatchDate getMatchDate(Calendar dateScale) {
+    public MatchDate getMatchDate(LocalDate dateScale) {
         MatchDate date = new MatchDate();
         dateScale.add(Calendar.DATE, matchSlot.getDay());
-        date.setCal(dateScale);
-        date.setDayOfWeek(DayOfWeek.valueOfCalendar(dateScale.get(Calendar.DAY_OF_WEEK)));
+        date.setDate(dateScale);
+        date.setDayOfWeek(DayOfWeek.valueOfCalendar(dateScale.getDayOfWeek()));
         return date;
     }
 

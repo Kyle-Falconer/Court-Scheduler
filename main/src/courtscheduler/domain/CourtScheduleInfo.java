@@ -22,8 +22,8 @@ public class CourtScheduleInfo {
 
  	public CourtScheduleInfo(String filepath) {
 		// TODO read these from a file
-		startingDay = new LocalDate( 2014, 1, 1);
-		endingDay = new LocalDate( 2014, 1, 15);
+		startingDay = new LocalDate( 2013, 1, 1);
+		endingDay = new LocalDate( 2013, 3, 15);
 		numberOfCourts = 3;
 		timeslotMidnightOffsetInMinutes = 420;  // 7am
 		numberOfTimeSlotsPerDay = 16;  // end at ~8:30pm

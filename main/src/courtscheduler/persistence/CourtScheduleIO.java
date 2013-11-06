@@ -234,7 +234,10 @@ public class CourtScheduleIO {
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
             request=request.toLowerCase();
             request=request.trim();
-            if(request.startsWith("xd"))
+            if(request.equals("")){
+
+            }
+            else if(request.startsWith("xd"))
                 badDates=requestOffDate(request,team,badDates);
 
             // CANT PLAY UNTIL AFTER CERTAIN TIME //
@@ -293,10 +296,10 @@ public class CourtScheduleIO {
             if(dates[1].split("/").length<3){
                 System.out.println("Team" + team.getTeamId() + "xd constraint date 2 is too short." + request);
             }
-            badDates.setStringDates(dates[0], dates[1], false);
+            badDates.addDates(badDates.findDateRange(dates[0],dates[1]));
         }
         else{
-            badDates.setStringDate(dates[0], false);
+            badDates.addDate(badDates.findDate(dates[0]));
         }
         return badDates;
     }
