@@ -60,7 +60,7 @@ public class Match {
 
     public MatchDate getMatchDate(LocalDate dateScale) {
         MatchDate date = new MatchDate();
-        dateScale.add(Calendar.DATE, matchSlot.getDay());
+        dateScale.plusDays(matchSlot.getDay());
         date.setDate(dateScale);
         date.setDayOfWeek(DayOfWeek.valueOfCalendar(dateScale.getDayOfWeek()));
         return date;
