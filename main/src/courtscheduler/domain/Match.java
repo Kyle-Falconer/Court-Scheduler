@@ -4,6 +4,7 @@ import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -89,6 +90,17 @@ public class Match implements Comparable<Match> {
 				|| this.team2.equals(other.team1) || this.team2.equals(other.team2);
 	}
 
+    public boolean canBeOnSameDateWith(Match other) {
+        boolean okay = true;
+        if (this.team1.equals(other.team1) || this.team1.equals(other.team2)) {
+            okay = team1.getBackToBack() || team1.getDoubleHeader();
+        }
+        if (this.team2.equals(other.team1) || this.team2.equals(other.team2)) {
+            okay = okay && (team2.getBackToBack() || team2.getDoubleHeader());
+        }
+        return okay;
+    }
+
 	public int getBasketHeight() {
 		return team1.getGrade(); // FIXME
 	}
@@ -141,4 +153,8 @@ public class Match implements Comparable<Match> {
 	public boolean overlapsWith(MatchSlot other) {
 		return matchSlot.getDay().equals(other.getDay()) && matchSlot.getTime().equals(other.getTime());
 	}
+
+    public boolean containsTeam(int teamId) {
+        return this.team1.getTeamId() == teamId || this.team2.getTeamId() == teamId;
+    }
 }

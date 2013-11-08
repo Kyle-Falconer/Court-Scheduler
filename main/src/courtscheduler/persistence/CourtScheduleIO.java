@@ -273,11 +273,11 @@ public class CourtScheduleIO {
                 playOnceTeamList=requestPlayOnce(request, team,playOnceTeamList);
 
             // DOUBLE HEADER PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(request.startsWith("DH"))
+            else if(request.startsWith("dh"))
                 likesDoubleHeaders = true;
 
                 // BACK TO BACK PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(request.startsWith("B2B"))
+            else if(request.startsWith("b2b"))
                 likesBackToBack = true;
 
             else if(request.startsWith("nst"))
