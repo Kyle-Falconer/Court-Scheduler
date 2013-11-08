@@ -5,6 +5,7 @@ import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @PlanningEntity
-public class Match {
+public class Match implements Comparable<Match> {
 
     // defining properties: teams
     private Team team1;
@@ -85,9 +86,20 @@ public class Match {
 		return this;
 	}
 
-    public boolean containsTeamsFrom(Match other) {
-        return this.team1.equals(other.team1) || this.team1.equals(other.team2) ||
-                this.team2.equals(other.team1) || this.team2.equals(other.team2);
+	public boolean containsTeamsFrom(Match other) {
+		return this.team1.equals(other.team1) || this.team1.equals(other.team2)
+				|| this.team2.equals(other.team1) || this.team2.equals(other.team2);
+	}
+
+    public boolean canBeOnSameDateWith(Match other) {
+        boolean okay = true;
+        if (this.team1.equals(other.team1) || this.team1.equals(other.team2)) {
+            okay = team1.getBackToBack() || team1.getDoubleHeader();
+        }
+        if (this.team2.equals(other.team1) || this.team2.equals(other.team2)) {
+            okay = okay && (team2.getBackToBack() || team2.getDoubleHeader());
+        }
+        return okay;
     }
 
 	public int getBasketHeight() {
@@ -113,4 +125,37 @@ public class Match {
 	public List<Integer> getNotSameTimeAs() {
 		return avail.notSameTimeAs.getSharedTeamList();
 	}
+
+    public int compareDateTimes(Match o) {
+        Integer thisDate = this.getDate();
+        Integer otherDate = o.getDate();
+        int dateCompare = thisDate.compareTo(otherDate);
+
+        if (dateCompare != 0) {
+            return dateCompare;
+        } else {
+            thisDate = this.getTime();
+            otherDate = o.getTime();
+
+            int timeCompare = thisDate.compareTo(otherDate);
+            if (timeCompare != 0){
+                return timeCompare;
+            } else {
+                return this.getCourt().compareTo(o.getCourt());
+            }
+
+        }
+    }
+
+    public int compareTo(Match o){
+        return this.compareDateTimes(o);
+    }
+
+	public boolean overlapsWith(MatchSlot other) {
+		return matchSlot.getDay().equals(other.getDay()) && matchSlot.getTime().equals(other.getTime());
+	}
+
+    public boolean containsTeam(int teamId) {
+        return this.team1.getTeamId() == teamId || this.team2.getTeamId() == teamId;
+    }
 }

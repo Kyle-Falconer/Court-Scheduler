@@ -10,6 +10,7 @@ import org.joda.time.LocalDate;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CourtScheduleIO {
@@ -58,8 +59,9 @@ public class CourtScheduleIO {
         return teamList;
     }
 
-
     public void writeXlsx(List<Match> matches, CourtScheduleInfo info, String filepath) {
+
+        Collections.sort(matches);
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Conference 1");
@@ -147,8 +149,8 @@ public class CourtScheduleIO {
         int columnCounter = 0;
 
         Integer teamId = null;
-        String x = "";
         String teamName = "";
+        Integer conference = null;
         String year = "";
         String gender = "";
         Integer grade = null;
@@ -167,16 +169,21 @@ public class CourtScheduleIO {
                 continue;  // if the cell is null just jump to the next iteration
             }
 
-
-
             if(columnCounter == 0){
-                int index = cell.toString().indexOf(".");
-                teamId = Integer.parseInt(cell.toString().substring(0,index));
-                team.setTeamId(teamId);
+                try {
+                    int index = cell.toString().indexOf(".");
+                    teamId = Integer.parseInt(cell.toString().substring(0,index));
+                    conference = Integer.parseInt(cell.toString().substring(0,1));
+                    team.setTeamId(teamId);
+                    team.setConference(conference);
+                } catch (NumberFormatException e) {
+                    //not sure what we should do here, this means a team's id is not being captured
+                    e.printStackTrace();
+                }
             }
-            else if(columnCounter == 1)
-                x = cell.toString();
-
+            else if(columnCounter == 1) {
+                // used to be the "x" column..
+            }
             else if(columnCounter == 2){
                 teamName = cell.toString();
                 team.setTeamName(teamName);
@@ -190,10 +197,14 @@ public class CourtScheduleIO {
                 team.setGender(gender);
             }
             else if(columnCounter == 5){
-
-                int index = cell.toString().indexOf(".");
-                grade = Integer.parseInt(cell.toString().substring(0,index));
-                team.setGrade(grade);
+                try {
+                    int index = cell.toString().indexOf(".");
+                    grade = Integer.parseInt(cell.toString().substring(0,index));
+                    team.setGrade(grade);
+                } catch (NumberFormatException e) {
+                    // still don't know what to do about this, this is bad
+                    e.printStackTrace();
+                }
             }
             else if(columnCounter == 6){
                 level = cell.toString();
@@ -265,11 +276,11 @@ public class CourtScheduleIO {
                 playOnceTeamList=requestPlayOnce(request, team,playOnceTeamList);
 
             // DOUBLE HEADER PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(request.startsWith("DH"))
+            else if(request.startsWith("dh"))
                 likesDoubleHeaders = true;
 
                 // BACK TO BACK PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(request.startsWith("B2B"))
+            else if(request.startsWith("b2b"))
                 likesBackToBack = true;
 
             else if(request.startsWith("nst"))
@@ -306,8 +317,8 @@ public class CourtScheduleIO {
 
     public static DateConstraint requestAfterTime(String request, Team team, DateConstraint badDates){
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-        if(request.contains("pm") || request.contains("p.m.")
-                ||request.contains("am")||request.contains("a.m.")){
+        if(!(request.contains("pm") || request.contains("p.m.")
+                ||request.contains("am")||request.contains("a.m."))){
 
             System.out.println("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
         }
@@ -321,8 +332,8 @@ public class CourtScheduleIO {
 
     public static DateConstraint requestBeforeTime(String request, Team team, DateConstraint badDates){
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-        if(request.contains("pm") || request.contains("p.m.")
-                ||request.contains("am")||request.contains("a.m.")){
+        if(!(request.contains("pm") || request.contains("p.m.")
+                ||request.contains("am")||request.contains("a.m."))){
 
             System.out.println("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
         }
@@ -467,4 +478,5 @@ public class CourtScheduleIO {
 
         return columnWidth;
     }
+
 }
