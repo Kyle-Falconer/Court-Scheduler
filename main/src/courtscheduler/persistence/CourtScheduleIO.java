@@ -255,6 +255,7 @@ public class CourtScheduleIO {
 		MatchAvailability availability = team.getAvailability();
         DateConstraint badDates = team.getBadDates();
         DateConstraint prefDates = team.getPreferredDates();
+        DateConstraint onlyDates = team.getOnlyDates();
         SharedTeams dontPlay=team.getDontPlay();
         SharedTeams notSameTime= new SharedTeams();
 
@@ -263,27 +264,25 @@ public class CourtScheduleIO {
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
             request=request.toLowerCase();
             request=request.trim();
+            //System.out.println(request);
             if(request.equals("")){
 
             }
-            else if(request.startsWith("xd"))
-                badDates=requestOffDate(request,team,badDates);
+            else if(request.startsWith("no")){
+                request=request.replace("no ", "");
+                badDates=parseDateConstraints(request, team, badDates);
+            }
+            // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY/TIME //
+            else if(request.startsWith("pref")){
+                request=request.replace("pref ","");
+                prefDates=parseDateConstraints(request, team, prefDates);
+            }
+            // ONLY TIMES
+            else if(request.startsWith("only")){
+                request=request.replace("only ", "");
+                onlyDates=parseDateConstraints(request, team, onlyDates);
+            }
 
-            // CANT PLAY UNTIL AFTER CERTAIN TIME //
-            else if(request.startsWith("after"))
-                badDates=requestAfterTime(request, team, badDates);
-
-            // CANT PLAY UNTIL BEFORE CERTAIN TIME //
-            else if(request.startsWith("before"))
-                badDates=requestBeforeTime(request,team,badDates);
-
-            // CANT PLAY BETWEEN CERTAIN TIME //
-            else if(request.startsWith("xr"))
-                badDates=requestOffTime(request, team, badDates);
-
-            // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY //
-            else if(request.startsWith("pd"))
-                prefDates=requestPreferredDate(request,team,prefDates);
 
             //DONT PLAY THESE TEAMS
             else if(request.startsWith("xplay"))
@@ -313,24 +312,50 @@ public class CourtScheduleIO {
         team.setDoubleHeaderPreference(new DoubleHeaderPreference(likesDoubleHeaders));
         team.setBackToBackPreference(new BackToBackPreference(likesBackToBack));
     }
+    public static DateConstraint parseDateConstraints(String request, Team team, DateConstraint dates){
+        if(request.contains("/")){
+            dates=requestDate(request, team, dates);
+        }
+        if(request.contains(":")){
+            if(request.contains("-")){
+                dates=requestOffTime(request, team, dates);
+            }
+            else if(request.contains("before")){
+                dates=requestBeforeTime(request, team, dates);
+            }
+            else if(request.contains("after")){
+                dates=requestAfterTime(request, team, dates);
+            }
+        }
+        else{
+            dates=requestDayOfWeek(request, team, dates);
+        }
+        return dates;
+    }
 
-    public static DateConstraint requestOffDate(String request, Team team, DateConstraint badDates){
+    public static DateConstraint requestDayOfWeek(String request, Team team, DateConstraint dates){
+        String[] reSplit=request.split(" ");
+        for(int i=1; i<reSplit.length;i++){
+            dates.addDates(dates.findDayOfWeek(reSplit[i]));
+        }
+        return dates;
+    }
+    public static DateConstraint requestDate(String request, Team team, DateConstraint date){
         //parse the date and use it to create a new DateConstraint object
-        request=request.replace("xd ","");
         String[] dates = request.split("-");
         if(dates[0].split("/").length<3){
-            System.out.println("Team" + team.getTeamId() + "xd constraint date 1 is too short.(" + request);
+            System.out.println("Team" + team.getTeamId() + " request date 1 is too short." + request);
         }
         if(dates.length>1){
             if(dates[1].split("/").length<3){
-                System.out.println("Team" + team.getTeamId() + "xd constraint date 2 is too short." + request);
+                System.out.println("Team" + team.getTeamId() + " request date 2 is too short." + request);
             }
-            badDates.addDates(badDates.findDateRange(dates[0],dates[1]));
+            date.addDates(date.findDateRange(dates[0],dates[1]));
         }
         else{
-            badDates.addDate(badDates.findDate(dates[0]));
+            date.addDate(date.findDate(dates[0]));
         }
-        return badDates;
+        return date;
     }
 
     public static DateConstraint requestAfterTime(String request, Team team, DateConstraint badDates){
@@ -342,7 +367,7 @@ public class CourtScheduleIO {
         }
         request=request.replace("after ", "");
         request = getMilitaryTime(request);
-        MatchTime offTime = new MatchTime("0:00", request);
+        MatchTime offTime = new MatchTime(request,"8:30");
         //offTimeList.add(offTime);
         badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
         return badDates;
@@ -357,7 +382,7 @@ public class CourtScheduleIO {
         }
         request=request.replace("before ", "");
         request = getMilitaryTime(request);
-        MatchTime offTime = new MatchTime(request, "0:00");
+        MatchTime offTime = new MatchTime( "0:00",request);
         //offTimeList.add(offTime);
         badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
         return badDates;
@@ -366,18 +391,19 @@ public class CourtScheduleIO {
     public static DateConstraint requestOffTime(String request, Team team, DateConstraint badDates){
         request=request.replace("xr ","");
         String[] times = request.split("-");
-        if(times[0].contains("pm") || times[0].contains("p.m.")
-                ||times[0].contains("am")||times[0].contains("a.m.")){
+        if(!(times[0].contains("pm") || times[0].contains("p.m.")
+                ||times[0].contains("am")||times[0].contains("a.m."))){
 
             System.out.println("Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);  // FIXME: is this the right error message?
         }
-        if(times[1].contains("pm") || times[1].contains("p.m.")
-                ||times[1].contains("am")||times[1].contains("a.m.")){
+        if(!(times[1].contains("pm") || times[1].contains("p.m.")
+                ||times[1].contains("am")||times[1].contains("a.m."))){
 
             System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request); // FIXME: is this the right error message?
         }
         times[0]=getMilitaryTime(times[0]);
         times[1]=getMilitaryTime(times[1]);
+        //System.out.println(times[0]+"vs"+times[1]);
         MatchTime offTime = new MatchTime(times[0], times[1]);
         //offTimeList.add(offTime);
         badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
@@ -393,24 +419,6 @@ public class CourtScheduleIO {
         return playOnceTeamList;
     }
 
-    public static DateConstraint requestPreferredDate(String request, Team team, DateConstraint prefDates){
-        request=request.replace("pd ","");
-        String[] dates = request.split("-");
-        if(dates[0].split("/").length<3){
-            System.out.println("Team" + team.getTeamId() + "pd constraint date 1 is too short.(" + request);
-        }
-        if(dates.length>1){
-            if(dates[1].split("/").length<3){
-                System.out.println("Team"+team.getTeamId()+"pd constraint date 2 is too short."+request);
-            }
-            prefDates.addDates(prefDates.findDateRange(dates[0],dates[1]));
-        }
-        else{
-            prefDates.addDate(prefDates.findDate(dates[0]));
-        }
-        return prefDates;
-
-    }
 
     private static SharedTeams requestDontPlay(String request, Team team, SharedTeams dontPlay){
         //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)

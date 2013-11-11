@@ -71,4 +71,11 @@ public class CourtScheduleInfo {
 		}
 		return String.format("%d:%02d " + suffix, hours, minutes);
 	}
+    public int getIndexTime(String time){
+        String[] times = time.split(":");
+        int minutes=(Integer.parseInt(times[0])*60)+Integer.parseInt(times[1]);
+        int index=(minutes-timeslotMidnightOffsetInMinutes)/timeslotDurationInMinutes;
+        return index;
+
+    }
 }
