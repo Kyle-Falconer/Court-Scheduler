@@ -33,6 +33,12 @@ public class CourtScheduleInfo {
 
     private List<String> raw_lines;
 
+    // TODO:
+    // Make numberOfTimeSlotsPerDay, timeslotDurationInMinutes,
+    // and timeslotMidnightOffsetInMinutes configurable for each day of the week (7 days).
+    // this is needed because Shane wants to make a particular day shorter than the others, so this
+    // would be a more general solution.
+
  	public CourtScheduleInfo(String filepath) {
 		// TODO read these from a file
         this.filepath = filepath;
@@ -115,6 +121,7 @@ public class CourtScheduleInfo {
         }
         return null;
     }
+
     private List<String> slurpConfigFile(String filename){
         List<String> lines = new ArrayList<String>();
         Path path = FileSystems.getDefault().getPath(filename);

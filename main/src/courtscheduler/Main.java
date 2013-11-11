@@ -1,6 +1,10 @@
 package courtscheduler;
 
+import courtscheduler.domain.CourtSchedule;
 import courtscheduler.domain.CourtScheduleInfo;
+import courtscheduler.persistence.CourtScheduleIO;
+import org.optaplanner.core.api.solver.Solver;
+import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
 
 import java.net.URL;
@@ -48,7 +52,7 @@ public class Main {
             System.out.println(info.toString());
         }
 
-        /*
+
         // initialize solver
         XmlSolverFactory solverFactory = loadConfig(solverConfigFilename);
 
@@ -77,7 +81,7 @@ public class Main {
         } catch(Exception e){
             e.printStackTrace(); //FIXME
         }
-        */
+
     }
 
     private static XmlSolverFactory loadConfig(String defaultConfigXmlFilename) {

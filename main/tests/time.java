@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  * Time: 10:24 AM
  */
 @RunWith(JUnit4.class)
-public class time {
+public class Time {
 
     @Test
     public void military() {
