@@ -37,7 +37,7 @@ public class Time {
     public void dateParse(){
         assertEquals("\"1/1/2014\" must be \"2014-01-01\"", new LocalDate(2014, 1, 1).toString(), parseDateString("1/1/2014").toString());
         assertEquals("\"1-1-2014\" must be \"2014-01-01\"", new LocalDate(2014, 1, 1).toString(), parseDateString("1-1-2014").toString());
-        assertEquals("\"12-31-2014\" must be \"2014-12-31\"", new LocalDate(2014, 1, 1).toString(), parseDateString("12-31-2014").toString());
+        assertEquals("\"12-31-2014\" must be \"2014-12-31\"", new LocalDate(2014, 12, 31).toString(), parseDateString("12-31-2014").toString());
 
     }
 }
