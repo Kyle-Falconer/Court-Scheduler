@@ -1,7 +1,9 @@
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import static courtscheduler.domain.CourtScheduleInfo.parseDateString;
 import static courtscheduler.domain.CourtScheduleInfo.timeStringToMinutes;
 import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
 import static org.junit.Assert.assertEquals;
@@ -29,5 +31,13 @@ public class Time {
         assertEquals("8:00 a.m. must be 480 minutes", 480, timeStringToMinutes("8:00 a.m."));
         assertEquals("4:00pm must be 480 minutes", 960, timeStringToMinutes("4:00pm"));
         assertEquals("11:59 p.m. must be 1439 minutes", 1439, timeStringToMinutes("11:59 p.m."));
+    }
+
+    @Test
+    public void dateParse(){
+        assertEquals("\"1/1/2014\" must be \"2014-01-01\"", new LocalDate(2014, 1, 1).toString(), parseDateString("1/1/2014").toString());
+        assertEquals("\"1-1-2014\" must be \"2014-01-01\"", new LocalDate(2014, 1, 1).toString(), parseDateString("1-1-2014").toString());
+        assertEquals("\"12-31-2014\" must be \"2014-12-31\"", new LocalDate(2014, 1, 1).toString(), parseDateString("12-31-2014").toString());
+
     }
 }

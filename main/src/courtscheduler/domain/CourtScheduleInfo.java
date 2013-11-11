@@ -42,12 +42,7 @@ public class CourtScheduleInfo {
  	public CourtScheduleInfo(String filepath) {
 		// TODO read these from a file
         this.filepath = filepath;
-        conferenceStartDate = new LocalDate(2014, 1, 1);
-        conferenceEndDate = new LocalDate(2014, 1, 10);
-        numberOfCourts = 3;
-        timeslotMidnightOffsetInMinutes = 420;  // 7am
-        numberOfTimeSlotsPerDay = 16;  // end at ~8:30pm
-        timeslotDurationInMinutes = 50;
+
         holidays = new ArrayList<LocalDate>();
 
         DateConstraint.setInfo(this);
@@ -88,8 +83,6 @@ public class CourtScheduleInfo {
                 this.timeslotMidnightOffsetInMinutes = timeStringToMinutes(value);
             }
 
-
-
         }
         return 0;
     }
@@ -103,7 +96,7 @@ public class CourtScheduleInfo {
         return hoursInMins + mins;
     }
 
-    private LocalDate parseDateString(String dateString){
+    public static LocalDate parseDateString(String dateString){
         String[] dateComponentStrings = dateString.split("[-//]");
         int[] dateComponentInts = new int[dateComponentStrings.length];
         int year, month, day;

@@ -12,6 +12,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Scanner;
 
 public class CourtScheduleIO {
 
@@ -59,7 +62,7 @@ public class CourtScheduleIO {
         return teamList;
     }
 
-    public void writeXlsx(List<Match> matches, CourtScheduleInfo info, String filepath) {
+    public void writeXlsx(List<Match> matches, CourtScheduleInfo info, String filepath) throws IOException {
 
         Collections.sort(matches);
 
@@ -127,21 +130,36 @@ public class CourtScheduleIO {
 			// normal people like their courts indexed from one, not zero,
 			// so add one if we're printing for the client
             dataRow.createCell(cellNumber).setCellValue(courtId + (Main.LOG_LEVEL > 1 ? 0 : 1));
-
         }
 
-        try {
-            FileOutputStream out =
-                    new FileOutputStream(new File(filepath));
-            workbook.write(out);
-            out.close();
-            System.out.println("Excel written successfully to " + filepath + ".");
+        Scanner input = new Scanner(System.in);
+        String reply = "";
+        boolean continueInput = true;
+        StackTraceElement[] stackTraceE = new StackTraceElement[100];
+        do {
+            try {
+                FileOutputStream out =
+                        new FileOutputStream(new File(filepath));
+                workbook.write(out);
+                out.close();
+                System.out.println("Excel written successfully to " + filepath + ".");
+                continueInput = false;
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            } catch (FileNotFoundException e) {
+                stackTraceE = e.getStackTrace();
+                System.out.println("Problem writing to output file.  If currently open, please close, then hit 'enter', or 'q' to quit.");
+                reply = input.nextLine();
+                if (reply.regionMatches(true, 0, "q", 0, 1))
+                    return;
+
+            } catch (IOException e) {
+                stackTraceE = e.getStackTrace();
+                System.out.println("An output file already exists.  Please enter new name or path for this output file: ");
+                filepath = input.nextLine();
+                if (reply.regionMatches(true, 0, "q", 0, 1))
+                    return;
+            }
+        }  while(continueInput);
     }
 
     private Team processRow(Row currentRow) {

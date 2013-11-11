@@ -193,8 +193,8 @@ public class DateConstraint extends Constraint{
     }
     public int[] findDateRange(LocalDate sdate, LocalDate edate){
         int dayCount=Days.daysBetween(sdate, edate).getDays();
-        int[] days= new int[dayCount];
-        for(int i=0; i<dayCount; i++){
+        int[] days= new int[dayCount+1];
+        for(int i=0; i<=dayCount; i++){
             days[i]=findDate(sdate)+i;
         }
         return days;
