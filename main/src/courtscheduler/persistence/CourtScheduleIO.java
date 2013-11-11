@@ -248,8 +248,28 @@ public class CourtScheduleIO {
             if(request.equals("")){
 
             }
-            else if(request.startsWith("xd"))
-                badDates=requestOffDate(request,team,badDates);
+
+            else if (request.startsWith("no"))
+            {
+                //Don't want to play on a date or range of dates
+                if (request.contains("/"))
+                    badDates=requestOffDate(request,team,badDates);
+                //Don't want to play between times
+                else if (request.contains(":"))
+                    badDates=requestOffTime(request, team, badDates);
+
+                else if (request.contains("mon") || request.contains("tue") || request.contains("wed") || request.contains("thu") ||
+                request.contains("fri") || request.contains("sat") || request.contains("sun"))
+                {
+                    String day= request.replace("no ","");
+                    System.out.println("you dont want to play on "+day);
+                }
+
+            }
+
+
+            //else if(request.startsWith("xd"))
+            //    badDates=requestOffDate(request,team,badDates);
 
             // CANT PLAY UNTIL AFTER CERTAIN TIME //
             else if(request.startsWith("after"))
@@ -260,8 +280,8 @@ public class CourtScheduleIO {
                 badDates=requestBeforeTime(request,team,badDates);
 
             // CANT PLAY BETWEEN CERTAIN TIME //
-            else if(request.startsWith("xr"))
-                badDates=requestOffTime(request, team, badDates);
+            //else if(request.startsWith("xr"))
+            //    badDates=requestOffTime(request, team, badDates);
 
             // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY //
             else if(request.startsWith("pd"))
@@ -298,7 +318,7 @@ public class CourtScheduleIO {
 
     public static DateConstraint requestOffDate(String request, Team team, DateConstraint badDates){
         //parse the date and use it to create a new DateConstraint object
-        request=request.replace("xd ","");
+        request=request.replace("no ","");
         String[] dates = request.split("-");
         if(dates[0].split("/").length<3){
             System.out.println("Team" + team.getTeamId() + "xd constraint date 1 is too short.(" + request);
@@ -346,15 +366,15 @@ public class CourtScheduleIO {
     }
 
     public static DateConstraint requestOffTime(String request, Team team, DateConstraint badDates){
-        request=request.replace("xr ","");
+        request=request.replace("no ","");
         String[] times = request.split("-");
-        if(times[0].contains("pm") || times[0].contains("p.m.")
-                ||times[0].contains("am")||times[0].contains("a.m.")){
+        if(!(times[0].contains("pm") || times[0].contains("p.m.")
+                ||times[0].contains("am")||times[0].contains("a.m."))){
 
             System.out.println("Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);  // FIXME: is this the right error message?
         }
-        if(times[1].contains("pm") || times[1].contains("p.m.")
-                ||times[1].contains("am")||times[1].contains("a.m.")){
+        if(!(times[1].contains("pm") || times[1].contains("p.m.")
+                ||times[1].contains("am")||times[1].contains("a.m."))){
 
             System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request); // FIXME: is this the right error message?
         }
