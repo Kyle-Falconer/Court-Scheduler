@@ -23,7 +23,7 @@ public class CourtScheduleInfo {
  	public CourtScheduleInfo(String filepath) {
 		// TODO read these from a file
 		startingDay = new LocalDate( 2014, 1, 1);
-		endingDay = new LocalDate( 2014, 1, 10);
+		endingDay = new LocalDate( 2014, 1, 15);
         endingDay = endingDay.plusDays(1);
 		numberOfCourts = 3;
 		timeslotMidnightOffsetInMinutes = 420;  // 7am
