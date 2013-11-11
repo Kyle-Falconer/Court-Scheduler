@@ -12,6 +12,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Michael
@@ -36,7 +38,6 @@ public class CourtScheduleInfo {
         this.filepath = filepath;
         conferenceStartDate = new LocalDate(2014, 1, 1);
         conferenceEndDate = new LocalDate(2014, 1, 10);
-        conferenceEndDate = conferenceEndDate.plusDays(1);
         numberOfCourts = 3;
         timeslotMidnightOffsetInMinutes = 420;  // 7am
         numberOfTimeSlotsPerDay = 16;  // end at ~8:30pm
@@ -54,7 +55,8 @@ public class CourtScheduleInfo {
             return -1;
         }
         for (String line : raw_lines){
-            if (line.startsWith(";", 0)){
+            if (line.startsWith(";", 0) || line.trim().length() == 0){
+                // this line is a comment or empty line
                 continue;
             }
             String[] lineComponents = line.split("=");
@@ -62,11 +64,37 @@ public class CourtScheduleInfo {
                 System.out.println("could not interpret line: "+ line);
                 continue;
             }
-            if (lineComponents[0].trim().equals("conference_start")){
-                conferenceStartDate = parseDateString(lineComponents[1].trim());
+
+            String key = lineComponents[0].trim();
+            String value = lineComponents[1].trim();
+
+            if (key.equals("conference_start")){
+                this.conferenceStartDate = parseDateString(value);
+            } else if (key.equals("conference_end")){
+                this.conferenceEndDate = parseDateString(value);
+            }  else if (key.equals("court_count")){
+                this.numberOfCourts = Integer.parseInt(value);
+            } else if (key.equals("timeslots_count")){
+                this.numberOfTimeSlotsPerDay = Integer.parseInt(value);
+            } else if (key.equals("timeslot_duration_minutes")){
+                this.timeslotDurationInMinutes = Integer.parseInt(value);
+            } else if (key.equals("timeslots_start")){
+                this.timeslotMidnightOffsetInMinutes = timeStringToMinutes(value);
             }
+
+
+
         }
         return 0;
+    }
+
+    public static int timeStringToMinutes(String timeString) {
+        timeString = getMilitaryTime(timeString);
+        String[] hourMin = timeString.split(":");
+        int hour = Integer.parseInt(hourMin[0]);
+        int mins = Integer.parseInt(hourMin[1]);
+        int hoursInMins = hour * 60;
+        return hoursInMins + mins;
     }
 
     private LocalDate parseDateString(String dateString){
@@ -152,12 +180,32 @@ public class CourtScheduleInfo {
         return this.holidays.toArray(new LocalDate[this.holidays.size()]);
     }
 
-    public String toString(){
+    /**
+     * toString method which outputs the values stored in the same format in which it was read in.
+     * This is to say that the output could also be used as the input.
+     *
+     * @return
+     */
+    public String toString() {
         StringBuilder result = new StringBuilder();
 
-        for (LocalDate holiday : holidays){
+        result.append("; " + FileSystems.getDefault().getPath(filepath).toAbsolutePath() + "\n");
+
+        if (conferenceStartDate != null)
+            result.append("conference_start=" + conferenceStartDate.toString() + "\n");
+
+        if (conferenceStartDate != null)
+            result.append("conference_end=" + conferenceStartDate.toString() + "\n");
+
+        result.append("court_count=" + numberOfCourts + "\n");
+        result.append("timeslots_start=" + timeslotMidnightOffsetInMinutes + "\n");
+        result.append("timeslots_count=" + numberOfTimeSlotsPerDay + "\n");
+        result.append("timeslot_duration_minutes=" + timeslotDurationInMinutes + "\n");
+
+        for (LocalDate holiday : holidays) {
             result.append("holiday = " + holiday.toString());
         }
+
         return result.toString();
     }
 }

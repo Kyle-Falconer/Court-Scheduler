@@ -421,7 +421,7 @@ public class CourtScheduleIO {
         return notSameTime;
     }
 
-    private static String getMilitaryTime(String time) {
+    public static String getMilitaryTime(String time) {
 
         if(time.contains("pm") || time.contains("p.m.")) {
             time = time.replace("pm", "");
@@ -450,8 +450,29 @@ public class CourtScheduleIO {
         }else {
             time = time.replace("am", "");
             time = time.replace("a.m.", "");
+            time=time.trim();
 
-            return time;
+            String[] t = time.split(":");
+            if (t.length < 2) {
+                System.out.println("Time not formatted correctly: "+ time);
+                return "";
+            }
+            try {
+                Integer timeInt = Integer.parseInt(t[0]);
+                if(timeInt == 12){
+                    timeInt = 0;
+                }
+                return timeInt+":"+t[1];
+            }catch (NumberFormatException e) {
+                System.out.println("Time not formatted correctly? "+
+                        "Could not read a number from: \""+ t[0]+"\", "+
+                        "given a time of "+time);
+                if (Main.LOG_LEVEL > 1) {
+                    e.printStackTrace();
+                }
+                return "";
+            }
+
         }
     }
 
