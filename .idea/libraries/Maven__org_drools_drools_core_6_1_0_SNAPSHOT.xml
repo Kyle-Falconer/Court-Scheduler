@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.drools:drools-core:6.1.0-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/drools/drools-core/6.1.0-SNAPSHOT/drools-core-6.1.0-20131104.154037-321.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/drools/drools-core/6.1.0-SNAPSHOT/drools-core-6.1.0-20131111.003408-331.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/drools/drools-core/6.1.0-SNAPSHOT/drools-core-6.1.0-20131104.154037-321-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/drools/drools-core/6.1.0-SNAPSHOT/drools-core-6.1.0-20131111.003408-331-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/drools/drools-core/6.1.0-SNAPSHOT/drools-core-6.1.0-20131104.154037-321-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/drools/drools-core/6.1.0-SNAPSHOT/drools-core-6.1.0-20131111.003408-331-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

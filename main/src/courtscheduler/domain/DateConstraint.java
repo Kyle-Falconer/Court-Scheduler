@@ -4,7 +4,7 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
+
 import java.util.List;
 
 /**
@@ -51,7 +51,7 @@ public class DateConstraint extends Constraint{
 		LocalDate localDate = LocalDate.parse(date, dateFormat);
 
 		if (info.dayIsInConference(localDate)) {
-			int dayOfConference = Days.daysBetween(info.getStartingDay(), localDate).getDays();
+			int dayOfConference = Days.daysBetween(info.getConferenceStartDate(), localDate).getDays();
 			this.markContiguousDays(dayOfConference, !canPlay, 1);
 		}
 		else {
@@ -64,7 +64,7 @@ public class DateConstraint extends Constraint{
 		LocalDate periodEndDate = LocalDate.parse(end, dateFormat);
 
 		if (info.dayIsInConference(periodStartDate) && info.dayIsInConference(periodEndDate)) {
-			int dayOfConference = Days.daysBetween(info.getStartingDay(), periodStartDate).getDays();
+			int dayOfConference = Days.daysBetween(info.getConferenceStartDate(), periodStartDate).getDays();
 			int numOfDays = Days.daysBetween(periodStartDate, periodEndDate).getDays();
 			this.markContiguousDays(dayOfConference, !canPlay, numOfDays+1);
 		}
@@ -172,7 +172,7 @@ public class DateConstraint extends Constraint{
         return findDate(date);
     }
     public int findDate(LocalDate Date){
-        return Days.daysBetween(info.getStartingDay(), Date).getDays();
+        return Days.daysBetween(info.getConferenceStartDate(), Date).getDays();
     }
     //array of matchDate inputs -> array of int days
     public int[] findDates(List<MatchDate> Dates){

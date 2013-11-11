@@ -107,7 +107,7 @@ public class CourtScheduleIO {
 
 			// date
 			Integer matchDateIndex = match.getMatchSlot().getDay();
-			LocalDate matchDate = info.getStartingDay().plusDays(matchDateIndex);
+			LocalDate matchDate = info.getConferenceStartDate().plusDays(matchDateIndex);
             String day = matchDate.dayOfWeek().getAsText();
             dataRow.createCell(cellNumber++).setCellValue(day);
 			String date = matchDate.toString();
@@ -249,7 +249,7 @@ public class CourtScheduleIO {
 
             }
             else if(request.startsWith("xd"))
-                badDates=requestOffDate(request,team,badDates);
+                badDates=requestOffDate(request, team, badDates);
 
             // CANT PLAY UNTIL AFTER CERTAIN TIME //
             else if(request.startsWith("after"))
@@ -257,7 +257,7 @@ public class CourtScheduleIO {
 
             // CANT PLAY UNTIL BEFORE CERTAIN TIME //
             else if(request.startsWith("before"))
-                badDates=requestBeforeTime(request,team,badDates);
+                badDates=requestBeforeTime(request, team, badDates);
 
             // CANT PLAY BETWEEN CERTAIN TIME //
             else if(request.startsWith("xr"))
@@ -265,7 +265,7 @@ public class CourtScheduleIO {
 
             // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY //
             else if(request.startsWith("pd"))
-                prefDates=requestPreferredDate(request,team,prefDates);
+                prefDates=requestPreferredDate(request, team, prefDates);
 
             //DONT PLAY THESE TEAMS
             else if(request.startsWith("xplay"))
@@ -307,7 +307,7 @@ public class CourtScheduleIO {
             if(dates[1].split("/").length<3){
                 System.out.println("Team" + team.getTeamId() + "xd constraint date 2 is too short." + request);
             }
-            badDates.addDates(badDates.findDateRange(dates[0],dates[1]));
+            badDates.addDates(badDates.findDateRange(dates[0], dates[1]));
         }
         else{
             badDates.addDate(badDates.findDate(dates[0]));
