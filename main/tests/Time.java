@@ -19,25 +19,40 @@ public class Time {
 
     @Test
     public void military() {
-        assertEquals("6:00pm must be 18:00 military time", "18:00", getMilitaryTime("6:00pm"));
-        assertEquals("12:00am must be 0:00 military time", "0:00", getMilitaryTime("12:00am"));
-        assertEquals("12:00 a.m. must be 0:00 military time", "0:00", getMilitaryTime("12:00 a.m."));
-        assertEquals("11:59 p.m. must be 23:59 military time", "23:59", getMilitaryTime("11:59 p.m."));
+
+        String[][] tests = {
+                {"6:00pm", "18:00"},
+                {"12:00am", "0:00"},
+                {"12:00 a.m.", "0:00"},
+                {"11:59 p.m.", "23:59"}
+        };
+        for (String[] test : tests){
+            assertEquals("\""+test[0]+"\" must be \""+test[1]+"\"", test[1], getMilitaryTime(test[0]).toString());
+        }
     }
 
     @Test
     public void timeToMinutes(){
-        assertEquals("12:00 a.m. must be 0 minutes", 0, timeStringToMinutes("12:00 a.m."));
-        assertEquals("8:00 a.m. must be 480 minutes", 480, timeStringToMinutes("8:00 a.m."));
-        assertEquals("4:00pm must be 480 minutes", 960, timeStringToMinutes("4:00pm"));
-        assertEquals("11:59 p.m. must be 1439 minutes", 1439, timeStringToMinutes("11:59 p.m."));
+        String[][] tests = {
+                {"12:00 a.m.", "0"},
+                {"8:00 a.m.", "480"},
+                {"4:00pm", "960"},
+                {"11:59 p.m.", "1439"}
+        };
+        for (String[] test : tests){
+            assertEquals("\""+test[0]+"\" must be \""+test[1]+"\"", test[1], timeStringToMinutes(test[0])+"");
+        }
     }
 
     @Test
     public void dateParse(){
-        assertEquals("\"1/1/2014\" must be \"2014-01-01\"", new LocalDate(2014, 1, 1).toString(), parseDateString("1/1/2014").toString());
-        assertEquals("\"1-1-2014\" must be \"2014-01-01\"", new LocalDate(2014, 1, 1).toString(), parseDateString("1-1-2014").toString());
-        assertEquals("\"12-31-2014\" must be \"2014-12-31\"", new LocalDate(2014, 12, 31).toString(), parseDateString("12-31-2014").toString());
-
+        String[][] tests = {
+                {"1/1/2014", new LocalDate(2014, 1, 1).toString()},
+                {"1-1-2014", new LocalDate(2014, 1, 1).toString()},
+                {"12-31-2014", new LocalDate(2014, 12, 31).toString()}
+        };
+        for (String[] test : tests){
+            assertEquals("\""+test[0]+"\" must be \""+test[1]+"\"", test[1], parseDateString(test[0]).toString());
+        }
     }
 }
