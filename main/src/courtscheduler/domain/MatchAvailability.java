@@ -28,6 +28,7 @@ public class MatchAvailability {
         // TODO: set the intersection of these two, m1 and m2 to be this MatchAvailability
 		// in all things, not just in dates-- a match can't happen at the same time as a match with
 		// a team that shares players with one of the teams
+        notSameTimeAs = new SharedTeams(m1.getNotSameTimeAs(), m2.getNotSameTimeAs());
 		badDates = new DateConstraint(m1.badDates, m2.badDates);
     }
 
@@ -35,4 +36,7 @@ public class MatchAvailability {
 		return badDates.isTrue(matchSlot);
 	}
 
+    public SharedTeams getNotSameTimeAs() {
+        return notSameTimeAs;
+    }
 }

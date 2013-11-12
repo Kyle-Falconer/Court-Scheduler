@@ -18,6 +18,17 @@ public class SharedTeams extends Constraint {
 		sharedTeamList = new ArrayList<Integer>();
 	}
 
+    public SharedTeams(SharedTeams s1, SharedTeams s2) {
+        this();
+
+        for (Integer teamId : s1.getSharedTeamList())
+            addSharedTeam(teamId);
+
+        for (Integer teamId : s2.getSharedTeamList())
+            if(!this.sharedTeamList.contains(teamId))
+                addSharedTeam(teamId);
+    }
+
     public List<Integer> getSharedTeamList() {
         return sharedTeamList;
     }

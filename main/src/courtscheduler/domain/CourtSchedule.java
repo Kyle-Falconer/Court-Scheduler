@@ -58,7 +58,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         List<Match> matches= new ArrayList<Match>();
         for(int i=0;i<teamList.size();i++){
             for(int j=i+1; j<teamList.size();j++){
-                if (Team.canPlay(teamList.get(i), teamList.get(j))) {
+                if (!Team.cannotPlay(teamList.get(i), teamList.get(j))) {
                     Match nextMatch = new Match(teamList.get(i),teamList.get(j));
                     nextMatch.setMatchSlot(new MatchSlot(-1, -1, -1));
                     matches.add(nextMatch);

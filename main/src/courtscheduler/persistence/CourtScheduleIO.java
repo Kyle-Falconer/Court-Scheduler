@@ -203,9 +203,7 @@ public class CourtScheduleIO {
                 try {
                     int index = cell.toString().indexOf(".");
                     teamId = Integer.parseInt(cell.toString().substring(0,index));
-                    conference = Integer.parseInt(cell.toString().substring(0,1));
                     team.setTeamId(teamId);
-                    team.setConference(conference);
                 } catch (NumberFormatException e) {
                     //not sure what we should do here, this means a team's id is not being captured
                     e.printStackTrace();
@@ -214,7 +212,9 @@ public class CourtScheduleIO {
             else if(columnCounter == 1) {
                 // used to be the "x" column..
                 try{
-                    conference = Integer.parseInt(cell.toString());
+                    int index = cell.toString().indexOf(".");
+                    conference = Integer.parseInt(cell.toString().substring(0,index));
+                    team.setConference(conference);
                 }
                 catch(NumberFormatException e){
                     System.out.println("Conference is invalid.");
@@ -251,8 +251,25 @@ public class CourtScheduleIO {
                 //debug(team.getTeamId().toString()+":"+requests);
                 processRequestConstraints(team, requests);
             }
-            else if(columnCounter == 8)
+            else if(columnCounter == 8){
                 notSameTimeAs = cell.toString();
+                String[] tempSplit = notSameTimeAs.split(",");
+
+                for (String teamIdStr : tempSplit) {
+                    try {
+                        int index = teamIdStr.indexOf(".");
+                        if(index > -1) {
+                            teamId = Integer.parseInt(teamIdStr.substring(0,index));
+                            team.getAvailability().getNotSameTimeAs().addSharedTeam(teamId);
+                            team.getDontPlay().addSharedTeam(teamId);
+                        }
+                    } catch (NumberFormatException nfe) {
+                        System.out.println("Unable to add team "+teamIdStr+"to shared team list. Unparsable.");
+                    } catch (NullPointerException npe) {
+                        System.out.println("team.availability or team.availability.notSameTimeAs is null");
+                    }
+                }
+            }
 
 
             columnCounter+=1;

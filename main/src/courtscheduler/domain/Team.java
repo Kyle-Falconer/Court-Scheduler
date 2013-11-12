@@ -142,10 +142,10 @@ public class Team {
         return this.avail;
     }
 
-	public static boolean canPlay(Team t1, Team t2) {
+	public static boolean cannotPlay(Team t1, Team t2) {
 		List<Integer> t1BadTeams = t1.getDontPlay().getSharedTeamList();
 		List<Integer> t2BadTeams = t2.getDontPlay().getSharedTeamList();
-		return !t1BadTeams.contains(t2.getTeamId()) && !t2BadTeams.contains(t1.getTeamId());
+		return t1BadTeams.contains(t2.getTeamId()) || t2BadTeams.contains(t1.getTeamId());
 	}
     public boolean getDoubleHeader(){
         return this.getDoubleHeaderPreference().likesDoubleHeaders();
