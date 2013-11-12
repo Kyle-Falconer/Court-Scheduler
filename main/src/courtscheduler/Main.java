@@ -45,6 +45,13 @@ public class Main {
 
 		// initialize CourtSchedule configuration
 		CourtScheduleInfo info = new CourtScheduleInfo("config.ini");
+        if(info.configure() == -1){
+           return;
+        }
+        if (LOG_LEVEL >= 2){
+            System.out.println(info.toString());
+        }
+
 
         // initialize solver
         XmlSolverFactory solverFactory = loadConfig(solverConfigFilename);
@@ -74,6 +81,7 @@ public class Main {
         } catch(Exception e){
             e.printStackTrace(); //FIXME
         }
+
     }
 
     private static XmlSolverFactory loadConfig(String defaultConfigXmlFilename) {
