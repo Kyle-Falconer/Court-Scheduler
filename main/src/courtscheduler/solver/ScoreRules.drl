@@ -137,7 +137,7 @@ end
 rule "dontWantDoubleHeaders"
     when
         // a team doesn't want double headers
-        Team(BackToBack == false, $teamId : teamId)
+        Team(DoubleHeader == false, $teamId : teamId)
         // but they have one
         Match(containsTeam($teamId) == true, $date : Date, $time : Time)
         Match(containsTeam($teamId) == true, Date == $date, Time == $time + 2 || Time == $time + 3)

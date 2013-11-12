@@ -35,7 +35,12 @@ public class DateConstraint extends Constraint{
 		// So, since we assume they can play all times by default, we use "false" to mean it's okay,
 		// and "true" to mean they can't play then.
 		// Confusing, I know, but the performance benefit is nontrivial. --MS
-        return !this.dates[day][timeSlot];
+        try {
+            return !this.dates[day][timeSlot];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Date/time requested is outside the start-end dates of the conference");
+            return true;
+        }
     }
 	public boolean isTrue(MatchSlot matchSlot) {
 		return this.getDate(matchSlot.getDay(), matchSlot.getTime());
@@ -101,12 +106,20 @@ public class DateConstraint extends Constraint{
     public void addDate(int day, boolean[] times){
         for(int i=0;i<this.dates[0].length;i++){
             //and if true=ok, or if false=ok
-            this.dates[day][i]= (times[i]||this.dates[day][i]);
+            try {
+                this.dates[day][i] = (times[i]||this.dates[day][i]);
+            } catch(ArrayIndexOutOfBoundsException e) {
+                System.out.println("Date/time requested is outside the start-end dates of the conference");
+            }
         }
     }
     //specific slot add
     public void addTime(int day, int time){
-        this.dates[day][time]=true;
+        try {
+            this.dates[day][time]=true;
+        } catch(ArrayIndexOutOfBoundsException e) {
+            System.out.println("Date/time requested is outside the start-end dates of the conference");
+        }
     }
 
     //wrappers for other input types
