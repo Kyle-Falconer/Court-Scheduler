@@ -89,36 +89,47 @@ public class CourtScheduleIO {
         header.createCell(0).setCellValue("TEAM");
         header.createCell(1).setCellValue(" ");
         header.createCell(2).setCellValue("OPPONENT");
-        header.createCell(3).setCellValue("DAY");
-        header.createCell(4).setCellValue("DATE");
-        header.createCell(5).setCellValue("TIME");
-        header.createCell(6).setCellValue("COURT");
+        header.createCell(3).setCellValue("CONFERENCE");
+        header.createCell(4).setCellValue("DAY");
+        header.createCell(5).setCellValue("DATE");
+        header.createCell(6).setCellValue("TIME");
+        header.createCell(7).setCellValue("COURT");
 
         for(Match match : matches) {
             cellNumber = 0;
             rowNumber++;
             Row dataRow = sheet.createRow(rowNumber);
 
+            // TEAM
             String teamName1 = match.getTeam1().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName1);
 
+            // VS
             String vs = "vs.";
             dataRow.createCell(cellNumber++).setCellValue(vs);
 
+            // OPPONENT
             String teamName2 = match.getTeam2().getTeamName();
             dataRow.createCell(cellNumber++).setCellValue(teamName2);
 
-			// date
+            // CONFERENCE
+            String conference = match.getTeam1().getConference().toString();
+            dataRow.createCell(cellNumber++).setCellValue(conference);
+
+			// DAY
 			Integer matchDateIndex = match.getMatchSlot().getDay();
 			LocalDate matchDate = info.getConferenceStartDate().plusDays(matchDateIndex);
             String day = matchDate.dayOfWeek().getAsText();
             dataRow.createCell(cellNumber++).setCellValue(day);
+
+            // DATE
 			String date = matchDate.toString();
 			if (Main.LOG_LEVEL > 1) {
 				date = date + " [" + matchDateIndex + "]";
 			}
             dataRow.createCell(cellNumber++).setCellValue(date);
 
+            // TIME
             Integer matchTime = match.getMatchSlot().getTime();
 			String time = info.getHumanReadableTime(matchTime);
 			if (Main.LOG_LEVEL > 1) {
@@ -126,6 +137,7 @@ public class CourtScheduleIO {
 			}
             dataRow.createCell(cellNumber++).setCellValue(time);
 
+            // COURT
             Integer courtId = match.getMatchSlot().getCourt();
 			// normal people like their courts indexed from one, not zero,
 			// so add one if we're printing for the client
