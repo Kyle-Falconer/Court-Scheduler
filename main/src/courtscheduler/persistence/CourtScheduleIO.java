@@ -367,7 +367,8 @@ public class CourtScheduleIO {
         }
         request=request.replace("after ", "");
         request = getMilitaryTime(request);
-        MatchTime offTime = new MatchTime(request,"8:30");
+        //System.out.println(request);
+        MatchTime offTime = new MatchTime(request,"20:30");
         //offTimeList.add(offTime);
         badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
         return badDates;

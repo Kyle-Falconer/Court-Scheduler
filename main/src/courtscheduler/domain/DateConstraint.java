@@ -122,14 +122,18 @@ public class DateConstraint extends Constraint{
         //System.out.println(timeRange);
         int[] times= new int[timeRange];
         for(int i=0;i<timeRange;i++){
+            int timeslot=startTime+i;
             //System.out.println(startTime+i);
-            times[i]=startTime+i;
+            if(timeslot>=0){
+                times[i]=timeslot;
+            }
         }
         return makeTimeArray(times);
     }
     public boolean[] makeTimeArray(String startTime, String endTime){
         int start=info.getIndexTime(startTime);
         int end=info.getIndexTime(endTime);
+        //System.out.println(start+":"+end);
         return makeTimeArray(start, end);
     }
     public boolean[] makeTimeArray(MatchTime time){
@@ -151,8 +155,8 @@ public class DateConstraint extends Constraint{
 
     public Integer findDate(LocalDate date){
         //System.out.println(Days.daysBetween(info.getStartingDay(), Date).getDays());
-        int day = Days.daysBetween(info.getStartingDay(), date).getDays();
-        int conferenceLength= Days.daysBetween(info.getStartingDay(),info.getEndingDay()).getDays();
+        int day = Days.daysBetween(info.getConferenceStartDate(), date).getDays();
+        int conferenceLength= info.getNumberOfConferenceDays();
         if(day< 0){
             System.out.println("ERROR: date "+date+" is before conference start.");
             return null;
@@ -228,8 +232,8 @@ public class DateConstraint extends Constraint{
     }
 
     public int[] findDayOfWeek(int weekday){
-        LocalDate firstDay=info.getStartingDay().withDayOfWeek(weekday);;
-        int[] days= new int[Weeks.weeksBetween(firstDay, info.getEndingDay()).getWeeks()];
+        LocalDate firstDay=info.getConferenceStartDate().withDayOfWeek(weekday);;
+        int[] days= new int[Weeks.weeksBetween(firstDay, info.getConferenceEndDate()).getWeeks()];
         for(int i=0; i<days.length;i++){
             days[i]= findDate(firstDay.plusWeeks(i));
         }
