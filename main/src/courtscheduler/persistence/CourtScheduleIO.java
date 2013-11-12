@@ -201,6 +201,12 @@ public class CourtScheduleIO {
             }
             else if(columnCounter == 1) {
                 // used to be the "x" column..
+                try{
+                    conference = Integer.parseInt(cell.toString());
+                }
+                catch(NumberFormatException e){
+                    System.out.println("Conference is invalid.");
+                }
             }
             else if(columnCounter == 2){
                 teamName = cell.toString();
