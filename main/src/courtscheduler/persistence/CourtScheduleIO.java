@@ -213,8 +213,14 @@ public class CourtScheduleIO {
                 // used to be the "x" column..
                 try{
                     int index = cell.toString().indexOf(".");
-                    conference = Integer.parseInt(cell.toString().substring(0,index));
-                    team.setConference(conference);
+					if (index != -1) {
+                   		conference = Integer.parseInt(cell.toString().substring(0,index));
+                    	team.setConference(conference);
+					}
+					else {
+						System.out.println("No conference present for team "+teamId+"; defaulting to 1");
+						conference = 1;
+					}
                 }
                 catch(NumberFormatException e){
                     System.out.println("Conference is invalid.");
