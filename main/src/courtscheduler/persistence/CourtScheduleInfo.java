@@ -25,11 +25,11 @@ import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
 public class CourtScheduleInfo {
     private String filepath;
     private LocalDate conferenceStartDate;
-	private LocalDate conferenceEndDate;
-	private int numberOfCourts;
-	private int timeslotMidnightOffsetInMinutes;
-	private int numberOfTimeSlotsPerDay;
-	private int timeslotDurationInMinutes;
+    private LocalDate conferenceEndDate;
+    private int numberOfCourts;
+    private int timeslotMidnightOffsetInMinutes;
+    private int numberOfTimeSlotsPerDay;
+    private int timeslotDurationInMinutes;
     private List<LocalDate> holidays;
 
     private List<String> raw_lines;
@@ -40,47 +40,47 @@ public class CourtScheduleInfo {
     // this is needed because Shane wants to make a particular day shorter than the others, so this
     // would be a more general solution.
 
- 	public CourtScheduleInfo(String filepath) {
-		// TODO read these from a file
+    public CourtScheduleInfo(String filepath) {
+        // TODO read these from a file
         this.filepath = filepath;
 
         holidays = new ArrayList<LocalDate>();
 
         DateConstraint.setInfo(this);
-	}
+    }
 
-    public int configure(){
+    public int configure() {
         raw_lines = slurpConfigFile(this.filepath);
-        if (raw_lines.size() == 0){
+        if (raw_lines.size() == 0) {
             printStandardErrorMessage("Could not read anything from the configuration file.\n" +
                     "Expected the configuration file to be found at: " + FileSystems.getDefault().getPath(filepath).toAbsolutePath());
             return -1;
         }
-        for (String line : raw_lines){
-            if (line.startsWith(";", 0) || line.trim().length() == 0){
+        for (String line : raw_lines) {
+            if (line.startsWith(";", 0) || line.trim().length() == 0) {
                 // this line is a comment or empty line
                 continue;
             }
             String[] lineComponents = line.split("=");
-            if (lineComponents.length < 2){
-                System.out.println("could not interpret line: "+ line);
+            if (lineComponents.length < 2) {
+                System.out.println("could not interpret line: " + line);
                 continue;
             }
 
             String key = lineComponents[0].trim();
             String value = lineComponents[1].trim();
 
-            if (key.equals("conference_start")){
+            if (key.equals("conference_start")) {
                 this.conferenceStartDate = parseDateString(value);
-            } else if (key.equals("conference_end")){
+            } else if (key.equals("conference_end")) {
                 this.conferenceEndDate = parseDateString(value);
-            }  else if (key.equals("court_count")){
+            } else if (key.equals("court_count")) {
                 this.numberOfCourts = Integer.parseInt(value);
-            } else if (key.equals("timeslots_count")){
+            } else if (key.equals("timeslots_count")) {
                 this.numberOfTimeSlotsPerDay = Integer.parseInt(value);
-            } else if (key.equals("timeslot_duration_minutes")){
+            } else if (key.equals("timeslot_duration_minutes")) {
                 this.timeslotDurationInMinutes = Integer.parseInt(value);
-            } else if (key.equals("timeslots_start")){
+            } else if (key.equals("timeslots_start")) {
                 this.timeslotMidnightOffsetInMinutes = timeStringToMinutes(value);
             }
 
@@ -97,11 +97,11 @@ public class CourtScheduleInfo {
         return hoursInMins + mins;
     }
 
-    public static LocalDate parseDateString(String dateString){
+    public static LocalDate parseDateString(String dateString) {
         String[] dateComponentStrings = dateString.split("[-//]");
         int[] dateComponentInts = new int[dateComponentStrings.length];
         int year, month, day;
-        if (dateComponentStrings.length != 3){
+        if (dateComponentStrings.length != 3) {
             // do something else
         } else {
             dateComponentInts[0] = Integer.parseInt(dateComponentStrings[0]);
@@ -116,7 +116,7 @@ public class CourtScheduleInfo {
         return null;
     }
 
-    private List<String> slurpConfigFile(String filename){
+    private List<String> slurpConfigFile(String filename) {
         List<String> lines = new ArrayList<String>();
         Path path = FileSystems.getDefault().getPath(filename);
         try {
@@ -131,68 +131,85 @@ public class CourtScheduleInfo {
         return lines;
     }
 
-    private void printStandardErrorMessage(String message){
-        System.out.println("ERROR:\n"+
-                message + "\n"+
+    private void printStandardErrorMessage(String message) {
+        System.out.println("ERROR:\n" +
+                message + "\n" +
                 "Try rebuilding the configuration file using the provided configuration utility.");
     }
 
-	public int getNumberOfConferenceDays() {
-		return Days.daysBetween(conferenceStartDate, conferenceEndDate).getDays();
-	}
-
-	public LocalDate getConferenceStartDate() {
-		return conferenceStartDate;
-	}
-	public LocalDate getConferenceEndDate() {
-		return conferenceEndDate;
-	}
-	public int getNumberOfTimeSlotsPerDay() {
-		return numberOfTimeSlotsPerDay;
-	}
-	public int getNumberOfCourts() {
-		return numberOfCourts;
-	}
-	public boolean dayIsInConference(LocalDate date) {
-		return conferenceStartDate.isBefore(date) && conferenceEndDate.isAfter(date);
-	}
-
-	public int getFinalTimeSlotIndex() {
-		return numberOfTimeSlotsPerDay - 1;
-	}
-
-	public String getHumanReadableTime(int index) {
-		int minutesFromMidnight = timeslotMidnightOffsetInMinutes + (timeslotDurationInMinutes * index);
-		int hours = minutesFromMidnight / 60;
-		int minutes = minutesFromMidnight % 60;
-		String suffix;
-		if (hours < 12) {
-			suffix = "AM";
-		}
-		else {
-			suffix = "PM";
-			if (hours > 12)
-				hours -= 12;
-		}
-		return String.format("%d:%02d " + suffix, hours, minutes);
-	}
-    public Integer getIndexTime(String time){
-        String[] times = time.split(":");
-        int hour = Integer.parseInt(times[0]);
-        int minute= Integer.parseInt(times[1]);
-        //System.out.println(time+"=>"+hour+":"+minute);
-        int minutes=(hour*60)+minute;
-        //System.out.println(minutes+"-"+timeslotMidnightOffsetInMinutes);
-        int index=(minutes-timeslotMidnightOffsetInMinutes)/timeslotDurationInMinutes;
-        //System.out.println(index);
-        if(index<0){
-            System.out.println("ERROR: Time "+time+" is before the start time.");
-        }
-        return index;
-
+    public int getNumberOfConferenceDays() {
+        return Days.daysBetween(conferenceStartDate, conferenceEndDate).getDays();
     }
 
-    public LocalDate[] getHolidays(){
+    public LocalDate getConferenceStartDate() {
+        return conferenceStartDate;
+    }
+
+    public LocalDate getConferenceEndDate() {
+        return conferenceEndDate;
+    }
+
+    public int getNumberOfTimeSlotsPerDay() {
+        return numberOfTimeSlotsPerDay;
+    }
+
+    public int getNumberOfCourts() {
+        return numberOfCourts;
+    }
+
+    public void setTimeslotMidnightOffset(String value){
+        this.timeslotMidnightOffsetInMinutes = timeStringToMinutes(value);
+    }
+
+    public void setTimeslotDuration(String value){
+        this.timeslotDurationInMinutes = Integer.parseInt(value);
+    }
+
+    public void setNumberOfTimeSlotsPerDay(String value){
+        this.numberOfTimeSlotsPerDay = Integer.parseInt(value);
+    }
+
+    public boolean dayIsInConference(LocalDate date) {
+        return conferenceStartDate.isBefore(date) && conferenceEndDate.isAfter(date);
+    }
+
+    public int getFinalTimeSlotIndex() {
+        return numberOfTimeSlotsPerDay - 1;
+    }
+
+    public String getHumanReadableTime(int index) {
+        int minutesFromMidnight = timeslotMidnightOffsetInMinutes + (timeslotDurationInMinutes * index);
+        int hours = minutesFromMidnight / 60;
+        int minutes = minutesFromMidnight % 60;
+        String suffix;
+        if (hours < 12) {
+            suffix = "a.m.";
+        } else {
+            suffix = "p.m.";
+            if (hours > 12)
+                hours -= 12;
+        }
+        return String.format("%d:%02d " + suffix, hours, minutes);
+    }
+
+    /**
+     * @param time The human-readable time string.
+     * @return
+     */
+    public Integer getTimeIndex(String time) {
+        int minutes = timeStringToMinutes(time);
+        int index = (minutes - this.timeslotMidnightOffsetInMinutes) / this.timeslotDurationInMinutes;
+        if (index < 0 ) {
+            System.out.println("ERROR: Time " + time + " is before the start time.");
+            return -1;
+        } else if (index >= this.numberOfTimeSlotsPerDay){
+            System.out.println("ERROR: Time " + time + " is after the end time.");
+            return -1;
+        }
+        return index;
+    }
+
+    public LocalDate[] getHolidays() {
         return this.holidays.toArray(new LocalDate[this.holidays.size()]);
     }
 
