@@ -1,7 +1,9 @@
 package courtscheduler.domain;
 
+import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.joda.time.Weeks;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -24,6 +26,7 @@ public class DateConstraint extends Constraint{
     public DateConstraint(){
         dates = new boolean[info.getNumberOfConferenceDays()][info.getNumberOfTimeSlotsPerDay()];
     }
+
 	public DateConstraint(DateConstraint a, DateConstraint b) {
 		this();
 		this.mergeDates(a, b);
@@ -52,44 +55,6 @@ public class DateConstraint extends Constraint{
         this.dates[day][timeSlot] = !canPlay;
     }
 
-	public void setStringDate(String date, boolean canPlay) {
-		LocalDate localDate = LocalDate.parse(date, dateFormat);
-
-		if (info.dayIsInConference(localDate)) {
-			int dayOfConference = Days.daysBetween(info.getConferenceStartDate(), localDate).getDays();
-			this.markContiguousDays(dayOfConference, !canPlay, 1);
-		}
-		else {
-			System.err.println("Day " + date + " is not in conference");
-		}
-	}
-
-	public void setStringDates(String start, String end, boolean canPlay) {
-		LocalDate periodStartDate = LocalDate.parse(start, dateFormat);
-		LocalDate periodEndDate = LocalDate.parse(end, dateFormat);
-
-		if (info.dayIsInConference(periodStartDate) && info.dayIsInConference(periodEndDate)) {
-			int dayOfConference = Days.daysBetween(info.getConferenceStartDate(), periodStartDate).getDays();
-			int numOfDays = Days.daysBetween(periodStartDate, periodEndDate).getDays();
-			this.markContiguousDays(dayOfConference, !canPlay, numOfDays+1);
-		}
-		else {
-			System.err.println("Day " + start + " or " + end + " is not in conference");
-		}
-	}
-
-	private void markContiguousDays(int dayOfConference, boolean canPlay, int dayCount) {
-		for (int i = 0; i < dayCount; i++) {
-			boolean[] markedArray = new boolean[info.getNumberOfTimeSlotsPerDay()];
-			// mark array as "can't play" for the entire day
-			for (int j = 0; j < markedArray.length; j++) {
-				markedArray[j] = canPlay;
-			}
-			dates[dayOfConference+i] = markedArray;
-			System.out.println("Can't play on day " + (dayOfConference+i));
-		}
-	}
-
     //merge functions
     private void mergeDates(DateConstraint a, DateConstraint b){
 		boolean[][] dates1 = a.dates;
@@ -113,6 +78,7 @@ public class DateConstraint extends Constraint{
             }
         }
     }
+
     //specific slot add
     public void addTime(int day, int time){
         try {
@@ -124,24 +90,31 @@ public class DateConstraint extends Constraint{
 
     //wrappers for other input types
     // no time
-    public void addDate(int day){
-        boolean[] noTimes = makeTimeArray(0,dates[0].length);
-        this.addDate(day, noTimes);
+    public void addDate(Integer day){
+        if(day!=null){
+            boolean[] noTimes = makeTimeArray(0,dates[0].length);
+            this.addDate(day, noTimes);
+        }
     }
+
     //no day
     public void addRestrictedTimes(boolean[] times){
         for(int i=0; i<this.dates.length;i++){
             this.addDate(i,times);
         }
     }
+
     //array of days
     public void addDates(int days[], boolean[] times){
         for(int i=0;i<days.length;i++){
             this.addDate(days[i], times);
+
         }
     }
+
     public void addDates(int days[]){
         for(int i=0;i<days.length;i++){
+            //System.out.println(days[i]);
             this.addDate(days[i]);
         }
     }
@@ -151,41 +124,61 @@ public class DateConstraint extends Constraint{
     public boolean[] makeTimeArray(int[] times){
         boolean[] timeArray = new boolean[this.dates[0].length];
         for(int i=0;i<times.length;i++){
+            //System.out.println(i+":"+times[i]);
             timeArray[times[i]]=true;
         }
         return timeArray;
     }
     //start/end times -> boolean[]
     public boolean[] makeTimeArray(int startTime, int endTime){
-        int[] times= new int[endTime-startTime];
-        for(int i=0;i<(endTime-startTime);i++){
-            times[i]=startTime+i;
+        int timeRange =Math.abs(endTime-startTime);
+        //System.out.println(timeRange);
+        int[] times= new int[timeRange];
+        for(int i=0;i<timeRange;i++){
+            int timeslot=startTime+i;
+            //System.out.println(startTime+i);
+            if(timeslot>=0){
+                times[i]=timeslot;
+            }
         }
         return makeTimeArray(times);
     }
     public boolean[] makeTimeArray(String startTime, String endTime){
-        String[] start= startTime.split(":");
-        String[] end= endTime.split(":");
-        return makeTimeArray(Integer.valueOf(start[0]),Integer.valueOf(end[0]));
+        int start=info.getIndexTime(startTime);
+        int end=info.getIndexTime(endTime);
+        //System.out.println(start+":"+end);
+        return makeTimeArray(start, end);
     }
     public boolean[] makeTimeArray(MatchTime time){
         return makeTimeArray(time.getStartTime(),time.getEndTime());
     }
 
     //conversion methods for days
-    //Calendar date ->int date
 
     //matchDate -> int day (calls calendar find date)
     public int findDate(MatchDate Date){
         return findDate(Date.getDate());
     }
+
     //string date->int day (calls calendar find date)
-    public int findDate(String Date){
-        LocalDate date= LocalDate.parse(Date, dateFormat);
-        return findDate(date);
+    public Integer findDate(String date){
+        LocalDate ldate= LocalDate.parse(date, dateFormat);
+        return findDate(ldate);
     }
-    public int findDate(LocalDate Date){
-        return Days.daysBetween(info.getConferenceStartDate(), Date).getDays();
+
+    public Integer findDate(LocalDate date){
+        //System.out.println(Days.daysBetween(info.getStartingDay(), Date).getDays());
+        int day = Days.daysBetween(info.getConferenceStartDate(), date).getDays();
+        int conferenceLength= info.getNumberOfConferenceDays();
+        if(day< 0){
+            System.out.println("ERROR: date "+date+" is before conference start.");
+            return null;
+        }
+        if(day>conferenceLength){
+            System.out.println("ERROR: date "+date+" is after conference end.");
+            return null;
+        }
+        return day-1;
     }
     //array of matchDate inputs -> array of int days
     public int[] findDates(List<MatchDate> Dates){
@@ -196,7 +189,7 @@ public class DateConstraint extends Constraint{
         return days;
 
     }
-    //Calender range -> int[] days
+
 
     //string range -> int[] days (calls calendar range)
     public int[] findDateRange(String startDate, String endDate){
@@ -204,11 +197,58 @@ public class DateConstraint extends Constraint{
         LocalDate edate= LocalDate.parse(endDate, dateFormat);
         return this.findDateRange(sdate,edate);
     }
+
     public int[] findDateRange(LocalDate sdate, LocalDate edate){
         int dayCount=Days.daysBetween(sdate, edate).getDays();
+        //System.out.println(dayCount);
         int[] days= new int[dayCount+1];
         for(int i=0; i<=dayCount; i++){
-            days[i]=findDate(sdate)+i;
+            Integer day= findDate(sdate.plusDays(i));
+            if(day !=null){
+                days[i]=day;
+            }
+        }
+        return days;
+    }
+
+    public int[] findDayOfWeek(String weekday){
+        Integer i=null;
+        if(weekday.equals("monday")){
+            i=1;
+        }
+        else if(weekday.equals("tuesday")){
+            i=2;
+        }
+        else if(weekday.equals("wednesday")){
+            i=3;
+        }
+        else if(weekday.equals("thursday")){
+            i=4;
+        }
+        else if(weekday.equals("friday")){
+            i=5;
+        }
+        else if(weekday.equals("saturday")){
+            i=6;
+        }
+        else if(weekday.equals("sunday")){
+            i=7;
+        }
+        if(i!=null){
+            return findDayOfWeek(i);
+        }
+        else{
+            System.out.println("Error: day of week "+weekday+" is not recognized");
+            int[] fail = new int[0];
+            return fail;
+        }
+    }
+
+    public int[] findDayOfWeek(int weekday){
+        LocalDate firstDay=info.getConferenceStartDate().withDayOfWeek(weekday);;
+        int[] days= new int[Weeks.weeksBetween(firstDay, info.getConferenceEndDate()).getWeeks()];
+        for(int i=0; i<days.length;i++){
+            days[i]= findDate(firstDay.plusWeeks(i));
         }
         return days;
     }

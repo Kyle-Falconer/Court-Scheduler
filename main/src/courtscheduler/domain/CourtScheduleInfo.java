@@ -175,6 +175,21 @@ public class CourtScheduleInfo {
 		}
 		return String.format("%d:%02d " + suffix, hours, minutes);
 	}
+    public Integer getIndexTime(String time){
+        String[] times = time.split(":");
+        int hour = Integer.parseInt(times[0]);
+        int minute= Integer.parseInt(times[1]);
+        //System.out.println(time+"=>"+hour+":"+minute);
+        int minutes=(hour*60)+minute;
+        //System.out.println(minutes+"-"+timeslotMidnightOffsetInMinutes);
+        int index=(minutes-timeslotMidnightOffsetInMinutes)/timeslotDurationInMinutes;
+        //System.out.println(index);
+        if(index<0){
+            System.out.println("ERROR: Time "+time+" is before the start time.");
+        }
+        return index;
+
+    }
 
     public LocalDate[] getHolidays(){
         return this.holidays.toArray(new LocalDate[this.holidays.size()]);
