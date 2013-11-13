@@ -111,7 +111,7 @@ public class CourtScheduleIO {
             dataRow.createCell(cellNumber++).setCellValue(teamName2);
 
             // CONFERENCE
-            String conference = match.getTeam1().getConference().toString();
+            Integer conference = match.getTeam1().getConference();
             dataRow.createCell(cellNumber++).setCellValue(conference);
 
             // DAY
