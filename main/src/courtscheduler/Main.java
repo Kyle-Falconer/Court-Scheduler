@@ -1,7 +1,7 @@
 package courtscheduler;
 
 import courtscheduler.domain.CourtSchedule;
-import courtscheduler.domain.CourtScheduleInfo;
+import courtscheduler.persistence.CourtScheduleInfo;
 import courtscheduler.persistence.CourtScheduleIO;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.SolverConfig;

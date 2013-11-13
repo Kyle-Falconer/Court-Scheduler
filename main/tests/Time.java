@@ -3,8 +3,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import static courtscheduler.domain.CourtScheduleInfo.parseDateString;
-import static courtscheduler.domain.CourtScheduleInfo.timeStringToMinutes;
+import static courtscheduler.persistence.CourtScheduleInfo.parseDateString;
+import static courtscheduler.persistence.CourtScheduleInfo.timeStringToMinutes;
 import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
 import static org.junit.Assert.assertEquals;
 
@@ -40,7 +40,7 @@ public class Time {
                 {"11:59 p.m.", "1439"}
         };
         for (String[] test : tests){
-            assertEquals("\""+test[0]+"\" must be \""+test[1]+"\"", test[1], timeStringToMinutes(test[0])+"");
+            assertEquals("\""+test[0]+"\" must be "+test[1], test[1], timeStringToMinutes(test[0])+"");
         }
     }
 

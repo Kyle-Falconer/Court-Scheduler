@@ -1,5 +1,6 @@
-package courtscheduler.domain;
+package courtscheduler.persistence;
 
+import courtscheduler.domain.DateConstraint;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 

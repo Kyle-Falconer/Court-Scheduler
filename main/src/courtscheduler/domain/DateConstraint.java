@@ -1,6 +1,6 @@
 package courtscheduler.domain;
 
-import org.joda.time.DateTimeConstants;
+import courtscheduler.persistence.CourtScheduleInfo;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Weeks;

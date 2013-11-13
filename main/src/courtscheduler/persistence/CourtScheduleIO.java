@@ -12,8 +12,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Scanner;
 
 public class CourtScheduleIO {
@@ -21,13 +19,13 @@ public class CourtScheduleIO {
     private List<Match> matchList;
     private static List<Team> teamList;
 
-    public CourtScheduleIO(){
+    public CourtScheduleIO() {
         matchList = new ArrayList<Match>();
         teamList = new ArrayList<Team>();
     }
 
 
-    public List<Team> readXlsx(String filename)throws Exception {
+    public List<Team> readXlsx(String filename) throws Exception {
 
         File file = new File(filename);
         FileInputStream fis = new FileInputStream(file);
@@ -39,17 +37,17 @@ public class CourtScheduleIO {
         Integer rowCounter = 2;
         Integer rowCount = sh.getLastRowNum();
 
-        if (Main.LOG_LEVEL >= 1 ) {
+        if (Main.LOG_LEVEL >= 1) {
             System.out.println(new java.util.Date() + "[INFO] Worksheet Name: " + sh.getSheetName());
             System.out.println(new java.util.Date() + "[INFO] Worksheet has " + (rowCount - 1) + " lines of data.");
         }
 
-        while (rowCounter <= rowCount){
+        while (rowCounter <= rowCount) {
             Row currentRow = sh.getRow(rowCounter);
-			if (currentRow != null && currentRow.getLastCellNum() > 0){
+            if (currentRow != null && currentRow.getLastCellNum() > 0) {
                 teamList.add(processRow(currentRow));
             }
-            rowCounter+=1;
+            rowCounter += 1;
         }
 
         if (Main.LOG_LEVEL >= 1) {
@@ -95,7 +93,7 @@ public class CourtScheduleIO {
         header.createCell(6).setCellValue("TIME");
         header.createCell(7).setCellValue("COURT");
 
-        for(Match match : matches) {
+        for (Match match : matches) {
             cellNumber = 0;
             rowNumber++;
             Row dataRow = sheet.createRow(rowNumber);
@@ -116,31 +114,31 @@ public class CourtScheduleIO {
             String conference = match.getTeam1().getConference().toString();
             dataRow.createCell(cellNumber++).setCellValue(conference);
 
-			// DAY
-			Integer matchDateIndex = match.getMatchSlot().getDay();
-			LocalDate matchDate = info.getConferenceStartDate().plusDays(matchDateIndex);
+            // DAY
+            Integer matchDateIndex = match.getMatchSlot().getDay();
+            LocalDate matchDate = info.getConferenceStartDate().plusDays(matchDateIndex);
             String day = matchDate.dayOfWeek().getAsText();
             dataRow.createCell(cellNumber++).setCellValue(day);
 
             // DATE
-			String date = matchDate.toString();
-			if (Main.LOG_LEVEL > 1) {
-				date = date + " [" + matchDateIndex + "]";
-			}
+            String date = matchDate.toString();
+            if (Main.LOG_LEVEL > 1) {
+                date = date + " [" + matchDateIndex + "]";
+            }
             dataRow.createCell(cellNumber++).setCellValue(date);
 
             // TIME
             Integer matchTime = match.getMatchSlot().getTime();
-			String time = info.getHumanReadableTime(matchTime);
-			if (Main.LOG_LEVEL > 1) {
-				time = time + " [" + matchTime + "]";
-			}
+            String time = info.getHumanReadableTime(matchTime);
+            if (Main.LOG_LEVEL > 1) {
+                time = time + " [" + matchTime + "]";
+            }
             dataRow.createCell(cellNumber++).setCellValue(time);
 
             // COURT
             Integer courtId = match.getMatchSlot().getCourt();
-			// normal people like their courts indexed from one, not zero,
-			// so add one if we're printing for the client
+            // normal people like their courts indexed from one, not zero,
+            // so add one if we're printing for the client
             dataRow.createCell(cellNumber).setCellValue(courtId + (Main.LOG_LEVEL > 1 ? 0 : 1));
         }
 
@@ -171,7 +169,7 @@ public class CourtScheduleIO {
                 if (reply.regionMatches(true, 0, "q", 0, 1))
                     return;
             }
-        }  while(continueInput);
+        } while (continueInput);
     }
 
     private Team processRow(Row currentRow) {
@@ -189,88 +187,78 @@ public class CourtScheduleIO {
         String notSameTimeAs = "";
         Team team = new Team();
 
-        while(columnCounter < columnCount){
+        while (columnCounter < columnCount) {
 
             Cell cell = currentRow.getCell(columnCounter);
 
 
-            if(cell == null) {
+            if (cell == null) {
                 columnCounter++;
                 continue;  // if the cell is null just jump to the next iteration
             }
 
-            if(columnCounter == 0){
+            if (columnCounter == 0) {
                 try {
                     int index = cell.toString().indexOf(".");
-                    teamId = Integer.parseInt(cell.toString().substring(0,index));
+                    teamId = Integer.parseInt(cell.toString().substring(0, index));
                     team.setTeamId(teamId);
                 } catch (NumberFormatException e) {
                     //not sure what we should do here, this means a team's id is not being captured
                     e.printStackTrace();
                 }
-            }
-            else if(columnCounter == 1) {
+            } else if (columnCounter == 1) {
                 // used to be the "x" column..
-                try{
-                    int index = cell.toString().indexOf(".");
-					if (index != -1) {
-                   		conference = Integer.parseInt(cell.toString().substring(0,index));
-                    	team.setConference(conference);
-					}
-					else {
-						System.out.println("No conference present for team "+teamId+"; defaulting to 1");
-						conference = 1;
-					}
-                }
-                catch(NumberFormatException e){
-                    System.out.println("Conference is invalid.");
-                }
-            }
-            else if(columnCounter == 2){
-                teamName = cell.toString();
-                team.setTeamName(teamName);
-            }
-            else if(columnCounter == 3) {
-                year =  cell.toString();
-                team.setYear(year);
-            }
-            else if(columnCounter == 4) {
-                gender = cell.toString();
-                team.setGender(gender);
-            }
-            else if(columnCounter == 5){
                 try {
                     int index = cell.toString().indexOf(".");
-                    grade = Integer.parseInt(cell.toString().substring(0,index));
+                    if (index != -1) {
+                        conference = Integer.parseInt(cell.toString().substring(0, index));
+                        team.setConference(conference);
+                    } else {
+                        System.out.println("No conference present for team " + teamId + "; defaulting to 1");
+                        conference = 1;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Conference is invalid.");
+                }
+            } else if (columnCounter == 2) {
+                teamName = cell.toString();
+                team.setTeamName(teamName);
+            } else if (columnCounter == 3) {
+                year = cell.toString();
+                team.setYear(year);
+            } else if (columnCounter == 4) {
+                gender = cell.toString();
+                team.setGender(gender);
+            } else if (columnCounter == 5) {
+                try {
+                    int index = cell.toString().indexOf(".");
+                    grade = Integer.parseInt(cell.toString().substring(0, index));
                     team.setGrade(grade);
                 } catch (NumberFormatException e) {
                     // still don't know what to do about this, this is bad
                     e.printStackTrace();
                 }
-            }
-            else if(columnCounter == 6){
+            } else if (columnCounter == 6) {
                 level = cell.toString();
                 team.setLevel(level);
-            }
-            else if(columnCounter == 7){
+            } else if (columnCounter == 7) {
                 requests = cell.toString();
                 //debug(team.getTeamId().toString()+":"+requests);
                 processRequestConstraints(team, requests);
-            }
-            else if(columnCounter == 8){
+            } else if (columnCounter == 8) {
                 notSameTimeAs = cell.toString();
                 String[] tempSplit = notSameTimeAs.split(",");
 
                 for (String teamIdStr : tempSplit) {
                     try {
                         int index = teamIdStr.indexOf(".");
-                        if(index > -1) {
-                            teamId = Integer.parseInt(teamIdStr.substring(0,index));
+                        if (index > -1) {
+                            teamId = Integer.parseInt(teamIdStr.substring(0, index));
                             team.getAvailability().getNotSameTimeAs().addSharedTeam(teamId);
                             team.getDontPlay().addSharedTeam(teamId);
                         }
                     } catch (NumberFormatException nfe) {
-                        System.out.println("Unable to add team "+teamIdStr+"to shared team list. Unparsable.");
+                        System.out.println("Unable to add team " + teamIdStr + "to shared team list. Unparsable.");
                     } catch (NullPointerException npe) {
                         System.out.println("team.availability or team.availability.notSameTimeAs is null");
                     }
@@ -278,7 +266,7 @@ public class CourtScheduleIO {
             }
 
 
-            columnCounter+=1;
+            columnCounter += 1;
         }
         return team;
     }
@@ -293,56 +281,55 @@ public class CourtScheduleIO {
         List<Integer> playOnceTeamList = new ArrayList<Integer>();
         boolean likesDoubleHeaders = false;//flat bool
         boolean likesBackToBack = false;//flat bool
-		MatchAvailability availability = team.getAvailability();
+        MatchAvailability availability = team.getAvailability();
         DateConstraint badDates = team.getBadDates();
         DateConstraint prefDates = team.getPreferredDates();
         DateConstraint onlyDates = team.getOnlyDates();
-        SharedTeams dontPlay=team.getDontPlay();
-        SharedTeams notSameTime= new SharedTeams();
+        SharedTeams dontPlay = team.getDontPlay();
+        SharedTeams notSameTime = new SharedTeams();
 
-        for(String request : requestArray) {
+        for (String request : requestArray) {
 
             // CANT PLAY ON CERTAIN DATE OR DATE RANGE //
-            request=request.toLowerCase();
-            request=request.trim();
+            request = request.toLowerCase();
+            request = request.trim();
             //System.out.println(request);
-            if(request.equals("")){
+            if (request.equals("")) {
 
-            }
-            else if(request.startsWith("no")){
-                request=request.replace("no ", "");
-                badDates=parseDateConstraints(request, team, badDates);
+            } else if (request.startsWith("no")) {
+                request = request.replace("no ", "");
+                badDates = parseDateConstraints(request, team, badDates);
             }
             // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY/TIME //
-            else if(request.startsWith("pref")){
-                request=request.replace("pref ","");
-                prefDates=parseDateConstraints(request, team, prefDates);
+            else if (request.startsWith("pref")) {
+                request = request.replace("pref ", "");
+                prefDates = parseDateConstraints(request, team, prefDates);
             }
             // ONLY TIMES
-            else if(request.startsWith("only")){
-                request=request.replace("only ", "");
-                onlyDates=parseDateConstraints(request, team, onlyDates);
+            else if (request.startsWith("only")) {
+                request = request.replace("only ", "");
+                onlyDates = parseDateConstraints(request, team, onlyDates);
             }
 
 
             //DONT PLAY THESE TEAMS
-            else if(request.startsWith("xplay"))
-                dontPlay=requestDontPlay(request, team, dontPlay);
+            else if (request.startsWith("xplay"))
+                dontPlay = requestDontPlay(request, team, dontPlay);
 
-            // TEAM REQUEST TO PLAY ANOTHER TEAM ONLY ONCE
-            else if(request.startsWith("playonce"))
-                playOnceTeamList=requestPlayOnce(request, team,playOnceTeamList);
+                // TEAM REQUEST TO PLAY ANOTHER TEAM ONLY ONCE
+            else if (request.startsWith("playonce"))
+                playOnceTeamList = requestPlayOnce(request, team, playOnceTeamList);
 
-            // DOUBLE HEADER PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(request.startsWith("dh"))
+                // DOUBLE HEADER PREFERENCE REQUEST (DEFAULTED TO false) //
+            else if (request.startsWith("dh"))
                 likesDoubleHeaders = true;
 
                 // BACK TO BACK PREFERENCE REQUEST (DEFAULTED TO false) //
-            else if(request.startsWith("b2b"))
+            else if (request.startsWith("b2b"))
                 likesBackToBack = true;
 
-            else if(request.startsWith("nst"))
-                notSameTime=requestNotSameTime(request, team, notSameTime);
+            else if (request.startsWith("nst"))
+                notSameTime = requestNotSameTime(request, team, notSameTime);
 
             else
                 System.out.println("Unknown constraint:" + request);
@@ -353,98 +340,96 @@ public class CourtScheduleIO {
         team.setDoubleHeaderPreference(new DoubleHeaderPreference(likesDoubleHeaders));
         team.setBackToBackPreference(new BackToBackPreference(likesBackToBack));
     }
-    public static DateConstraint parseDateConstraints(String request, Team team, DateConstraint dates){
-        if(request.contains("/")){
-            dates=requestDate(request, team, dates);
+
+    public static DateConstraint parseDateConstraints(String request, Team team, DateConstraint dates) {
+        if (request.contains("/")) {
+            dates = requestDate(request, team, dates);
         }
-        if(request.contains(":")){
-            if(request.contains("-")){
-                dates=requestOffTime(request, team, dates);
+        if (request.contains(":")) {
+            if (request.contains("-")) {
+                dates = requestOffTime(request, team, dates);
+            } else if (request.contains("before")) {
+                dates = requestBeforeTime(request, team, dates);
+            } else if (request.contains("after")) {
+                dates = requestAfterTime(request, team, dates);
             }
-            else if(request.contains("before")){
-                dates=requestBeforeTime(request, team, dates);
-            }
-            else if(request.contains("after")){
-                dates=requestAfterTime(request, team, dates);
-            }
-        }
-        else{
-            dates=requestDayOfWeek(request, team, dates);
+        } else {
+            dates = requestDayOfWeek(request, team, dates);
         }
         return dates;
     }
 
-    public static DateConstraint requestDayOfWeek(String request, Team team, DateConstraint dates){
-        String[] reSplit=request.split(" ");
-        for(int i=1; i<reSplit.length;i++){
+    public static DateConstraint requestDayOfWeek(String request, Team team, DateConstraint dates) {
+        String[] reSplit = request.split(" ");
+        for (int i = 1; i < reSplit.length; i++) {
             dates.addDates(dates.findDayOfWeek(reSplit[i]));
         }
         return dates;
     }
-    public static DateConstraint requestDate(String request, Team team, DateConstraint date){
+
+    public static DateConstraint requestDate(String request, Team team, DateConstraint date) {
         //parse the date and use it to create a new DateConstraint object
         String[] dates = request.split("-");
-        if(dates[0].split("/").length<3){
+        if (dates[0].split("/").length < 3) {
             System.out.println("Team" + team.getTeamId() + " request date 1 is too short." + request);
         }
-        if(dates.length>1){
-            if(dates[1].split("/").length<3){
+        if (dates.length > 1) {
+            if (dates[1].split("/").length < 3) {
                 System.out.println("Team" + team.getTeamId() + " request date 2 is too short." + request);
             }
-            date.addDates(date.findDateRange(dates[0],dates[1]));
-        }
-        else{
+            date.addDates(date.findDateRange(dates[0], dates[1]));
+        } else {
             date.addDate(date.findDate(dates[0]));
         }
         return date;
     }
 
-    public static DateConstraint requestAfterTime(String request, Team team, DateConstraint badDates){
+    public static DateConstraint requestAfterTime(String request, Team team, DateConstraint badDates) {
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-        if(!(request.contains("pm") || request.contains("p.m.")
-                ||request.contains("am")||request.contains("a.m."))){
+        if (!(request.contains("pm") || request.contains("p.m.")
+                || request.contains("am") || request.contains("a.m."))) {
 
             System.out.println("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
         }
-        request=request.replace("after ", "");
+        request = request.replace("after ", "");
         request = getMilitaryTime(request);
         //System.out.println(request);
-        MatchTime offTime = new MatchTime(request,"20:30");
+        MatchTime offTime = new MatchTime(request, "20:30");
         //offTimeList.add(offTime);
         badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
         return badDates;
     }
 
-    public static DateConstraint requestBeforeTime(String request, Team team, DateConstraint badDates){
+    public static DateConstraint requestBeforeTime(String request, Team team, DateConstraint badDates) {
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-        if(!(request.contains("pm") || request.contains("p.m.")
-                ||request.contains("am")||request.contains("a.m."))){
+        if (!(request.contains("pm") || request.contains("p.m.")
+                || request.contains("am") || request.contains("a.m."))) {
 
             System.out.println("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
         }
-        request=request.replace("before ", "");
+        request = request.replace("before ", "");
         request = getMilitaryTime(request);
-        MatchTime offTime = new MatchTime( "0:00",request);
+        MatchTime offTime = new MatchTime("0:00", request);
         //offTimeList.add(offTime);
         badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
         return badDates;
     }
 
-    public static DateConstraint requestOffTime(String request, Team team, DateConstraint badDates){
-        request=request.replace("xr ","");
+    public static DateConstraint requestOffTime(String request, Team team, DateConstraint badDates) {
+        request = request.replace("xr ", "");
         String[] times = request.split("-");
-        if(!(times[0].contains("pm") || times[0].contains("p.m.")
-                ||times[0].contains("am")||times[0].contains("a.m."))){
+        if (!(times[0].contains("pm") || times[0].contains("p.m.")
+                || times[0].contains("am") || times[0].contains("a.m."))) {
 
-            System.out.println("Team"+team.getTeamId()+"xr constraint time has no am/pm on time 1."+request);  // FIXME: is this the right error message?
+            System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 1." + request);  // FIXME: is this the right error message?
         }
-        if(!(times[1].contains("pm") || times[1].contains("p.m.")
-                ||times[1].contains("am")||times[1].contains("a.m."))){
+        if (!(times[1].contains("pm") || times[1].contains("p.m.")
+                || times[1].contains("am") || times[1].contains("a.m."))) {
 
             System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request); // FIXME: is this the right error message?
         }
-        times[0]=getMilitaryTime(times[0]);
-        times[1]=getMilitaryTime(times[1]);
+        times[0] = getMilitaryTime(times[0]);
+        times[1] = getMilitaryTime(times[1]);
         //System.out.println(times[0]+"vs"+times[1]);
         MatchTime offTime = new MatchTime(times[0], times[1]);
         //offTimeList.add(offTime);
@@ -452,38 +437,36 @@ public class CourtScheduleIO {
         return badDates;
     }
 
-    public static List<Integer> requestPlayOnce(String request, Team team, List<Integer> playOnceTeamList){
+    public static List<Integer> requestPlayOnce(String request, Team team, List<Integer> playOnceTeamList) {
         //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
-        request=request.replace("playonce ", "");
+        request = request.replace("playonce ", "");
         int index = request.indexOf(".");
-        Integer teamId = Integer.parseInt(request.substring(0,index));
+        Integer teamId = Integer.parseInt(request.substring(0, index));
         playOnceTeamList.add(teamId);
         return playOnceTeamList;
     }
 
 
-    private static SharedTeams requestDontPlay(String request, Team team, SharedTeams dontPlay){
+    private static SharedTeams requestDontPlay(String request, Team team, SharedTeams dontPlay) {
         //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
-        request=request.replace("xplay ", "");
-        Integer teamId=null;
-        try{
+        request = request.replace("xplay ", "");
+        Integer teamId = null;
+        try {
             teamId = Integer.parseInt(request);
-        }
-        catch(NumberFormatException nfe){
+        } catch (NumberFormatException nfe) {
             System.out.println("Team" + team.getTeamId() + "xplay constraint teamID error." + request); // FIXME: this is not human readable enough!
         }
         dontPlay.addSharedTeam(teamId);
         return dontPlay;
     }
 
-    private static SharedTeams requestNotSameTime(String request, Team team, SharedTeams notSameTime){
-        request=request.replace("nst ","");
-        Integer teamId=null;
-        try{
-            teamId=Integer.parseInt(request);
-        }
-        catch(NumberFormatException nfe){
-            System.out.println("Team"+team.getTeamId()+"nst constraint teamId error."+request); // FIXME: this is not human readable enough!
+    private static SharedTeams requestNotSameTime(String request, Team team, SharedTeams notSameTime) {
+        request = request.replace("nst ", "");
+        Integer teamId = null;
+        try {
+            teamId = Integer.parseInt(request);
+        } catch (NumberFormatException nfe) {
+            System.out.println("Team" + team.getTeamId() + "nst constraint teamId error." + request); // FIXME: this is not human readable enough!
         }
         notSameTime.addSharedTeam(teamId);
         return notSameTime;
@@ -491,50 +474,50 @@ public class CourtScheduleIO {
 
     public static String getMilitaryTime(String time) {
 
-        if(time.contains("pm") || time.contains("p.m.")) {
+        if (time.contains("pm") || time.contains("p.m.")) {
             time = time.replace("pm", "");
             time = time.replace("p.m.", "");
-            time=time.trim();
+            time = time.trim();
             String[] t = time.split(":");
             if (t.length < 2) {
-                System.out.println("Time not formatted correctly: "+ time);
+                System.out.println("Time not formatted correctly: " + time);
                 return "";
             }
             try {
                 Integer timeInt = Integer.parseInt(t[0]);
-                if(timeInt != 12){
+                if (timeInt != 12) {
                     timeInt += 12;
                 }
-                return timeInt.toString()+":"+t[1];
-            }catch (NumberFormatException e) {
-                System.out.println("Time not formatted correctly? "+
-                        "Could not read a number from: \""+ t[0]+"\", "+
-                        "given a time of "+time);
+                return timeInt.toString() + ":" + t[1];
+            } catch (NumberFormatException e) {
+                System.out.println("Time not formatted correctly? " +
+                        "Could not read a number from: \"" + t[0] + "\", " +
+                        "given a time of " + time);
                 if (Main.LOG_LEVEL > 1) {
                     e.printStackTrace();
                 }
                 return "";
             }
-        }else {
+        } else {
             time = time.replace("am", "");
             time = time.replace("a.m.", "");
-            time=time.trim();
+            time = time.trim();
 
             String[] t = time.split(":");
             if (t.length < 2) {
-                System.out.println("Time not formatted correctly: "+ time);
+                System.out.println("Time not formatted correctly: " + time);
                 return "";
             }
             try {
                 Integer timeInt = Integer.parseInt(t[0]);
-                if(timeInt == 12){
+                if (timeInt == 12) {
                     timeInt = 0;
                 }
-                return timeInt+":"+t[1];
-            }catch (NumberFormatException e) {
-                System.out.println("Time not formatted correctly? "+
-                        "Could not read a number from: \""+ t[0]+"\", "+
-                        "given a time of "+time);
+                return timeInt + ":" + t[1];
+            } catch (NumberFormatException e) {
+                System.out.println("Time not formatted correctly? " +
+                        "Could not read a number from: \"" + t[0] + "\", " +
+                        "given a time of " + time);
                 if (Main.LOG_LEVEL > 1) {
                     e.printStackTrace();
                 }
@@ -557,11 +540,11 @@ public class CourtScheduleIO {
         Integer rowCounter = 0;
         Integer rowCount = sh.getLastRowNum();
 
-        while (rowCounter <= rowCount){
+        while (rowCounter <= rowCount) {
             Row currentRow = sh.getRow(rowCounter);
             short columnCount = currentRow.getLastCellNum();
 
-            if(columnCount > columnWidth)
+            if (columnCount > columnWidth)
                 columnWidth = columnCount;
         }
 
