@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
+import static courtscheduler.persistence.CourtScheduleIO.isAfternoon;
 import static courtscheduler.persistence.CourtScheduleInfo.parseDateString;
 import static courtscheduler.persistence.CourtScheduleInfo.timeStringToMinutes;
 import static org.junit.Assert.assertEquals;
@@ -33,12 +34,31 @@ public class Time {
     }
 
     @Test
+    public void afternoon(){
+        String[][] tests = {
+                {"12:00 a.m.", "false"},
+                {"8:00 a.m.", "false"},
+                {"8:01 PM", "true"},
+                {"4:00pm", "true"},
+                {"11:59 p.m.", "true"},
+                {"14:00", "true"},
+                {"12:00", "true"},
+                {"0:00", "false"}
+        };
+        for (String[] test : tests){
+            assertEquals("\""+test[0]+"\" must be "+test[1], test[1], isAfternoon(test[0])+"");
+        }
+    }
+
+    @Test
     public void timeToMinutes(){
         String[][] tests = {
                 {"12:00 a.m.", "0"},
                 {"8:00 a.m.", "480"},
+                {"8:01 PM", "1201"},
                 {"4:00pm", "960"},
-                {"11:59 p.m.", "1439"}
+                {"11:59 p.m.", "1439"},
+                {"11:59", "719"},
         };
         for (String[] test : tests){
             assertEquals("\""+test[0]+"\" must be "+test[1], test[1], timeStringToMinutes(test[0])+"");
