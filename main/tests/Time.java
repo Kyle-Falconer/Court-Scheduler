@@ -1,11 +1,12 @@
+import courtscheduler.persistence.CourtScheduleInfo;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import static courtscheduler.domain.CourtScheduleInfo.parseDateString;
-import static courtscheduler.domain.CourtScheduleInfo.timeStringToMinutes;
 import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
+import static courtscheduler.persistence.CourtScheduleInfo.parseDateString;
+import static courtscheduler.persistence.CourtScheduleInfo.timeStringToMinutes;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -40,7 +41,7 @@ public class Time {
                 {"11:59 p.m.", "1439"}
         };
         for (String[] test : tests){
-            assertEquals("\""+test[0]+"\" must be \""+test[1]+"\"", test[1], timeStringToMinutes(test[0])+"");
+            assertEquals("\""+test[0]+"\" must be "+test[1], test[1], timeStringToMinutes(test[0])+"");
         }
     }
 
@@ -55,4 +56,23 @@ public class Time {
             assertEquals("\""+test[0]+"\" must be \""+test[1]+"\"", test[1], parseDateString(test[0]).toString());
         }
     }
+
+    @Test
+    public void timeIndices(){
+        CourtScheduleInfo info = new CourtScheduleInfo("");
+        info.setTimeslotDuration("60");
+        info.setTimeslotMidnightOffset("4:00pm");
+        info.setNumberOfTimeSlotsPerDay("4");
+
+        String[][] tests = {
+                {"6:00pm", "2"},
+                {"4:00pm", "0"},
+                {"12:00am", "-1"},
+                {"8:00pm", "-1"}
+        };
+        for (String[] test : tests){
+            assertEquals("\""+test[0]+"\" must be "+test[1], test[1], info.getTimeIndex(test[0]).toString());
+        }
+    }
+
 }

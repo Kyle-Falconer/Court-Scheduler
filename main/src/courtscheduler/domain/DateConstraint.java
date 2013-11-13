@@ -1,6 +1,6 @@
 package courtscheduler.domain;
 
-import org.joda.time.DateTimeConstants;
+import courtscheduler.persistence.CourtScheduleInfo;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Weeks;
@@ -144,8 +144,8 @@ public class DateConstraint extends Constraint{
         return makeTimeArray(times);
     }
     public boolean[] makeTimeArray(String startTime, String endTime){
-        int start=info.getIndexTime(startTime);
-        int end=info.getIndexTime(endTime);
+        int start=info.getTimeIndex(startTime);
+        int end=info.getTimeIndex(endTime);
         //System.out.println(start+":"+end);
         return makeTimeArray(start, end);
     }
