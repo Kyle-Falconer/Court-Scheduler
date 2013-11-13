@@ -227,8 +227,8 @@ public class CourtScheduleInfo {
         if (conferenceStartDate != null)
             result.append("conference_start=" + conferenceStartDate.toString() + "\n");
 
-        if (conferenceStartDate != null)
-            result.append("conference_end=" + conferenceStartDate.toString() + "\n");
+        if (conferenceEndDate != null)
+            result.append("conference_end=" + conferenceEndDate.toString() + "\n");
 
         result.append("court_count=" + numberOfCourts + "\n");
         result.append("timeslots_start=" + timeslotMidnightOffsetInMinutes + "\n");
@@ -236,7 +236,7 @@ public class CourtScheduleInfo {
         result.append("timeslot_duration_minutes=" + timeslotDurationInMinutes + "\n");
 
         for (LocalDate holiday : holidays) {
-            result.append("holiday = " + holiday.toString());
+            result.append("holiday = " + holiday.toString() +"\n");
         }
 
         return result.toString();

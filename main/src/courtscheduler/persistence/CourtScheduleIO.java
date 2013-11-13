@@ -386,9 +386,7 @@ public class CourtScheduleIO {
 
     public static DateConstraint requestAfterTime(String request, Team team, DateConstraint badDates) {
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-        if (!(request.contains("pm") || request.contains("p.m.")
-                || request.contains("am") || request.contains("a.m."))) {
-
+        if (isAfternoon(request) == null) {
             System.out.println("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
         }
         request = request.replace("after ", "");
@@ -402,9 +400,7 @@ public class CourtScheduleIO {
 
     public static DateConstraint requestBeforeTime(String request, Team team, DateConstraint badDates) {
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
-        if (!(request.contains("pm") || request.contains("p.m.")
-                || request.contains("am") || request.contains("a.m."))) {
-
+        if (isAfternoon(request) == null) {
             System.out.println("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
         }
         request = request.replace("before ", "");
@@ -418,15 +414,10 @@ public class CourtScheduleIO {
     public static DateConstraint requestOffTime(String request, Team team, DateConstraint badDates) {
         request = request.replace("xr ", "");
         String[] times = request.split("-");
-        if (!(times[0].contains("pm") || times[0].contains("p.m.")
-                || times[0].contains("am") || times[0].contains("a.m."))) {
-
-            System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 1." + request);  // FIXME: is this the right error message?
-        }
-        if (!(times[1].contains("pm") || times[1].contains("p.m.")
-                || times[1].contains("am") || times[1].contains("a.m."))) {
-
-            System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time 2." + request); // FIXME: is this the right error message?
+        for (int i = 0; i < times.length; i++){
+            if (isAfternoon(times[i]) == null) {
+                System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time "+i+"." + request);  // FIXME: is this the right error message?
+            }
         }
         times[0] = getMilitaryTime(times[0]);
         times[1] = getMilitaryTime(times[1]);
@@ -472,12 +463,43 @@ public class CourtScheduleIO {
         return notSameTime;
     }
 
+    public static Boolean isAfternoon(String time){
+        boolean isPM = time.matches("[0-9: ]*([pP].?[mM].?)");
+        boolean isAM = time.matches("[0-9: ]*([aA].?[mM].?)");
+
+        if (!isPM && !isAM){
+            // string contains neither a.m. nor p.m.
+            String hourString = time.split(":")[0];
+            int hour;
+            try {
+                hour = Integer.parseInt(hourString);
+                isPM = hour >= 12;
+            } catch (NumberFormatException nfe){
+                System.out.println("Time not formatted correctly? " +
+                        "Could not read a number from: \"" + hourString + "\", " +
+                        "given a time of " + time);
+                return null;
+            }
+            if (!isPM && hour != 0){
+                // could not decide!
+                return null;
+            } else if (hour == 0){
+                return false;
+            }
+        }
+        return isPM;
+    }
     public static String getMilitaryTime(String time) {
 
-        if (time.contains("pm") || time.contains("p.m.")) {
-            time = time.replace("pm", "");
-            time = time.replace("p.m.", "");
-            time = time.trim();
+        // Pattern pattern = Pattern.compile("am|a.m.|pm|p.m.", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+        // time = time.replaceAll(pattern.toString(), "");
+        Boolean isPM = isAfternoon(time);
+
+        time = time.replaceAll("([apAP].?[mM].?)", "");
+        time = time.trim();
+
+        if (isPM != null && isPM) {
+
             String[] t = time.split(":");
             if (t.length < 2) {
                 System.out.println("Time not formatted correctly: " + time);
@@ -499,9 +521,6 @@ public class CourtScheduleIO {
                 return "";
             }
         } else {
-            time = time.replace("am", "");
-            time = time.replace("a.m.", "");
-            time = time.trim();
 
             String[] t = time.split(":");
             if (t.length < 2) {
