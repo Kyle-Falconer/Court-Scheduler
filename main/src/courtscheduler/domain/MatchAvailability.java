@@ -13,6 +13,7 @@ public class MatchAvailability {
     Constraint[] constraints;
     DateConstraint badDates;
     DateConstraint prefDates;
+    DateConstraint onlyDates;
 	SharedTeams notSameTimeAs;
 
 
@@ -20,6 +21,7 @@ public class MatchAvailability {
     public MatchAvailability(){
 		badDates = new DateConstraint();
 		prefDates = new DateConstraint();
+		// intentionally leaving onlyDates uninitialized
 		notSameTimeAs = new SharedTeams();
     }
 
@@ -30,10 +32,23 @@ public class MatchAvailability {
 		// a team that shares players with one of the teams
         notSameTimeAs = new SharedTeams(m1.getNotSameTimeAs(), m2.getNotSameTimeAs());
 		badDates = new DateConstraint(m1.badDates, m2.badDates);
+		prefDates = new DateConstraint(m1.prefDates, m2.prefDates);
+		onlyDates = mergeOnlyDates(m1.onlyDates, m2.onlyDates);
     }
 
+	private static DateConstraint mergeOnlyDates(DateConstraint only1, DateConstraint only2) {
+		if (only1 == null && only2 == null)
+			return null;
+		else if (only1 == null)
+			return only2;
+		else if (only2 == null)
+			return only1;
+		else
+			return new DateConstraint(only1, only2);
+	}
+
 	public boolean canPlayIn(MatchSlot matchSlot) {
-		return badDates.isTrue(matchSlot);
+		return badDates.isTrue(matchSlot) && (onlyDates == null || onlyDates.isTrue(matchSlot));
 	}
 
     public SharedTeams getNotSameTimeAs() {

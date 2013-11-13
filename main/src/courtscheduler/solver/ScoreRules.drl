@@ -21,7 +21,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 import courtscheduler.domain.CourtSchedule;
-import courtscheduler.domain.CourtScheduleInfo;
+import courtscheduler.persistence.CourtScheduleInfo;
 import courtscheduler.domain.Match;
 import courtscheduler.domain.Team;
 
@@ -94,16 +94,6 @@ rule "oneGamePerTeam"
 		scoreHolder.addHardConstraintMatch(kcontext, -20);
 end
 
-// a Team cannot play themselves (honestly I'm not sure if this is already taken care of)
-// I know that "notSameTimeAs" should take care of this, but it is a soft constraint so
-// there is no guarantee. ~MA
-rule "teamCannotPlayThemselves"
-    when
-        Match(team1.teamId == team2.teamId)
-    then
-        scoreHolder.addHardConstraintMatch(kcontext, -20);
-end
-
 // ############################################################################
 // Soft constraints
 // ############################################################################
@@ -125,10 +115,9 @@ rule "noNightOwl"
 end
 
 // prefer not to schedule teams at the same time as ones that share coaches
-// changed "notSameTimeAs" to "NotSameTimeAs"
 rule "notSameTimeAs"
 	when
-		Match($teamlist : NotSameTimeAs, $matchSlot : matchSlot)
+		Match($teamlist : notSameTimeAs, $matchSlot : matchSlot)
 		Match($matchSlot == matchSlot && (team1.teamId memberOf $teamlist || team2.teamId memberOf $teamlist))
 	then
 		scoreHolder.addSoftConstraintMatch(kcontext, -5);

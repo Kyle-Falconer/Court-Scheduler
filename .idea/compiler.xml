@@ -24,7 +24,6 @@
         <processorPath useClasspath="true" />
         <module name="optaplanner-benchmark" />
         <module name="optaplanner-core" />
-        <module name="optaplanner-docs" />
         <module name="optaplanner-examples" />
         <module name="optaplanner-webexamples" />
       </profile>

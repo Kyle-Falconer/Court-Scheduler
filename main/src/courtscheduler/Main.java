@@ -1,7 +1,7 @@
 package courtscheduler;
 
 import courtscheduler.domain.CourtSchedule;
-import courtscheduler.domain.CourtScheduleInfo;
+import courtscheduler.persistence.CourtScheduleInfo;
 import courtscheduler.persistence.CourtScheduleIO;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.SolverConfig;
@@ -19,7 +19,7 @@ import java.util.Scanner;
  */
 public class Main {
 
-    public static int LOG_LEVEL = 1;
+    public static int LOG_LEVEL = 2;
 
     public static void main(String[] args) throws Exception {
 
@@ -85,19 +85,19 @@ public class Main {
     }
 
     private static XmlSolverFactory loadConfig(String defaultConfigXmlFilename) {
-        XmlSolverFactory configed = null;
+        XmlSolverFactory configured = null;
         String solverConfigFilename = defaultConfigXmlFilename;
-        while (configed == null) {
+        while (configured == null) {
             // http://docs.jboss.org/drools/release/5.5.0.Final/drools-planner-docs/html_single/index.html#d0e1961
             try {
-                configed = new XmlSolverFactory(solverConfigFilename);
+                configured = new XmlSolverFactory(solverConfigFilename);
             } catch (IllegalArgumentException iae) {
                 System.out.println("Could not find the solver configuration file: " + solverConfigFilename);
-                configed = null;
+                configured = null;
                 solverConfigFilename = promptGetString("Please enter the class path of the solver configuration file: ");
             }
         }
-        return configed;
+        return configured;
     }
 
     private static String promptGetString(String prompt) {
