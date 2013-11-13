@@ -1,12 +1,14 @@
 package courtscheduler;
 
 import courtscheduler.domain.CourtSchedule;
-import courtscheduler.persistence.CourtScheduleInfo;
 import courtscheduler.persistence.CourtScheduleIO;
+import courtscheduler.persistence.CourtScheduleInfo;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
 
+import java.awt.*;
+import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Scanner;
@@ -78,10 +80,25 @@ public class Main {
 			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
 
             utils.writeXlsx(bestSolution.getMatchList(), info, out_filename);
+            openExcelFile(out_filename);
         } catch(Exception e){
             e.printStackTrace(); //FIXME
         }
 
+
+    }
+
+    private static void openExcelFile(String filename){
+        try {
+            if (System.getProperty("os.name").contains("Windows")){
+                Process p = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + filename);
+            } else {
+                Desktop dt = Desktop.getDesktop();
+                dt.open(new File(filename));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static XmlSolverFactory loadConfig(String defaultConfigXmlFilename) {
