@@ -2,19 +2,30 @@ package courtscheduler.persistence;
 
 import courtscheduler.Main;
 import courtscheduler.domain.*;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.PrintOrientation;
+import org.apache.poi.xssf.usermodel.XSSFPrintSetup;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFFontFormatting;
+import org.apache.poi.hssf.util.HSSFColor;
+
 import org.joda.time.LocalDate;
 
 import java.io.*;
+import java.lang.Comparable;
+import java.lang.Object;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Scanner;
+
 
 public class CourtScheduleIO {
 
@@ -67,35 +78,69 @@ public class CourtScheduleIO {
         Collections.sort(matches);
 
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Conference 1");
-        //Create a new row in current sheet
+        XSSFSheet sheet;
+        sheet = workbook.createSheet();
         int rowNumber = 0;
         int cellNumber = 0;
-        Row header = sheet.createRow(rowNumber);
-        //cell.setCellValue("CourtScheduler");
-
-        header.createCell(0).setCellValue("THE COURTS");
-        header.createCell(2).setCellValue("Game Schedule");
-        rowNumber = rowNumber + 2;
-
-        header = sheet.createRow(rowNumber);
-        // Team firstTeamOnList = matchList.getTeam1();
-        //int conf = firstTeamOnList.getConference();
-        header.createCell(0).setCellValue("Conference:");
-        header.createCell(1).setCellValue("1");     // FIXME
-        rowNumber = rowNumber + 2;
-
-        header = sheet.createRow(rowNumber);
-        header.createCell(0).setCellValue("TEAM");
-        header.createCell(1).setCellValue(" ");
-        header.createCell(2).setCellValue("OPPONENT");
-        header.createCell(3).setCellValue("CONFERENCE");
-        header.createCell(4).setCellValue("DAY");
-        header.createCell(5).setCellValue("DATE");
-        header.createCell(6).setCellValue("TIME");
-        header.createCell(7).setCellValue("COURT");
+        String conf = "";
 
         for(Match match : matches) {
+
+
+            // CONFERENCE
+            String conference = match.getTeam1().getConference().toString();
+            if (!conference.equals(conf)) {
+
+                sheet = workbook.createSheet(conference);
+                //Create a new row in current sheet
+                rowNumber = 0;
+                //cellNumber = 0;
+                Row header = sheet.createRow(rowNumber);
+                XSSFPrintSetup printSetup = sheet.getPrintSetup();
+                printSetup.setOrientation(PrintOrientation.LANDSCAPE);
+
+                sheet.setColumnWidth(0, 7424);
+                sheet.setColumnWidth(1, 1024);
+                sheet.setColumnWidth(2, 7424);
+                sheet.setColumnWidth(3, 3072);
+                sheet.setColumnWidth(4, 2816);
+                sheet.setColumnWidth(5, 2816);
+                sheet.setColumnWidth(6, 2304);
+                sheet.setColumnWidth(7, 1792);
+
+                //XSSFCellStyle cellStyle = workbook.createCellStyle();
+                //cellStyle = workbook.createCellStyle();
+                XSSFFont xSSFFont = workbook.createFont();
+                //xSSFFont.setFontName(XSSFFont.DEFAULT_FONT_NAME);
+                //xSSFFont.setFontHeightInPoints((short) 28);
+                xSSFFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
+                //hSSFFont.setColor(HSSFColor.GREEN.index);
+                //cellStyle.setFont(xSSFFont);
+                //setFontHeight(28);
+                header.createCell(0).setCellValue("THE COURTS");
+                //xSSFFont.setFontHeightInPoints((short) 24);
+                header.createCell(2).setCellValue("Game Schedule");
+                rowNumber = rowNumber + 2;
+
+                header = sheet.createRow(rowNumber);
+                // Team firstTeamOnList = matchList.getTeam1();
+                //int conf = match.getTeam1().getConference().toString();
+                header.createCell(0).setCellValue("Conference:");
+                header.createCell(1).setCellValue(conference);
+                rowNumber = rowNumber + 2;
+
+                header = sheet.createRow(rowNumber);
+                header.createCell(0).setCellValue("TEAM");
+                header.createCell(1).setCellValue(" ");
+                header.createCell(2).setCellValue("OPPONENT");
+                header.createCell(3).setCellValue("CONFERENCE");
+                header.createCell(4).setCellValue("DAY");
+                header.createCell(5).setCellValue("DATE");
+                header.createCell(6).setCellValue("TIME");
+                header.createCell(7).setCellValue("COURT");
+
+            }
+
             cellNumber = 0;
             rowNumber++;
             Row dataRow = sheet.createRow(rowNumber);
@@ -113,7 +158,6 @@ public class CourtScheduleIO {
             dataRow.createCell(cellNumber++).setCellValue(teamName2);
 
             // CONFERENCE
-            String conference = match.getTeam1().getConference().toString();
             dataRow.createCell(cellNumber++).setCellValue(conference);
 
 			// DAY
@@ -142,6 +186,8 @@ public class CourtScheduleIO {
 			// normal people like their courts indexed from one, not zero,
 			// so add one if we're printing for the client
             dataRow.createCell(cellNumber).setCellValue(courtId + (Main.LOG_LEVEL > 1 ? 0 : 1));
+
+            conf = conference;
         }
 
         Scanner input = new Scanner(System.in);
@@ -159,17 +205,26 @@ public class CourtScheduleIO {
 
             } catch (FileNotFoundException e) {
                 stackTraceE = e.getStackTrace();
-                System.out.println("Problem writing to output file.  If currently open, please close, then hit 'enter', or 'q' to quit.");
+                System.out.println("An output file already exists and is open.");
+                System.out.println("To overwrite: close it, then hit 'enter'.");
+                System.out.println("To create a new output file: enter new name or path.");
+                System.out.println("To quit: type 'q'.");
                 reply = input.nextLine();
                 if (reply.regionMatches(true, 0, "q", 0, 1))
                     return;
+                else if (reply.equals(""))
+                    continue;
+                else
+                    filepath = reply;
 
             } catch (IOException e) {
                 stackTraceE = e.getStackTrace();
-                System.out.println("An output file already exists.  Please enter new name or path for this output file: ");
-                filepath = input.nextLine();
+                System.out.println("Output error.  Please enter new name or path for this output file, or 'q' to quit: ");
+                reply = input.nextLine();
                 if (reply.regionMatches(true, 0, "q", 0, 1))
                     return;
+                else
+                    filepath = reply;
             }
         }  while(continueInput);
     }
