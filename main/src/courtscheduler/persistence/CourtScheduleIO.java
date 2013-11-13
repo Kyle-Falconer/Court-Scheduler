@@ -398,7 +398,7 @@ public class CourtScheduleIO {
         request = request.replace("after ", "");
         request = getMilitaryTime(request);
         //System.out.println(request);
-        badDates.addRestrictedTimes(badDates.makeTimeArray(request, "24:00"));
+        badDates.addRestrictedTimes(badDates.makeTimeArray(request, "23:59"));
     }
 
     public static void requestBeforeTime(String request, Team team, DateConstraint badDates){

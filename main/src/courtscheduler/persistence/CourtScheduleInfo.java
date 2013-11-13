@@ -196,9 +196,9 @@ public class CourtScheduleInfo {
      * @param time The human-readable time string.
      * @return
      */
-    public Integer getTimeIndex(String time) {
+    public Integer getCeilingTimeIndex(String time) {
         int minutes = timeStringToMinutes(time);
-        int index = (minutes - this.timeslotMidnightOffsetInMinutes) / this.timeslotDurationInMinutes;
+        int index = (int) Math.ceil((minutes - this.timeslotMidnightOffsetInMinutes) / this.timeslotDurationInMinutes);
         if (index < 0 ) {
             System.out.println("ERROR: Time " + time + " is before the start time.");
             return -1;
@@ -208,6 +208,18 @@ public class CourtScheduleInfo {
         }
         return index;
     }
+	public Integer getFloorTimeIndex(String time) {
+		int minutes = timeStringToMinutes(time);
+		int index = (int) Math.ceil((minutes - this.timeslotMidnightOffsetInMinutes) / this.timeslotDurationInMinutes);
+		if (index < 0 ) {
+			System.out.println("ERROR: Time " + time + " is before the start time.");
+			return -1;
+		} else if (index >= this.numberOfTimeSlotsPerDay){
+			System.out.println("ERROR: Time " + time + " is after the end time.");
+			return -1;
+		}
+		return index;
+	}
 
     public LocalDate[] getHolidays() {
         return this.holidays.toArray(new LocalDate[this.holidays.size()]);

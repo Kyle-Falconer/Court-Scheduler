@@ -92,7 +92,7 @@ public class DateConstraint extends Constraint{
     // no time
     public void addDate(Integer day){
         if(day!=null){
-            boolean[] noTimes = makeTimeArray(0,dates[0].length);
+            boolean[] noTimes = makeTimeArray(0,dates[0].length-1);
             this.addDate(day, noTimes);
         }
     }
@@ -131,7 +131,7 @@ public class DateConstraint extends Constraint{
     }
     //start/end times -> boolean[]
     public boolean[] makeTimeArray(int startTime, int endTime){
-        int timeRange =Math.abs(endTime-startTime);
+        int timeRange =Math.abs(endTime-startTime)+1;
         //System.out.println(timeRange);
         int[] times= new int[timeRange];
         for(int i=0;i<timeRange;i++){
@@ -144,8 +144,8 @@ public class DateConstraint extends Constraint{
         return makeTimeArray(times);
     }
     public boolean[] makeTimeArray(String startTime, String endTime){
-        int start=info.getTimeIndex(startTime);
-        int end=info.getTimeIndex(endTime);
+        int start=info.getCeilingTimeIndex(startTime);
+        int end=info.getFloorTimeIndex(endTime);
         //System.out.println(start+":"+end);
         return makeTimeArray(start, end);
     }

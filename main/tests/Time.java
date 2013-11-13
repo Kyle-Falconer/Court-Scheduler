@@ -64,15 +64,28 @@ public class Time {
         info.setTimeslotMidnightOffset("4:00pm");
         info.setNumberOfTimeSlotsPerDay("4");
 
-        String[][] tests = {
+        String[][] ceilTests = {
                 {"6:00pm", "2"},
                 {"4:00pm", "0"},
                 {"12:00am", "-1"},
-                {"8:00pm", "-1"}
+                {"8:00pm", "-1"},
+				{"4:30pm", "0"},
+				{"6:30pm", "2"}
         };
-        for (String[] test : tests){
-            assertEquals("\""+test[0]+"\" must be "+test[1], test[1], info.getTimeIndex(test[0]).toString());
+        for (String[] test : ceilTests){
+            assertEquals("\""+test[0]+"\" must be "+test[1], test[1], info.getCeilingTimeIndex(test[0]).toString());
         }
+		String[][] floorTests = {
+				{"6:00pm", "2"},
+				{"4:00pm", "0"},
+				{"12:00am", "-1"},
+				{"8:00pm", "-1"},
+				{"4:30pm", "1"},
+				{"6:30pm", "3"}
+		};
+		for (String[] test : floorTests){
+			assertEquals("\""+test[0]+"\" must be "+test[1], test[1], info.getFloorTimeIndex(test[0]).toString());
+		}
     }
 
 }
