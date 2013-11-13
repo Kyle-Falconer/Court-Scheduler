@@ -23,3 +23,6 @@
 
 # Court Scheduler output
 output.xlsx
+
+# Lock files from OpenOffice
+.~lock*

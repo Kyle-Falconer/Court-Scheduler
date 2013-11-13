@@ -149,9 +149,6 @@ public class DateConstraint extends Constraint{
         //System.out.println(start+":"+end);
         return makeTimeArray(start, end);
     }
-    public boolean[] makeTimeArray(MatchTime time){
-        return makeTimeArray(time.getStartTime(),time.getEndTime());
-    }
 
     //conversion methods for days
 
@@ -178,7 +175,7 @@ public class DateConstraint extends Constraint{
             System.out.println("ERROR: date "+date+" is after conference end.");
             return null;
         }
-        return day-1;
+        return day;
     }
     //array of matchDate inputs -> array of int days
     public int[] findDates(List<MatchDate> Dates){

@@ -160,4 +160,9 @@ public class Team {
     public DateConstraint getOnlyDates() {
         return this.avail.onlyDates;
     }
+	public void setOnlyDates(DateConstraint onlyDates) {
+		if (onlyDates != null) {
+			this.avail.onlyDates = onlyDates;
+		}
+	}
 }

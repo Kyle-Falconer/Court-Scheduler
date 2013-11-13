@@ -296,7 +296,7 @@ public class CourtScheduleIO {
 		MatchAvailability availability = team.getAvailability();
         DateConstraint badDates = team.getBadDates();
         DateConstraint prefDates = team.getPreferredDates();
-        DateConstraint onlyDates = team.getOnlyDates();
+        DateConstraint onlyDates = null;
         SharedTeams dontPlay=team.getDontPlay();
         SharedTeams notSameTime= new SharedTeams();
 
@@ -307,21 +307,24 @@ public class CourtScheduleIO {
             request=request.trim();
             //System.out.println(request);
             if(request.equals("")){
-
+				continue;
             }
             else if(request.startsWith("no")){
                 request=request.replace("no ", "");
-                badDates=parseDateConstraints(request, team, badDates);
+                parseDateConstraints(request, team, badDates);
             }
             // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY/TIME //
             else if(request.startsWith("pref")){
                 request=request.replace("pref ","");
-                prefDates=parseDateConstraints(request, team, prefDates);
+                parseDateConstraints(request, team, prefDates);
             }
             // ONLY TIMES
             else if(request.startsWith("only")){
                 request=request.replace("only ", "");
-                onlyDates=parseDateConstraints(request, team, onlyDates);
+				if (onlyDates == null) {
+					onlyDates = new DateConstraint();
+				}
+                parseDateConstraints(request, team, onlyDates);
             }
 
 
@@ -352,36 +355,36 @@ public class CourtScheduleIO {
         team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));
         team.setDoubleHeaderPreference(new DoubleHeaderPreference(likesDoubleHeaders));
         team.setBackToBackPreference(new BackToBackPreference(likesBackToBack));
+		team.setOnlyDates(onlyDates);
     }
     public static DateConstraint parseDateConstraints(String request, Team team, DateConstraint dates){
         if(request.contains("/")){
-            dates=requestDate(request, team, dates);
+            requestDate(request, team, dates);
         }
         if(request.contains(":")){
             if(request.contains("-")){
-                dates=requestOffTime(request, team, dates);
+                requestOffTime(request, team, dates);
             }
             else if(request.contains("before")){
-                dates=requestBeforeTime(request, team, dates);
+                requestBeforeTime(request, team, dates);
             }
             else if(request.contains("after")){
-                dates=requestAfterTime(request, team, dates);
+                requestAfterTime(request, team, dates);
             }
         }
         else{
-            dates=requestDayOfWeek(request, team, dates);
+            requestDayOfWeek(request, team, dates);
         }
         return dates;
     }
 
-    public static DateConstraint requestDayOfWeek(String request, Team team, DateConstraint dates){
+    public static void requestDayOfWeek(String request, Team team, DateConstraint dates){
         String[] reSplit=request.split(" ");
         for(int i=1; i<reSplit.length;i++){
             dates.addDates(dates.findDayOfWeek(reSplit[i]));
         }
-        return dates;
     }
-    public static DateConstraint requestDate(String request, Team team, DateConstraint date){
+    public static void requestDate(String request, Team team, DateConstraint date){
         //parse the date and use it to create a new DateConstraint object
         String[] dates = request.split("-");
         if(dates[0].split("/").length<3){
@@ -396,10 +399,9 @@ public class CourtScheduleIO {
         else{
             date.addDate(date.findDate(dates[0]));
         }
-        return date;
     }
 
-    public static DateConstraint requestAfterTime(String request, Team team, DateConstraint badDates){
+    public static void requestAfterTime(String request, Team team, DateConstraint badDates){
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
         if(!(request.contains("pm") || request.contains("p.m.")
                 ||request.contains("am")||request.contains("a.m."))){
@@ -409,13 +411,10 @@ public class CourtScheduleIO {
         request=request.replace("after ", "");
         request = getMilitaryTime(request);
         //System.out.println(request);
-        MatchTime offTime = new MatchTime(request,"20:30");
-        //offTimeList.add(offTime);
-        badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
-        return badDates;
+        badDates.addRestrictedTimes(badDates.makeTimeArray(request, "24:00"));
     }
 
-    public static DateConstraint requestBeforeTime(String request, Team team, DateConstraint badDates){
+    public static void requestBeforeTime(String request, Team team, DateConstraint badDates){
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
         if(!(request.contains("pm") || request.contains("p.m.")
                 ||request.contains("am")||request.contains("a.m."))){
@@ -424,14 +423,10 @@ public class CourtScheduleIO {
         }
         request=request.replace("before ", "");
         request = getMilitaryTime(request);
-        MatchTime offTime = new MatchTime( "0:00",request);
-        //offTimeList.add(offTime);
-        badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
-        return badDates;
+        badDates.addRestrictedTimes(badDates.makeTimeArray("0:00", request));
     }
 
-    public static DateConstraint requestOffTime(String request, Team team, DateConstraint badDates){
-        request=request.replace("xr ","");
+    public static void requestOffTime(String request, Team team, DateConstraint badDates){
         String[] times = request.split("-");
         if(!(times[0].contains("pm") || times[0].contains("p.m.")
                 ||times[0].contains("am")||times[0].contains("a.m."))){
@@ -446,10 +441,7 @@ public class CourtScheduleIO {
         times[0]=getMilitaryTime(times[0]);
         times[1]=getMilitaryTime(times[1]);
         //System.out.println(times[0]+"vs"+times[1]);
-        MatchTime offTime = new MatchTime(times[0], times[1]);
-        //offTimeList.add(offTime);
-        badDates.addRestrictedTimes(badDates.makeTimeArray(offTime));
-        return badDates;
+        badDates.addRestrictedTimes(badDates.makeTimeArray(times[0], times[1]));
     }
 
     public static List<Integer> requestPlayOnce(String request, Team team, List<Integer> playOnceTeamList){
