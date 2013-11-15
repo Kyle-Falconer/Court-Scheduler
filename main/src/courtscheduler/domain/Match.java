@@ -121,6 +121,9 @@ public class Match implements Comparable<Match> {
 	public boolean getCanPlayInCurrentSlot() {
 		return avail.canPlayIn(matchSlot);
 	}
+	public boolean getPreferToPlayInCurrentSlot() {
+		return avail.isPreferredSlot(matchSlot);
+	}
 
 	public List<Integer> getNotSameTimeAs() {
 		return avail.notSameTimeAs.getSharedTeamList();

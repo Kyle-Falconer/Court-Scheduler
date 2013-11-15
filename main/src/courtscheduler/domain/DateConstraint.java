@@ -7,6 +7,7 @@ import org.joda.time.Weeks;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -66,6 +67,18 @@ public class DateConstraint extends Constraint{
         }
     }
 
+	public static DateConstraint getIntersection(DateConstraint a, DateConstraint b){
+		DateConstraint dc = new DateConstraint();
+		boolean[][] dates1 = a.dates;
+		boolean[][] dates2 = b.dates;
+		for(int i=0;i<dates1.length;i++){
+			for(int j=0;j<dates1[i].length;j++){
+				dc.dates[i][j] = dates1[i][j] && dates2[i][j];
+			}
+		}
+		return dc;
+	}
+
     //add functions
     //day/general adding
     public void addDate(int day, boolean[] times){
@@ -112,12 +125,17 @@ public class DateConstraint extends Constraint{
         }
     }
 
-    public void addDates(int days[]){
+    public void addDates(Integer[] days){
         for(int i=0;i<days.length;i++){
-            //System.out.println(days[i]);
             this.addDate(days[i]);
         }
     }
+	// the magic of autoboxing
+	public void addDates(int[] days){
+		for(int i=0;i<days.length;i++){
+			this.addDate(days[i]);
+		}
+	}
 
     //conversion methods for times
     //int[] (0-24 with 1=1:00, size should not exceed 24, but need not be in order or full) ->boolean[]
@@ -208,7 +226,7 @@ public class DateConstraint extends Constraint{
         return days;
     }
 
-    public int[] findDayOfWeek(String weekday){
+    public Integer[] findDayOfWeek(String weekday){
         Integer i=null;
         if(weekday.equals("monday")){
             i=1;
@@ -236,21 +254,25 @@ public class DateConstraint extends Constraint{
         }
         else{
             System.out.println("Error: day of week "+weekday+" is not recognized");
-            int[] fail = new int[0];
+            Integer[] fail = new Integer[0];
             return fail;
         }
     }
 
-    public int[] findDayOfWeek(int weekday){
-        LocalDate firstDay=info.getConferenceStartDate().withDayOfWeek(weekday);;
-        int[] days= new int[Weeks.weeksBetween(firstDay, info.getConferenceEndDate()).getWeeks()];
-        for(int i=0; i<days.length;i++){
-            days[i]= findDate(firstDay.plusWeeks(i));
-        }
-        return days;
+    public Integer[] findDayOfWeek(int weekday){
+        LocalDate firstDay = info.getConferenceStartDate().withDayOfWeek(weekday);
+		ArrayList<Integer> days = new ArrayList<Integer>();
+		do {
+			days.add(Days.daysBetween(info.getConferenceStartDate(), firstDay).getDays());
+			firstDay = firstDay.plusWeeks(1);
+		} while (firstDay.isBefore(info.getConferenceEndDate()));
+        return days.toArray(new Integer[days.size()]);
     }
 
 	public static void setInfo(CourtScheduleInfo info) {
 		DateConstraint.info = info;
+	}
+	public static CourtScheduleInfo getInfo() {
+		return info;
 	}
 }

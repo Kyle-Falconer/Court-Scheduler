@@ -98,6 +98,13 @@ end
 // Soft constraints
 // ############################################################################
 
+// prefer to put teams in preferred slots
+rule "preferredDates"
+	when
+		Match(PreferToPlayInCurrentSlot == true)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, 3);
+end
 // prefer not to use the earliest time slot
 rule "noEarlyBird"
 	when
@@ -114,13 +121,13 @@ rule "noNightOwl"
 		scoreHolder.addSoftConstraintMatch(kcontext, -1);
 end
 
-// prefer not to schedule teams at the same time as ones that share coaches
+// prefer not to schedule teams that share coaches at the same time as each other
 rule "notSameTimeAs"
 	when
 		Match($teamlist : notSameTimeAs, $matchSlot : matchSlot)
 		Match($matchSlot == matchSlot && (team1.teamId memberOf $teamlist || team2.teamId memberOf $teamlist))
 	then
-		scoreHolder.addSoftConstraintMatch(kcontext, -5);
+		scoreHolder.addSoftConstraintMatch(kcontext, -10);
 end
 
 rule "dontWantBackToBack"

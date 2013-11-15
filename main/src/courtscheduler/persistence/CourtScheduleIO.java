@@ -13,10 +13,13 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.usermodel.XSSFFontFormatting;
 import org.apache.poi.hssf.util.HSSFColor;
 
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeParser;
 
 import java.io.*;
 import java.lang.Comparable;
@@ -31,8 +34,10 @@ public class CourtScheduleIO {
 
     private List<Match> matchList;
     private static List<Team> teamList;
+	private static DateTimeFormatter normalTime = DateTimeFormat.forPattern("h:mma");
+	private static DateTimeFormatter militaryTime = DateTimeFormat.forPattern("H:mm");
 
-    public CourtScheduleIO() {
+    public CourtScheduleIO(CourtScheduleInfo info) {
         matchList = new ArrayList<Match>();
         teamList = new ArrayList<Team>();
     }
@@ -411,7 +416,7 @@ public class CourtScheduleIO {
         if (request.contains("/")) {
             requestDate(request, team, dates);
         }
-        if(request.contains(":")){
+        else if(request.contains(":")){
             if(request.contains("-")){
                 requestOffTime(request, team, dates);
             }
@@ -430,7 +435,7 @@ public class CourtScheduleIO {
 
     public static void requestDayOfWeek(String request, Team team, DateConstraint dates){
         String[] reSplit = request.split(" ");
-        for(int i = 1; i < reSplit.length; i++) {
+        for(int i = 0; i < reSplit.length; i++) {
             dates.addDates(dates.findDayOfWeek(reSplit[i]));
         }
     }
@@ -452,10 +457,10 @@ public class CourtScheduleIO {
 
     public static void requestAfterTime(String request, Team team, DateConstraint badDates){
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
+		request = request.replace("after ", "");
         if (isAfternoon(request) == null) {
             System.out.println("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
         }
-        request = request.replace("after ", "");
         request = getMilitaryTime(request);
         //System.out.println(request);
         badDates.addRestrictedTimes(badDates.makeTimeArray(request, "23:59"));
@@ -463,12 +468,14 @@ public class CourtScheduleIO {
 
     public static void requestBeforeTime(String request, Team team, DateConstraint badDates){
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
+		request = request.replace("before ", "");
         if (isAfternoon(request) == null) {
             System.out.println("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
         }
-        request = request.replace("before ", "");
-        request = getMilitaryTime(request);
-        badDates.addRestrictedTimes(badDates.makeTimeArray("0:00", request));
+		LocalTime t = normalTime.parseLocalTime(request);
+		// if we're saying not before an exact hour, we need to not schedule them to start AT that hour
+		request = militaryTime.print(t.minusMinutes(1));
+        badDates.addRestrictedTimes(badDates.makeTimeArray(DateConstraint.getInfo().getHumanReadableTime(0), request));
     }
 
     public static void requestOffTime(String request, Team team, DateConstraint badDates){
@@ -563,7 +570,7 @@ public class CourtScheduleIO {
             }
             try {
                 Integer timeInt = Integer.parseInt(t[0]);
-                if (timeInt != 12) {
+                if (timeInt < 12) {
                     timeInt += 12;
                 }
                 return timeInt.toString() + ":" + t[1];
