@@ -273,7 +273,8 @@ public class CourtScheduleIO {
                     //not sure what we should do here, this means a team's id is not being captured
                     e.printStackTrace();
                 }
-            } else if (columnCounter == 1) {
+            }
+            else if (columnCounter == 1) {
                 // used to be the "x" column..
                 try {
                     int index = cell.toString().indexOf(".");
@@ -287,16 +288,20 @@ public class CourtScheduleIO {
                 } catch (NumberFormatException e) {
                     System.out.println("Conference is invalid.");
                 }
-            } else if (columnCounter == 2) {
+            }
+            else if (columnCounter == 2) {
                 teamName = cell.toString();
                 team.setTeamName(teamName);
-            } else if (columnCounter == 3) {
+            }
+            else if (columnCounter == 3) {
                 year = cell.toString();
                 team.setYear(year);
-            } else if (columnCounter == 4) {
+            }
+            else if (columnCounter == 4) {
                 gender = cell.toString();
                 team.setGender(gender);
-            } else if (columnCounter == 5) {
+            }
+            else if (columnCounter == 5) {
                 try {
                     int index = cell.toString().indexOf(".");
                     grade = Integer.parseInt(cell.toString().substring(0, index));
@@ -305,14 +310,17 @@ public class CourtScheduleIO {
                     // still don't know what to do about this, this is bad
                     e.printStackTrace();
                 }
-            } else if (columnCounter == 6) {
+            }
+            else if (columnCounter == 6) {
                 level = cell.toString();
                 team.setLevel(level);
-            } else if (columnCounter == 7) {
+            }
+            else if (columnCounter == 7) {
                 requests = cell.toString();
                 //debug(team.getTeamId().toString()+":"+requests);
                 processRequestConstraints(team, requests, info);
-            } else if (columnCounter == 8) {
+            }
+            else if (columnCounter == 8) {
                 notSameTimeAs = cell.toString();
                 String[] tempSplit = notSameTimeAs.split(",");
 
@@ -407,7 +415,7 @@ public class CourtScheduleIO {
         }
 
         // put all dates that are not conference primary/secondary days on the badDates object
-        parseDateConstraints(info.getBadConferenceDays().get(team.getConferenceString()), team, badDates);
+        //parseDateConstraints(info.getBadConferenceDays().get(team.getConferenceString()), team, badDates);
 
         team.setOffTimes(new OffTimes(offTimeList));
         team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));
