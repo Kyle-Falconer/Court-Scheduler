@@ -69,7 +69,7 @@ public class Main {
         String out_filename = getOptArg(args, 1, "output.xlsx");
 
 
-        CourtScheduleIO utils = new CourtScheduleIO();
+        CourtScheduleIO utils = new CourtScheduleIO(info);
         CourtSchedule testSchedule;
         try{
             testSchedule= new CourtSchedule(utils.readXlsx(in_filename, info), info);

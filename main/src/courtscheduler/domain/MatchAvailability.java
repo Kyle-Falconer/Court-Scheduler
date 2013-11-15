@@ -44,11 +44,21 @@ public class MatchAvailability {
 		else if (only2 == null)
 			return only1;
 		else
-			return new DateConstraint(only1, only2);
+			return DateConstraint.getIntersection(only1, only2);
 	}
 
 	public boolean canPlayIn(MatchSlot matchSlot) {
-		return badDates.isTrue(matchSlot) && (onlyDates == null || onlyDates.isTrue(matchSlot));
+		if (onlyDates != null && onlyDates.isTrue(matchSlot)) {
+			// onlyDates true means team can't play then
+			return false;
+		}
+		return badDates.isTrue(matchSlot);
+	}
+
+	public boolean isPreferredSlot(MatchSlot matchSlot) {
+		// again, true means team can't play then
+		// I deserve to be mocked for this design decision, it's true
+		return !prefDates.isTrue(matchSlot);
 	}
 
     public SharedTeams getNotSameTimeAs() {
