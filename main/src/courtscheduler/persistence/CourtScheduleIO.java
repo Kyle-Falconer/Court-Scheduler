@@ -13,7 +13,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.usermodel.XSSFFontFormatting;
 import org.apache.poi.hssf.util.HSSFColor;
 
 import org.joda.time.LocalDate;
@@ -38,7 +37,7 @@ public class CourtScheduleIO {
     }
 
 
-    public List<Team> readXlsx(String filename) throws Exception {
+    public List<Team> readXlsx(String filename, CourtScheduleInfo info) throws Exception {
 
         File file = new File(filename);
         FileInputStream fis = new FileInputStream(file);
@@ -58,7 +57,7 @@ public class CourtScheduleIO {
         while (rowCounter <= rowCount) {
             Row currentRow = sh.getRow(rowCounter);
             if (currentRow != null && currentRow.getLastCellNum() > 0) {
-                teamList.add(processRow(currentRow));
+                teamList.add(processRow(currentRow, info));
             }
             rowCounter += 1;
         }
@@ -234,7 +233,7 @@ public class CourtScheduleIO {
         } while (continueInput);
     }
 
-    private Team processRow(Row currentRow) {
+    private Team processRow(Row currentRow, CourtScheduleInfo info) {
         short columnCount = currentRow.getLastCellNum();
         int columnCounter = 0;
 
@@ -306,7 +305,7 @@ public class CourtScheduleIO {
             } else if (columnCounter == 7) {
                 requests = cell.toString();
                 //debug(team.getTeamId().toString()+":"+requests);
-                processRequestConstraints(team, requests);
+                processRequestConstraints(team, requests, info);
             } else if (columnCounter == 8) {
                 notSameTimeAs = cell.toString();
                 String[] tempSplit = notSameTimeAs.split(",");
@@ -333,7 +332,7 @@ public class CourtScheduleIO {
         return team;
     }
 
-    private static void processRequestConstraints(Team team, String requests) {
+    private static void processRequestConstraints(Team team, String requests, CourtScheduleInfo info) {
 
         String splitToken = ","; // This needs to be updated with whatever Shane wants to use to separate the requests
         String[] requestArray = requests.split(splitToken);
@@ -401,11 +400,16 @@ public class CourtScheduleIO {
                 System.out.println("Unknown constraint:" + request);
         }
 
+        // put all dates that are not conference primary/secondary days on the badDates object
+        parseDateConstraints(info.getBadConferenceDays().get(team.getConferenceString()), team, badDates);
+
         team.setOffTimes(new OffTimes(offTimeList));
         team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));
         team.setDoubleHeaderPreference(new DoubleHeaderPreference(likesDoubleHeaders));
         team.setBackToBackPreference(new BackToBackPreference(likesBackToBack));
 		team.setOnlyDates(onlyDates);
+        team.setBadDates(badDates);
+        team.setPreferredDates(prefDates);
     }
     public static DateConstraint parseDateConstraints(String request, Team team, DateConstraint dates){
         if (request.contains("/")) {
@@ -429,6 +433,7 @@ public class CourtScheduleIO {
     }
 
     public static void requestDayOfWeek(String request, Team team, DateConstraint dates){
+        request = request.trim();
         String[] reSplit = request.split(" ");
         for(int i = 1; i < reSplit.length; i++) {
             dates.addDates(dates.findDayOfWeek(reSplit[i]));

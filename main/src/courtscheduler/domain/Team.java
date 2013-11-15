@@ -82,6 +82,11 @@ public class Team {
         return conference;
     }
 
+    public String getConferenceString(){
+        String confStr= Integer.toString(conference);
+        return confStr;
+    }
+
     public void setConference(Integer conference) {
         this.conference = conference;
     }
@@ -125,6 +130,9 @@ public class Team {
     public DateConstraint getPreferredDates() {
         return this.avail.prefDates;
     }
+    public void setPreferredDates(DateConstraint preferredDates) {
+        this.avail.prefDates = preferredDates;
+    }
 
     @Override
     public String toString() {
@@ -157,6 +165,9 @@ public class Team {
 	public DateConstraint getBadDates() {
 		return this.avail.badDates;
 	}
+    public void setBadDates(DateConstraint badDates) {
+        this.avail.badDates = badDates;
+    }
     public DateConstraint getOnlyDates() {
         return this.avail.onlyDates;
     }

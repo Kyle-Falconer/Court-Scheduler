@@ -72,7 +72,7 @@ public class Main {
         CourtScheduleIO utils = new CourtScheduleIO();
         CourtSchedule testSchedule;
         try{
-            testSchedule= new CourtSchedule(utils.readXlsx(in_filename), info);
+            testSchedule= new CourtSchedule(utils.readXlsx(in_filename, info), info);
 
             // solve the problem (gee, it sounds so easy when you put it like that)
             solver.setPlanningProblem(testSchedule);

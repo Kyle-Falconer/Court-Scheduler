@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
 
@@ -31,8 +32,19 @@ public class CourtScheduleInfo {
     private int numberOfTimeSlotsPerDay;
     private int timeslotDurationInMinutes;
     private List<LocalDate> holidays;
+    private Map<String, String[]> primaryDays;
+    private Map<String, String[]> secondaryDays;
+    private Map<String, String> badConferenceDays;
 
     private List<String> raw_lines;
+
+    private final String MONDAY = "monday";
+    private final String TUESDAY = "tuesday";
+    private final String WEDNESDAY = "wednesday";
+    private final String THURSDAY = "thursday";
+    private final String FRIDAY = "friday";
+    private final String SATURDAY = "saturday";
+    private final String SUNDAY = "sunday";
 
     // TODO:
     // Make numberOfTimeSlotsPerDay, timeslotDurationInMinutes,
@@ -82,10 +94,34 @@ public class CourtScheduleInfo {
                 this.timeslotDurationInMinutes = Integer.parseInt(value);
             } else if (key.equals("timeslots_start")) {
                 this.timeslotMidnightOffsetInMinutes = timeStringToMinutes(value);
+            } else if (key.startsWith("<conference>")) {
+                // example line '<conference>2=Monday,Wednedsay#Friday,Saturday'
+                String conference = key.replace("<conference>", "");
+                String primaryDays = value.split("#")[0];
+                String secondaryDays = value.split("#")[1];
+                String[] primaryDaysArray = primaryDays.split(",");
+                String[] secondaryDaysArray = secondaryDays.split(",");
+
+                String[] days = {SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY};
+                String badDates = "";
+
+                for (String day : days) {
+                    if(!primaryDays.contains(day) && !secondaryDays.contains(day))
+                        badDates += day+" ";
+                }
+
+                this.badConferenceDays.put(conference, badDates);
+                this.primaryDays.put(conference, primaryDaysArray);
+                this.secondaryDays.put(conference, secondaryDaysArray);
             }
 
         }
         return 0;
+    }
+
+    public Map<String,String> getBadConferenceDays(){
+        return this.badConferenceDays;
+
     }
 
     public static int timeStringToMinutes(String timeString) {
