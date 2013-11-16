@@ -1,5 +1,6 @@
 package courtscheduler.domain;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.joda.time.LocalDate;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
@@ -151,7 +152,11 @@ public class Match implements Comparable<Match> {
     }
 
     public int compareTo(Match o){
-        return this.compareDateTimes(o);
+		int confCompare = Integer.compare(this.getConference(), o.getConference());
+        if (confCompare != 0)
+			return confCompare;
+		else
+			return this.compareDateTimes(o);
     }
 
 	public boolean overlapsWith(MatchSlot other) {
@@ -161,4 +166,11 @@ public class Match implements Comparable<Match> {
     public boolean containsTeam(int teamId) {
         return this.team1.getTeamId() == teamId || this.team2.getTeamId() == teamId;
     }
+
+	public int getConference() {
+		if (team1.getConference() != team2.getConference()) {
+			System.err.println("WARNING: Match " + this + " has teams from different conferences.");
+		}
+		return team1.getConference();
+	}
 }

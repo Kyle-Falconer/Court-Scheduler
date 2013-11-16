@@ -93,10 +93,10 @@ public class CourtScheduleIO {
 
 
             // CONFERENCE
-            String conference = match.getTeam1().getConference().toString();
+            String conference = getConferenceString(match.getConference());
             if (!conference.equals(conf)) {
 
-                sheet = workbook.createSheet(conference);
+                sheet = workbook.createSheet();
 
                 //Create a new row in current sheet
                 rowNumber = 0;
@@ -196,7 +196,7 @@ public class CourtScheduleIO {
             // so add one if we're printing for the client
             dataRow.createCell(cellNumber).setCellValue(courtId + (Main.LOG_LEVEL > 1 ? 0 : 1));
 
-            conf = conference;
+            conf = getConferenceString(match.getConference());
 
         }
 
@@ -238,6 +238,10 @@ public class CourtScheduleIO {
             }
         } while (continueInput);
     }
+
+	private String getConferenceString(int conference) {
+		return "Conference " + Integer.toString(conference);
+	}
 
     private Team processRow(Row currentRow, CourtScheduleInfo info) {
         short columnCount = currentRow.getLastCellNum();
