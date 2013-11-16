@@ -84,27 +84,27 @@ public class CourtScheduleIO {
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet;
-        sheet = workbook.createSheet();
+        sheet = null;
         int rowNumber = 0;
         int cellNumber = 0;
         String conf = "";
 
         for(Match match : matches) {
 
-
             // CONFERENCE
             String conference = getConferenceString(match.getConference());
+
             if (!conference.equals(conf)) {
-
-                sheet = workbook.createSheet();
-
-                //Create a new row in current sheet
+                // Create a new sheet with titles and headings for each new conference
+                sheet = workbook.createSheet(conference);
                 rowNumber = 0;
-                //cellNumber = 0;
                 Row header = sheet.createRow(rowNumber);
+
+                // Set sheet to Landscape so all columns will fit on one page
                 XSSFPrintSetup printSetup = sheet.getPrintSetup();
                 printSetup.setOrientation(PrintOrientation.LANDSCAPE);
 
+                // Column widths determined by specific sizes of heading strings (further down)
                 sheet.setColumnWidth(0, 7424);
                 sheet.setColumnWidth(1, 1024);
                 sheet.setColumnWidth(2, 7424);
@@ -114,26 +114,26 @@ public class CourtScheduleIO {
                 sheet.setColumnWidth(6, 2304);
                 sheet.setColumnWidth(7, 1792);
 
-                //XSSFCellStyle cellStyle = workbook.createCellStyle();
-                //cellStyle = workbook.createCellStyle();
+                /* FIXME lines below were attempts to set titles to larger font size and headings to bold
+                XSSFCellStyle cellStyle = workbook.createCellStyle();
+                cellStyle = workbook.createCellStyle();
                 XSSFFont xSSFFont = workbook.createFont();
-                //xSSFFont.setFontName(XSSFFont.DEFAULT_FONT_NAME);
-                //xSSFFont.setFontHeightInPoints((short) 28);
+                xSSFFont.setFontName(XSSFFont.DEFAULT_FONT_NAME);
+                xSSFFont.setFontHeightInPoints((short) 28);
                 xSSFFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
-                //hSSFFont.setColor(HSSFColor.GREEN.index);
-                //cellStyle.setFont(xSSFFont);
-                //setFontHeight(28);
+                hSSFFont.setColor(HSSFColor.GREEN.index);
+                cellStyle.setFont(xSSFFont);
+                setFontHeight(28);      // end FIXME    */
+
                 header.createCell(0).setCellValue("THE COURTS");
-                //xSSFFont.setFontHeightInPoints((short) 24);
+
+                // FIXME one more line attempted font size // xSSFFont.setFontHeightInPoints((short) 24);
+
                 header.createCell(2).setCellValue("Game Schedule");
                 rowNumber = rowNumber + 2;
 
-
                 header = sheet.createRow(rowNumber);
-                // Team firstTeamOnList = matchList.getTeam1();
-                //int conf = match.getTeam1().getConference().toString();
-                header.createCell(0).setCellValue("Conference:");
-                header.createCell(1).setCellValue(conference);
+                header.createCell(0).setCellValue(conference);
                 rowNumber = rowNumber + 2;
 
                 header = sheet.createRow(rowNumber);
@@ -146,7 +146,6 @@ public class CourtScheduleIO {
                 header.createCell(6).setCellValue("TIME");
                 header.createCell(7).setCellValue("COURT");
             }
-
 
             cellNumber = 0;
             rowNumber++;
@@ -193,11 +192,10 @@ public class CourtScheduleIO {
             // COURT
             Integer courtId = match.getMatchSlot().getCourt();
             // normal people like their courts indexed from one, not zero,
-            // so add one if we're printing for the client
-            dataRow.createCell(cellNumber).setCellValue(courtId + (Main.LOG_LEVEL > 1 ? 0 : 1));
+            // so on next line, add one when printing to the spreadsheet
+            dataRow.createCell(cellNumber).setCellValue(courtId + 1 + (Main.LOG_LEVEL > 1 ? 0 : 1));
 
             conf = getConferenceString(match.getConference());
-
         }
 
         Scanner input = new Scanner(System.in);
