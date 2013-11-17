@@ -192,8 +192,8 @@ public class CourtScheduleIO {
             // COURT
             Integer courtId = match.getMatchSlot().getCourt();
             // normal people like their courts indexed from one, not zero,
-            // so on next line, add one when printing to the spreadsheet
-            dataRow.createCell(cellNumber).setCellValue(courtId + 1 + (Main.LOG_LEVEL > 1 ? 0 : 1));
+            // so add one if we're printing for the client
+            dataRow.createCell(cellNumber).setCellValue(courtId + (Main.LOG_LEVEL > 1 ? 0 : 1));
 
             conf = getConferenceString(match.getConference());
         }
@@ -416,6 +416,7 @@ public class CourtScheduleIO {
                 System.out.println("Unknown constraint:" + request);
         }
 
+		// put all conference primary/secondary days on prefDates
         // put all dates that are not conference primary/secondary days on the badDates object
         //parseDateConstraints(info.getBadConferenceDays().get(team.getConferenceString()), team, badDates);
 
