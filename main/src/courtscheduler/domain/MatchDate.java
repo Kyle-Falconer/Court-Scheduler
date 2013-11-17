@@ -1,9 +1,6 @@
 package courtscheduler.domain;
 
 import org.joda.time.LocalDate;
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
-
-import java.util.Calendar;
 
 /**
  * Created with IntelliJ IDEA.

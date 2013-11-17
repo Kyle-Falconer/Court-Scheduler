@@ -21,7 +21,7 @@ import java.util.Scanner;
  */
 public class Main {
 
-    public static int LOG_LEVEL = 2;
+    public static int LOG_LEVEL = 3;
 
     public static void main(String[] args) throws Exception {
 
@@ -43,7 +43,7 @@ public class Main {
         }
 
         // This filename needs to be relative to the application's classpath
-        String solverConfigFilename = getOptArg(args, 2, "/courtscheduler/solver/SolverConfig.xml");
+        String solverConfigFilename = getOptArg(args, 2, "/SolverConfig.xml");
 
 		// initialize CourtSchedule configuration
 		CourtScheduleInfo info = new CourtScheduleInfo("config.ini");

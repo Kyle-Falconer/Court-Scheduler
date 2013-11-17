@@ -2,29 +2,22 @@ package courtscheduler.persistence;
 
 import courtscheduler.Main;
 import courtscheduler.domain.*;
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.PrintOrientation;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFPrintSetup;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.PrintOrientation;
-import org.apache.poi.xssf.usermodel.XSSFPrintSetup;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.usermodel.XSSFFontFormatting;
-import org.apache.poi.hssf.util.HSSFColor;
-
 import org.joda.time.LocalDate;
 
 import java.io.*;
-import java.lang.Comparable;
-import java.lang.Object;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+
+//import org.apache.poi.xssf.usermodel.XSSFFontFormatting;
 
 
 public class CourtScheduleIO {

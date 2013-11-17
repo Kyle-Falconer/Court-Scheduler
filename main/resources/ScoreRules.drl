@@ -19,7 +19,7 @@ package courtscheduler.solver;
 
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
+import courtscheduler.domain.DayOfWeek;
 import courtscheduler.domain.CourtSchedule;
 import courtscheduler.persistence.CourtScheduleInfo;
 import courtscheduler.domain.Match;

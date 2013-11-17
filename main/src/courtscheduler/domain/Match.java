@@ -3,10 +3,7 @@ package courtscheduler.domain;
 import org.joda.time.LocalDate;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
