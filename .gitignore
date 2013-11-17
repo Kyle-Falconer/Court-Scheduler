@@ -24,3 +24,8 @@ output.xlsx
 
 # Lock files from OpenOffice
 .~lock*
+
+# Package Files #
+*.jar
+*.war
+*.ear

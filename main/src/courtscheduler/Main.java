@@ -21,7 +21,7 @@ import java.util.Scanner;
  */
 public class Main {
 
-    public static int LOG_LEVEL = 3;
+    public static int LOG_LEVEL = 1;
 
     public static void main(String[] args) throws Exception {
 
