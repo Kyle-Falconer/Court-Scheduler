@@ -1,0 +1,205 @@
+/*
+ * Copyright 2010 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package courtscheduler.solver;
+    dialect "java"
+
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
+
+import courtscheduler.domain.DayOfWeek;
+import courtscheduler.domain.CourtSchedule;
+import courtscheduler.persistence.CourtScheduleInfo;
+import courtscheduler.domain.Match;
+import courtscheduler.domain.Team;
+
+global HardSoftScoreHolder scoreHolder;
+
+// ############################################################################
+// Hard constraints
+// ############################################################################
+
+// http://docs.jboss.org/drools/release/5.3.0.Final/drools-expert-docs/html/ch05.html#d0e2777
+// format:
+// rule "rule_name"
+//    when
+//        LHS: Drools Rules; specifies a condition
+//        (when does the rule take effect?)
+//    then
+//        RHS: Java; specifies the action
+//        (what do we do when the rule is applicable?)
+
+// All constraints will try to optimize the solution to the highest score.
+// For hard constraints, this will probably be zero (because each violation of a hard
+//    constraint will result in subtracting from the solution's hard score).
+
+// THIS DOES NOT HANDLE THE CASE WHERE A TEAM HAS (BACK TO BACK AND DOUBLE HEADERS) SET TO "TRUE"
+// Not sure if this is a necessary constraint?
+
+// teams should not play more than twice on one day, ever
+rule "maxTwoGamesPerDay"
+    when
+        Team($team : teamId)
+        $match1 : Match(containsTeam($team) == true, $date : date)
+        $match2 : Match(containsTeam($team) == true, this != $match1, $date == date)
+        $match3 : Match(containsTeam($team) == true, this != $match1, this != $match2, $date == date)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -20);
+end
+
+// teams should not play twice on one day if they do not want double headers or back to back games
+rule "noTwoGameDay"
+    when
+        $match1 : Match($date : date)
+        Match(this != $match1, canBeOnSameDateWith($match1) == false, date == $date)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -15);
+end
+
+// when a team is playing when they aren't available, that's bad
+rule "availability"
+	when
+		Match(CanPlayInCurrentSlot == false)
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -10);
+end
+
+// when there are two matches with the same matchslot, and they aren't the same, that's bad
+rule "overlappingGames"
+	when
+    	$match1 : Match($matchSlot : matchSlot)
+    	Match(matchSlot == $matchSlot, this != $match1)
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -20);
+end
+
+// a team can't be scheduled for the same time slot on different courts
+rule "oneGamePerTeam"
+	when
+    	$match1 : Match($matchSlot : matchSlot)
+    	Match(this != $match1 && containsTeamsFrom($match1) == true && overlapsWith($matchSlot) == true)
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -20);
+end
+
+// ############################################################################
+// Soft constraints
+// ############################################################################
+
+// prefer to put teams in preferred slots
+rule "preferredDates"
+	when
+		Match(PreferToPlayInCurrentSlot == true)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, 3);
+end
+// prefer not to use the earliest time slot
+rule "noEarlyBird"
+	when
+		Match(time == 0)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -1);
+end
+// prefer not to use the latest time slot
+rule "noNightOwl"
+	when
+		CourtScheduleInfo($time : finalTimeSlotIndex)
+		Match(time == $time)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -1);
+end
+
+// prefer not to schedule teams that share coaches at the same time as each other
+rule "notSameTimeAs"
+	when
+		Match($teamlist : notSameTimeAs, $matchSlot : matchSlot)
+		Match($matchSlot == matchSlot && (team1.teamId memberOf $teamlist || team2.teamId memberOf $teamlist))
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -10);
+end
+
+rule "dontWantBackToBack"
+    when
+        // a team doesn't want back to backs
+        Team(BackToBack == false, $team : teamId)
+        // but they have one
+        Match(containsTeam($team) == true, $date : Date, $time : Time)
+        Match(containsTeam($team) == true, Date == $date, Time == $time + 1)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -7);
+end
+
+rule "dontWantDoubleHeaders"
+    when
+        // a team doesn't want double headers
+        Team(DoubleHeader == false, $teamId : teamId)
+        // but they have one
+        Match(containsTeam($teamId) == true, $date : Date, $time : Time)
+        Match(containsTeam($teamId) == true, Date == $date, Time == $time + 2 || Time == $time + 3)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -5);
+end
+
+rule "dontWantFarApartGames"
+    when
+        Team($teamId : teamId)
+        $match : Match(containsTeam($teamId) == true, $date : Date, $time1 : Time)
+        Match(containsTeam($teamId) == true, this != $match, Date == $date, (Time > $time1 + 3), $time2 : time)
+    then
+        int modifier = $time2 - $time1 > 2 ? 1 : 0;
+        scoreHolder.addSoftConstraintMatch(kcontext, -10 * modifier);
+end
+
+/*
+// team likes double headers and wants to play them whenever possible
+rule "preferBackToBack"
+    when
+        Team(BackToBack == true, $team : teamId)
+        Match(containsTeam($team) == true, $date : Date, $time : Time)
+        Match($match : this, containsTeam($team) == true, Date == $date, Time == $time + 1)
+        not Match(containsTeam($team) == true, Date == $date, Time != $time + 1 && Time != $time)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, 5);
+end
+*/
+/*
+// team likes back to back
+rule "backToBack"
+    when
+        $Match1 : Match($t1 : t1, $date : Date, $time : Time)
+        $Match2 : Match(t1 == $t1, Date = $date, Time != $time + 1)
+        Team(teamName : $t1, BackToBack == true)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, BackToBackPreference.getWeight());
+end
+*/
+
+/*
+// prefer to only schedule games with one gender on a particular day and court
+rule "gender"
+	when
+		Match($date : date, $court : court, $gender : gender)
+		Match(date == $date, court == $court, gender != $gender)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -3);
+end
+
+rule "basketHeight"
+	when
+		Match($bh : basketHeight, $date : date, $court : court)
+		Match(date == $date, court == $court, $bh != basketHeight)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -3);
+end*/

@@ -3,10 +3,8 @@
 /out
 
 # Eclipse, Netbeans and IntelliJ files
-*/.idea/workspace.xml
-*/.idea/tasks.xml
-.idea/workspace.xml
-.idea/tasks.xml
+.idea/
+*/.idea
 !.gitignore
 !.gitattributes
 /nbproject
@@ -26,7 +24,13 @@ output.xlsx
 
 # Lock files from OpenOffice
 .~lock*
+
 .idea/libraries/Maven__org_drools_drools_compiler_6_1_0_SNAPSHOT.xml
 .idea/libraries/Maven__org_drools_drools_core_6_1_0_SNAPSHOT.xml
 .idea/libraries/Maven__org_kie_kie_api_6_1_0_SNAPSHOT.xml
 .idea/libraries/Maven__org_kie_kie_internal_6_1_0_SNAPSHOT.xml
+
+# Package Files #
+*.jar
+*.war
+*.ear

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <!--<environmentMode>FAST_ASSERT</environmentMode>-->
+  <solutionClass>courtscheduler.domain.CourtSchedule</solutionClass>
+  <planningEntityClass>courtscheduler.domain.Match</planningEntityClass>
+
+  <scoreDirectorFactory>
+    <scoreDefinitionType>HARD_SOFT</scoreDefinitionType>
+    <scoreDrl>/ScoreRules.drl</scoreDrl>
+  </scoreDirectorFactory>
+
+  <termination>
+    <!--
+      Official benchmark maximumSecondsSpend allowed on:
+      - ge0ffrey's main pc: sprint 11, medium 700, long 42000
+    -->
+    <maximumSecondsSpend>60</maximumSecondsSpend>
+    <!--<scoreAttained>-0hard/-999999soft</scoreAttained>-->
+  </termination>
+  <constructionHeuristic>
+    <!-- See http://docs.jboss.org/drools/release/6.0.0.CR5/optaplanner-docs/html_single/index.html#constructionHeuristics -->
+    <constructionHeuristicType>BEST_FIT</constructionHeuristicType>
+  </constructionHeuristic>
+  <localSearch>
+    <unionMoveSelector>
+      <moveListFactory>
+        <cacheType>JUST_IN_TIME</cacheType>
+        <moveListFactoryClass>courtscheduler.solver.move.MatchChangeMoveFactory</moveListFactoryClass>
+      </moveListFactory>
+      <!--<moveListFactory>
+        <cacheType>PHASE</cacheType>
+        <moveListFactoryClass>courtscheduler.solver.move.MatchScheduleSwapMoveFactory</moveListFactoryClass>
+      </moveListFactory>-->
+
+    </unionMoveSelector>
+    <acceptor>
+      <solutionTabuSize>1000</solutionTabuSize>
+      <entityTabuSize>7</entityTabuSize>
+    </acceptor>
+    <forager>
+      <acceptedCountLimit>800</acceptedCountLimit>
+    </forager>
+  </localSearch>
+</solver>
