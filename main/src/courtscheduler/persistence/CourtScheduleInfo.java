@@ -48,7 +48,7 @@ public class CourtScheduleInfo {
     private final String SUNDAY = "sunday";
 
 	private final String[] LONG_DAYS = {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY};
-	private final String[] SHORT_DAYS = {"M", "T", "W", "R", "F", "A", "U"};
+	private final String[] SHORT_DAYS = {"M", "T", "W", "R", "F", "S", "U"};
 
 	// TODO:
     // Make numberOfTimeSlotsPerDay, timeslotDurationInMinutes,
@@ -100,31 +100,12 @@ public class CourtScheduleInfo {
             } else if (key.equals("timeslots_start")) {
                 this.timeslotMidnightOffsetInMinutes = timeStringToMinutes(value);
             } else if (key.startsWith("conference")) {
-                // example line 'conference=11-MW:FA'
-				String conference = value.substring(0, value.indexOf("-"));
-                String primaryShortDays = value.split(":")[0];
-                String secondaryShortDays = value.split(":")[1];
-				StringBuilder primaryDays = new StringBuilder();
-				StringBuilder secondaryDays = new StringBuilder();
-				StringBuilder badDays = new StringBuilder();
 
-                for (int i = 0; i < SHORT_DAYS.length; i++) {
-					String shortDay = SHORT_DAYS[i];
-					String longDay = LONG_DAYS[i];
-					if (primaryShortDays.contains(shortDay)) {
-						primaryDays.append(longDay + " ");
-					}
-					else if (secondaryShortDays.contains(shortDay)) {
-						secondaryDays.append(longDay + " ");
-					}
-					else {
-                        badDays.append(longDay + " ");
-					}
-                }
+                String[] confDays = parseConferenceDays(value);
 
-                this.badConferenceDays.put(conference, badDays.toString());
-                this.primaryDays.put(conference, primaryDays.toString());
-                this.secondaryDays.put(conference, secondaryDays.toString());
+                this.badConferenceDays.put(confDays[0], confDays[1]);
+                this.primaryDays.put(confDays[0], confDays[2]);
+                this.secondaryDays.put(confDays[0], confDays[3]);
             }
 
         }
@@ -148,6 +129,37 @@ public class CourtScheduleInfo {
         int mins = Integer.parseInt(hourMin[1]);
         int hoursInMins = hour * 60;
         return hoursInMins + mins;
+    }
+
+    private String[] parseConferenceDays(String conferenceString){
+        // example line 'conference=11-MW:FS'
+        String conference = conferenceString.substring(0, conferenceString.indexOf("-"));
+        String primaryShortDays = conferenceString.split(":")[0];
+        String secondaryShortDays = conferenceString.split(":")[1];
+        StringBuilder primaryDays = new StringBuilder();
+        StringBuilder secondaryDays = new StringBuilder();
+        StringBuilder badDays = new StringBuilder();
+        String[] result = new String[4];
+
+        for (int i = 0; i < SHORT_DAYS.length; i++) {
+            String shortDay = SHORT_DAYS[i];
+            String longDay = LONG_DAYS[i];
+            if (primaryShortDays.contains(shortDay)) {
+                primaryDays.append(longDay + " ");
+            }
+            else if (secondaryShortDays.contains(shortDay)) {
+                secondaryDays.append(longDay + " ");
+            }
+            else {
+                badDays.append(longDay + " ");
+            }
+        }
+
+        result[0] = conference;
+        result[1] = badDays.toString();
+        result[2] = primaryDays.toString();
+        result[3] = secondaryDays.toString();
+        return result;
     }
 
     public static LocalDate parseDateString(String dateString) {

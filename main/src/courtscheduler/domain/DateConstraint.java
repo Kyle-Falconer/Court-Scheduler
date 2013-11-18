@@ -3,7 +3,6 @@ package courtscheduler.domain;
 import courtscheduler.persistence.CourtScheduleInfo;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
-import org.joda.time.Weeks;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -39,12 +38,12 @@ public class DateConstraint extends Constraint{
 		// So, since we assume they can play all times by default, we use "false" to mean it's okay,
 		// and "true" to mean they can't play then.
 		// Confusing, I know, but the performance benefit is nontrivial. --MS
-        try {
-            return !this.dates[day][timeSlot];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Date/time requested is outside the start-end dates of the conference");
+        if (day >= this.dates.length || timeSlot >= this.dates[day].length){
+            System.out.println("Date/time ("+day+"/"+timeSlot+") requested is outside the start-end dates of the conference");
             return true;
         }
+
+        return !this.dates[day][timeSlot];
     }
 	public boolean isTrue(MatchSlot matchSlot) {
 		return this.getDate(matchSlot.getDay(), matchSlot.getTime());
@@ -82,23 +81,24 @@ public class DateConstraint extends Constraint{
     //add functions
     //day/general adding
     public void addDate(int day, boolean[] times){
+
         for(int i=0;i<this.dates[0].length;i++){
             //and if true=ok, or if false=ok
-            try {
-                this.dates[day][i] = (times[i]||this.dates[day][i]);
-            } catch(ArrayIndexOutOfBoundsException e) {
-                System.out.println("Date/time requested is outside the start-end dates of the conference");
+            if (day < 0 || day >= this.dates.length || i >= this.dates[day].length || i >= times.length){
+                System.out.println("Date/time ("+day+"/"+i+") requested is outside the start-end dates of the conference");
+                continue;
             }
+            this.dates[day][i] = (times[i]||this.dates[day][i]);
         }
     }
 
     //specific slot add
     public void addTime(int day, int time){
-        try {
-            this.dates[day][time]=true;
-        } catch(ArrayIndexOutOfBoundsException e) {
-            System.out.println("Date/time requested is outside the start-end dates of the conference");
+        if (day >= this.dates.length || time >= this.dates[day].length){
+            System.out.println("Date/time ("+day+"/"+time+") requested is outside the start-end dates of the conference");
+            return;
         }
+        this.dates[day][time]=true;
     }
 
     //wrappers for other input types
@@ -263,7 +263,10 @@ public class DateConstraint extends Constraint{
         LocalDate firstDay = info.getConferenceStartDate().withDayOfWeek(weekday);
 		ArrayList<Integer> days = new ArrayList<Integer>();
 		do {
-			days.add(Days.daysBetween(info.getConferenceStartDate(), firstDay).getDays());
+            Integer day = Days.daysBetween(info.getConferenceStartDate(), firstDay).getDays();
+            if (day > 0){
+			    days.add(day);
+            }
 			firstDay = firstDay.plusWeeks(1);
 		} while (firstDay.isBefore(info.getConferenceEndDate()));
         return days.toArray(new Integer[days.size()]);
