@@ -327,7 +327,7 @@ public class CourtScheduleIO {
                     } catch (NumberFormatException nfe) {
                         System.out.println("Unable to add team " + teamIdStr + "to shared team list. Unparsable.");
                     } catch (NullPointerException npe) {
-                        System.out.println("team.availability or team.availability.notSameTimeAs is null");
+                        System.out.println("team.availability or team.availability.notSameTimeAs is null for " + teamIdStr);
                     }
                 }
             }
@@ -406,9 +406,13 @@ public class CourtScheduleIO {
                 System.out.println("Unknown constraint:" + request);
         }
 
-		// put all conference primary/secondary days on prefDates
+		// put all conference primary days on prefDates
+		String prefDays = info.getPrimaryDays().get(team.getConferenceString());
+		parseDateConstraints(prefDays, team, prefDates);
+		// do nothing with secondary days-- they're neither preferred nor unplayable
         // put all dates that are not conference primary/secondary days on the badDates object
-        //parseDateConstraints(info.getBadConferenceDays().get(team.getConferenceString()), team, badDates);
+		String badDays = info.getBadConferenceDays().get(team.getConferenceString());
+        parseDateConstraints(badDays, team, badDates);
 
         team.setOffTimes(new OffTimes(offTimeList));
         team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));

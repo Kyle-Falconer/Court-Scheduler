@@ -11,6 +11,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +33,8 @@ public class CourtScheduleInfo {
     private int numberOfTimeSlotsPerDay;
     private int timeslotDurationInMinutes;
     private List<LocalDate> holidays;
-    private Map<String, String[]> primaryDays;
-    private Map<String, String[]> secondaryDays;
+    private Map<String, String> primaryDays;
+    private Map<String, String> secondaryDays;
     private Map<String, String> badConferenceDays;
 
     private List<String> raw_lines;
@@ -46,17 +47,21 @@ public class CourtScheduleInfo {
     private final String SATURDAY = "saturday";
     private final String SUNDAY = "sunday";
 
-    // TODO:
+	private final String[] LONG_DAYS = {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY};
+	private final String[] SHORT_DAYS = {"M", "T", "W", "R", "F", "A", "U"};
+
+	// TODO:
     // Make numberOfTimeSlotsPerDay, timeslotDurationInMinutes,
     // and timeslotMidnightOffsetInMinutes configurable for each day of the week (7 days).
     // this is needed because Shane wants to make a particular day shorter than the others, so this
     // would be a more general solution.
 
     public CourtScheduleInfo(String filepath) {
-        // TODO read these from a file
         this.filepath = filepath;
-
-        holidays = new ArrayList<LocalDate>();
+		this.badConferenceDays = new HashMap<String, String>();
+		this.primaryDays = new HashMap<String, String>();
+		this.secondaryDays = new HashMap<String, String>();
+		this.holidays = new ArrayList<LocalDate>();
 
         DateConstraint.setInfo(this);
     }
@@ -94,25 +99,32 @@ public class CourtScheduleInfo {
                 this.timeslotDurationInMinutes = Integer.parseInt(value);
             } else if (key.equals("timeslots_start")) {
                 this.timeslotMidnightOffsetInMinutes = timeStringToMinutes(value);
-            } else if (key.startsWith("<conference>")) {
-                // example line '<conference>2=Monday,Wednedsay#Friday,Saturday'
-                String conference = key.replace("<conference>", "");
-                String primaryDays = value.split("#")[0];
-                String secondaryDays = value.split("#")[1];
-                String[] primaryDaysArray = primaryDays.split(",");
-                String[] secondaryDaysArray = secondaryDays.split(",");
+            } else if (key.startsWith("conference")) {
+                // example line 'conference=11-MW:FA'
+				String conference = value.substring(0, value.indexOf("-"));
+                String primaryShortDays = value.split(":")[0];
+                String secondaryShortDays = value.split(":")[1];
+				StringBuilder primaryDays = new StringBuilder();
+				StringBuilder secondaryDays = new StringBuilder();
+				StringBuilder badDays = new StringBuilder();
 
-                String[] days = {SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY};
-                String badDates = "";
-
-                for (String day : days) {
-                    if(!primaryDays.contains(day) && !secondaryDays.contains(day))
-                        badDates += day+" ";
+                for (int i = 0; i < SHORT_DAYS.length; i++) {
+					String shortDay = SHORT_DAYS[i];
+					String longDay = LONG_DAYS[i];
+					if (primaryShortDays.contains(shortDay)) {
+						primaryDays.append(longDay + " ");
+					}
+					else if (secondaryShortDays.contains(shortDay)) {
+						secondaryDays.append(longDay + " ");
+					}
+					else {
+                        badDays.append(longDay + " ");
+					}
                 }
 
-                this.badConferenceDays.put(conference, badDates);
-                this.primaryDays.put(conference, primaryDaysArray);
-                this.secondaryDays.put(conference, secondaryDaysArray);
+                this.badConferenceDays.put(conference, badDays.toString());
+                this.primaryDays.put(conference, primaryDays.toString());
+                this.secondaryDays.put(conference, secondaryDays.toString());
             }
 
         }
@@ -121,8 +133,13 @@ public class CourtScheduleInfo {
 
     public Map<String,String> getBadConferenceDays(){
         return this.badConferenceDays;
-
     }
+	public Map<String,String> getPrimaryDays() {
+		return this.primaryDays;
+	}
+	public Map<String,String> getSecondaryDays() {
+		return this.secondaryDays;
+	}
 
     public static int timeStringToMinutes(String timeString) {
         timeString = getMilitaryTime(timeString);
