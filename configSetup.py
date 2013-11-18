@@ -3,10 +3,14 @@ Author: Stephen Kaysen
 Purpose: Gui for court scheduler information
 '''
 
-from Tkinter import *
-import tkMessageBox
+
 import sys
 
+if sys.version_info.major > 2:
+    from tkinter import *
+else:
+    from Tkinter import *
+    import tkMessageBox as messagebox
 
 class schedulerConfig(Frame):
 
@@ -58,7 +62,7 @@ class schedulerConfig(Frame):
                     btnDaysSubmit.grid_forget()
                     sessionUnavail()
                 else:
-                    tkMessageBox.showinfo("Incorrect Days", "Make sure all days are spelled correctly")
+                    messagebox.showinfo("Incorrect Days", "Make sure all days are spelled correctly")
                         
             #create new Frame
             Primary = LabelFrame(self, text = "Primary/Secondary Setup", bd = 6)
@@ -161,19 +165,19 @@ class schedulerConfig(Frame):
                 enddate = enddate.split("/")
                 save = 0
                 if len(startdate) != 3 or len(enddate) != 3:
-                    tkMessageBox.showinfo("Failure to Initialize", "Make sure values are in the proper format")
+                    messagebox.showinfo("Failure to Initialize", "Make sure values are in the proper format")
                 else:
                     config = open("Config.txt", "w")
                     if int(startdate[0]) in months and int(startdate[1]) in days and int(startdate[2]) in year:
                         config.write( "conference_start=" + ntryStartDate.get() +"\n")
                     else:
                         save += 1
-                        tkMessageBox.showinfo("Failure to Initialize", "Start Date not in the proper format")
+                        messagebox.showinfo("Failure to Initialize", "Start Date not in the proper format")
                     if int(enddate[0]) in months and int(enddate[1]) in days and int(enddate[2]) in year:
                         config.write( "conference_end=" +ntryEndDate.get() + "\n")
                     else:
                         save += 1
-                        tkMessageBox.showinfo("Failure to Initialize", "End Date not in the proper format")
+                        messagebox.showinfo("Failure to Initialize", "End Date not in the proper format")
                     if save == 0:
                         config.write( "court_count=" + ntryCourts.get() + "\n")
                         config.write( "timeslot_duration_minutes=" + ntryMatchLength.get() + "\n")
@@ -192,7 +196,7 @@ class schedulerConfig(Frame):
                         daySetup()
 
             else:
-                tkMessageBox.showinfo("Failure to Initialize", "Make sure you have inserted values in the Initial Setup and they are in the proper format")
+                messagebox.showinfo("Failure to Initialize", "Make sure you have inserted values in the Initial Setup and they are in the proper format")
 
 
         def sessionUnavail():
@@ -232,11 +236,11 @@ class schedulerConfig(Frame):
                                 
                         
                         else:
-                            tkMessageBox.showinfo("Holidays/Days Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' or '1/24/2013-1/25/2013' and try again.")
+                            messagebox.showinfo("Holidays/Days Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' or '1/24/2013-1/25/2013' and try again.")
                         
 
                 except:
-                    tkMessageBox.showinfo("Holidays/Days Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' or '1/24/2013-1/25/2013' and try again.")
+                    messagebox.showinfo("Holidays/Days Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' or '1/24/2013-1/25/2013' and try again.")
 
             Session = LabelFrame(self, text = "Session Unavailability", bd = 6)
             Session.grid(row = 1, column = 0, columnspan = 3, padx = 10, pady = 6, sticky = W)
@@ -263,7 +267,7 @@ class schedulerConfig(Frame):
                 for courts in saveOffCourts:
                             config.write( "NO_courts: " + courts[0] +", " + courts[1] + "\n")
                 config.close()
-                tkMessageBox.showinfo("Completion", "You have completed the setup")
+                messagebox.showinfo("Completion", "You have completed the setup")
                 quit()
             def clearCourtUnavail():
                 while len(saveOffCourts) > 0:
@@ -287,9 +291,9 @@ class schedulerConfig(Frame):
                         displayCourtDate.config(state=DISABLED)
                         saveOffCourts.append((date,numCourts))
                     else:
-                        tkMessageBox.showinfo("Courts Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' and courts is a number") 
+                        messagebox.showinfo("Courts Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' and courts is a numessageboxer") 
                 except:
-                    tkMessageBox.showinfo("Courts Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' and courts is a number")
+                    messagebox.showinfo("Courts Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' and courts is a numessageboxer")
 
             court = LabelFrame(self, text = "Court Unavailability", bd = 6)
             court.grid(row = 3, column = 0, columnspan = 4, padx=10, pady=6, sticky= W)
@@ -318,7 +322,7 @@ class schedulerConfig(Frame):
         ntryStartDate = Entry(Initial)
         lblEndDate = Label(Initial, text = "Ending Date: ")
         ntryEndDate = Entry(Initial)
-        lblCourts = Label(Initial, text = "Number of Courts: ")
+        lblCourts = Label(Initial, text = "Numessageboxer of Courts: ")
         ntryCourts = Entry(Initial, width = 4)
         ntryCourts.insert(0, "3")
         lblStartDate.grid(row = 0, column = 0, pady=4, padx=5)
@@ -336,7 +340,7 @@ class schedulerConfig(Frame):
         ntryMatchStart = Entry(Initial, width = 10)
         ntryMatchStart.grid(row = 4, column = 1, padx = 5, pady = 4, sticky = W)
         ntryMatchStart.insert(0, "8:00pm")
-        lblTimeslots =Label(Initial, bd = 3, width = 35, relief = RIDGE, text = "Number of Timeslots on Specific Days")
+        lblTimeslots =Label(Initial, bd = 3, width = 35, relief = RIDGE, text = "Numessageboxer of Timeslots on Specific Days")
         lblTimeslots.grid(row = 0, column = 2, pady=4, padx=5, columnspan = 4, sticky=W)
         ntryMatchLength = Entry(Initial, width = 4)
         ntryMatchLength.insert(0, "50")
