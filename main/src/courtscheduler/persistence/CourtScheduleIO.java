@@ -410,17 +410,18 @@ public class CourtScheduleIO {
 
 		// put all conference primary days on prefDates
 		String prefDays = info.getPrimaryDays().get(team.getConferenceString());
-
-        if (prefDays == null){
-            // FIXME no configuration for this conference.
-            // we don't know what the primary days are for this conference!
+		if (prefDays != null){
+			parseDateConstraints(prefDays, team, prefDates);
         }
+		// if there's no primary day marked, then default to doing nothing
 
-		parseDateConstraints(prefDays, team, prefDates);
 		// do nothing with secondary days-- they're neither preferred nor unplayable
+
         // put all dates that are not conference primary/secondary days on the badDates object
 		String badDays = info.getBadConferenceDays().get(team.getConferenceString());
-        parseDateConstraints(badDays, team, badDates);
+		if (badDays != null && badDays.length() != 7) {
+        	parseDateConstraints(badDays, team, badDates);
+		}
 
         team.setOffTimes(new OffTimes(offTimeList));
         team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));
