@@ -291,9 +291,9 @@ class schedulerConfig(Frame):
                         displayCourtDate.config(state=DISABLED)
                         saveOffCourts.append((date,numCourts))
                     else:
-                        messagebox.showinfo("Courts Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' and courts is a numessageboxer") 
+                        messagebox.showinfo("Courts Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' and courts is a number") 
                 except:
-                    messagebox.showinfo("Courts Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' and courts is a numessageboxer")
+                    messagebox.showinfo("Courts Off Error", "The format of your input is incorrect. Make sure it is of the format '1/24/2013' and courts is a number")
 
             court = LabelFrame(self, text = "Court Unavailability", bd = 6)
             court.grid(row = 3, column = 0, columnspan = 4, padx=10, pady=6, sticky= W)
@@ -322,7 +322,7 @@ class schedulerConfig(Frame):
         ntryStartDate = Entry(Initial)
         lblEndDate = Label(Initial, text = "Ending Date: ")
         ntryEndDate = Entry(Initial)
-        lblCourts = Label(Initial, text = "Numessageboxer of Courts: ")
+        lblCourts = Label(Initial, text = "number of Courts: ")
         ntryCourts = Entry(Initial, width = 4)
         ntryCourts.insert(0, "3")
         lblStartDate.grid(row = 0, column = 0, pady=4, padx=5)
@@ -340,7 +340,7 @@ class schedulerConfig(Frame):
         ntryMatchStart = Entry(Initial, width = 10)
         ntryMatchStart.grid(row = 4, column = 1, padx = 5, pady = 4, sticky = W)
         ntryMatchStart.insert(0, "8:00pm")
-        lblTimeslots =Label(Initial, bd = 3, width = 35, relief = RIDGE, text = "Numessageboxer of Timeslots on Specific Days")
+        lblTimeslots =Label(Initial, bd = 3, width = 35, relief = RIDGE, text = "number of Timeslots on Specific Days")
         lblTimeslots.grid(row = 0, column = 2, pady=4, padx=5, columnspan = 4, sticky=W)
         ntryMatchLength = Entry(Initial, width = 4)
         ntryMatchLength.insert(0, "50")
