@@ -11,7 +11,7 @@ if sys.version_info.major > 2:
 else:
     from Tkinter import *
     import tkMessageBox as messagebox
-
+    
 class schedulerConfig(Frame):
 
     def __init__(self):
@@ -389,6 +389,7 @@ class schedulerConfig(Frame):
 def main():
     schedulerConfig().mainloop()
 
+if __name__ == "__main__":
+    main()
 
 
-main()
