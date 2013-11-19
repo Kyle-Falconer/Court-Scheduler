@@ -1,19 +1,13 @@
-import courtscheduler.domain.CourtSchedule;
 import courtscheduler.domain.DateConstraint;
 import courtscheduler.domain.Team;
 import courtscheduler.persistence.CourtScheduleIO;
 import courtscheduler.persistence.CourtScheduleInfo;
-import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.List;
 
-import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
-import static courtscheduler.persistence.CourtScheduleIO.isAfternoon;
-import static courtscheduler.persistence.CourtScheduleInfo.parseDateString;
-import static courtscheduler.persistence.CourtScheduleInfo.timeStringToMinutes;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -27,9 +21,14 @@ public class Parser {
 
     @Test
     public void parser() throws Exception {
-        CourtScheduleInfo info = new CourtScheduleInfo("");
+        CourtScheduleInfo info = new CourtScheduleInfo("config.ini");
+        if(info.configure() == -1){
+            System.out.println("config file issue!");
+            return;
+        }
+
         CourtScheduleIO  test = new CourtScheduleIO(info);
-        List<Team> teams = test.readXlsx("testBook.xlsx", info);
+        List<Team> teams = test.readXlsx("Raw/Excel Files/test/testBook.xlsx", info);
         Team[] team = new Team[9];
         team[0]=team1();
         team[1]=team2();

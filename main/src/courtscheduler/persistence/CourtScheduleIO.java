@@ -369,8 +369,10 @@ public class CourtScheduleIO {
                 parseDateConstraints(request, team, badDates);
             }
             // TEAM REQUEST TO PLAY ON DAY OTHER THAN PRIMARY DAY/TIME //
-            else if (request.startsWith("pref")) {
-                request = request.replace("pref ", "");
+            else if (request.startsWith("pref")||request.startsWith("prefer")) {
+                request = request.replace("prefer", "");
+                request = request.replace("pref", "");
+                request = request.trim();
                 parseDateConstraints(request, team, prefDates);
             }
             // ONLY TIMES
@@ -408,6 +410,12 @@ public class CourtScheduleIO {
 
 		// put all conference primary days on prefDates
 		String prefDays = info.getPrimaryDays().get(team.getConferenceString());
+
+        if (prefDays == null){
+            // FIXME no configuration for this conference.
+            // we don't know what the primary days are for this conference!
+        }
+
 		parseDateConstraints(prefDays, team, prefDates);
 		// do nothing with secondary days-- they're neither preferred nor unplayable
         // put all dates that are not conference primary/secondary days on the badDates object
@@ -423,6 +431,10 @@ public class CourtScheduleIO {
         team.setPreferredDates(prefDates);
     }
     public static DateConstraint parseDateConstraints(String request, Team team, DateConstraint dates){
+        if (request == null){
+            // FIXME
+            // no requests? Probably no configuration for this team!
+        }
         if (request.contains("/")) {
             requestDate(request, team, dates);
         }
