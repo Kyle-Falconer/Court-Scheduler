@@ -38,7 +38,7 @@ public class DateConstraint extends Constraint{
 		// So, since we assume they can play all times by default, we use "false" to mean it's okay,
 		// and "true" to mean they can't play then.
 		// Confusing, I know, but the performance benefit is nontrivial. --MS
-        if (day >= this.dates.length || timeSlot >= this.dates[day].length){
+		if (day < 0 || timeSlot < 0 || day >= this.dates.length || timeSlot >= this.dates[day].length){
             System.out.println("Date/time ("+day+"/"+timeSlot+") requested is outside the start-end dates of the conference");
             return true;
         }
