@@ -14,7 +14,7 @@
       Official benchmark maximumSecondsSpend allowed on:
       - ge0ffrey's main pc: sprint 11, medium 700, long 42000
     -->
-    <maximumSecondsSpend>300</maximumSecondsSpend>
+    <maximumSecondsSpend>36000</maximumSecondsSpend>
   </termination>
   <constructionHeuristic>
     <!-- See http://docs.jboss.org/drools/release/6.0.0.CR5/optaplanner-docs/html_single/index.html#constructionHeuristics -->
