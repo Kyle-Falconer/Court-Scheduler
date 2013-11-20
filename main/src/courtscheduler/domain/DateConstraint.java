@@ -278,4 +278,13 @@ public class DateConstraint extends Constraint{
 	public static CourtScheduleInfo getInfo() {
 		return info;
 	}
+    private DateConstraint getInverse(){
+        DateConstraint inverse = new DateConstraint();
+        for(int i=0; i<info.getNumberOfConferenceDays();i++){
+            for(int j=0; j<info.getNumberOfTimeSlotsPerDay();i++){
+                inverse.dates[i][j]=! this.dates[i][j];
+            }
+        }
+        return inverse;
+    }
 }
