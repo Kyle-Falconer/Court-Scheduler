@@ -97,7 +97,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
     }
 
-    private boolean eitherTeamIsPlayingOnDay(Match match, int dayIndex){
+    public boolean eitherTeamIsPlayingOnDay(Match match, int dayIndex){
         for (Match m : matchList) {
             if (m.containsTeamsFrom(match) && m.getMatchSlot().getDay() == dayIndex) {
                 return true;
@@ -105,6 +105,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         }
         return false;
     }
+
 
     public void setTeamList(List<Team> teamList) {
         this.teamList = teamList;
