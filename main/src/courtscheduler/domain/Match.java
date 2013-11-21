@@ -149,7 +149,7 @@ public class Match implements Comparable<Match> {
     }
 
     public int compareTo(Match o){
-		int confCompare = Integer.compare(this.getConference(), o.getConference());
+		int confCompare = this.getConference().compareTo(o.getConference());
         if (confCompare != 0)
 			return confCompare;
 		else
@@ -164,8 +164,8 @@ public class Match implements Comparable<Match> {
         return this.team1.getTeamId() == teamId || this.team2.getTeamId() == teamId;
     }
 
-	public int getConference() {
-		if (team1.getConference() != team2.getConference()) {
+	public String getConference() {
+		if (team1.getConference().equals(team2.getConference())) {
 			System.err.println("WARNING: Match " + this + " has teams from different conferences.");
 		}
 		return team1.getConference();

@@ -77,8 +77,8 @@ public class Parser {
             String tYear2=team[i].getYear();
             assertEquals("\""+tYear1+"\" must be \""+tYear2+"\"", tYear2, tYear1);
 
-            int tConference1=t1.getConference();
-            int tConference2=team[i].getConference();
+            String tConference1=t1.getConference();
+            String tConference2=team[i].getConference();
             assertEquals("\""+tConference1+"\" must be \""+tConference2+"\"", tConference2, tConference1);
 
             String tLevel1=t1.getLevel();
@@ -100,7 +100,7 @@ public class Parser {
         team.setGender("B");
         team.setYear("");
 
-        team.setConference(1);
+        team.setConference("1");
         team.setLevel("R");
         return team;
     }
@@ -120,7 +120,7 @@ public class Parser {
         team.setGender("B");
         team.setYear("");
 
-        team.setConference(1);
+        team.setConference("1");
         team.setLevel("C");
         return team;
     }
@@ -140,7 +140,7 @@ public class Parser {
         team.setGender("B");
         team.setYear("");
 
-        team.setConference(1);
+        team.setConference("1");
         team.setLevel("R");
         return team;
     }
@@ -157,7 +157,7 @@ public class Parser {
         team.setGender("B");
         team.setYear("");
 
-        team.setConference(1);
+        team.setConference("1");
         team.setLevel("I");
         return team;
     }
@@ -177,7 +177,7 @@ public class Parser {
         team.setGender("B");
         team.setYear("");
 
-        team.setConference(1);
+        team.setConference("1");
         team.setLevel("R");
         return team;
     }
@@ -199,7 +199,7 @@ public class Parser {
         team.setGender("B");
         team.setYear("");
 
-        team.setConference(1);
+        team.setConference("1");
         team.setLevel("C");
         return team;
     }
@@ -222,7 +222,7 @@ public class Parser {
         team.setGender("B");
         team.setYear("");
 
-        team.setConference(1);
+        team.setConference("1");
         team.setLevel("C");
         return team;
     }
@@ -245,7 +245,7 @@ public class Parser {
         team.setGender("B");
         team.setYear("");
 
-        team.setConference(1);
+        team.setConference("1");
         team.setLevel("C");
         return team;
     }
@@ -270,7 +270,7 @@ public class Parser {
         team.setGender("B");
         team.setYear("");
 
-        team.setConference(1);
+        team.setConference("1");
         team.setLevel("C");
         return team;
     }

@@ -82,7 +82,7 @@ public class CourtScheduleIO {
         for(Match match : matches) {
 
             // CONFERENCE
-            String conference = getConferenceString(match.getConference());
+            String conference = match.getConference();
 
             if (!conference.equals(conf)) {
                 // Create a new sheet with titles and headings for each new conference
@@ -154,7 +154,7 @@ public class CourtScheduleIO {
             dataRow.createCell(cellNumber++).setCellValue(teamName2);
 
             // CONFERENCE
-            conference = match.getTeam1().getConference().toString();
+            conference = match.getTeam1().getConference();
             
             dataRow.createCell(cellNumber++).setCellValue(conference);
 
@@ -185,7 +185,7 @@ public class CourtScheduleIO {
             // so add one if we're printing for the client
             dataRow.createCell(cellNumber).setCellValue(courtId + (Main.LOG_LEVEL > 1 ? 0 : 1));
 
-            conf = getConferenceString(match.getConference());
+            conf = match.getConference();
         }
 
         Scanner input = new Scanner(System.in);
@@ -227,10 +227,6 @@ public class CourtScheduleIO {
         } while (continueInput);
     }
 
-	private String getConferenceString(int conference) {
-		return "Conference " + Integer.toString(conference);
-	}
-
     private Team processRow(Row currentRow, CourtScheduleInfo info) {
         short columnCount = currentRow.getLastCellNum();
         int columnCounter = 0;
@@ -267,19 +263,7 @@ public class CourtScheduleIO {
                 }
             }
             else if (columnCounter == 1) {
-                // used to be the "x" column..
-                try {
-                    int index = cell.toString().indexOf(".");
-                    if (index != -1) {
-                        conference = Integer.parseInt(cell.toString().substring(0, index));
-                        team.setConference(conference);
-                    } else {
-                        System.out.println("No conference present for team " + teamId + "; defaulting to 1");
-                        conference = 1;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Conference is invalid.");
-                }
+                team.setConference(cell.toString());
             }
             else if (columnCounter == 2) {
                 teamName = cell.toString();
@@ -409,7 +393,7 @@ public class CourtScheduleIO {
         }
 
 		// put all conference primary days on prefDates
-		String prefDays = info.getPrimaryDays().get(team.getConferenceString());
+		String prefDays = info.getPrimaryDays().get(team.getConference());
 		if (prefDays != null){
 			parseDateConstraints(prefDays, team, prefDates);
         }
@@ -418,7 +402,7 @@ public class CourtScheduleIO {
 		// do nothing with secondary days-- they're neither preferred nor unplayable
 
         // put all dates that are not conference primary/secondary days on the badDates object
-		String badDays = info.getBadConferenceDays().get(team.getConferenceString());
+		String badDays = info.getBadConferenceDays().get(team.getConference());
 		if (badDays != null && badDays.length() != 7) {
         	parseDateConstraints(badDays, team, badDates);
 		}

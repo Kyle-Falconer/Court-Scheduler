@@ -10,7 +10,7 @@ public class Team {
     private String gender;
     private Integer grade;
     private String level;
-    private Integer conference;
+    private String conference;
 
     private DoubleHeaderPreference doubleHeaderPreference;
     private BackToBackPreference backToBackPreference;
@@ -19,6 +19,7 @@ public class Team {
 	private SharedTeams dontPlay;
 
     private MatchAvailability avail;
+    private Integer gamesScheduled = 10;
 
 
     public Team() {
@@ -78,16 +79,11 @@ public class Team {
       return level;
     }
 
-    public Integer getConference() {
+    public String getConference() {
         return conference;
     }
 
-    public String getConferenceString(){
-        String confStr= Integer.toString(conference);
-        return confStr;
-    }
-
-    public void setConference(Integer conference) {
+    public void setConference(String conference) {
         this.conference = conference;
     }
 
