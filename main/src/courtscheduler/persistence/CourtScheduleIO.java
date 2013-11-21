@@ -2,10 +2,9 @@ package courtscheduler.persistence;
 
 import courtscheduler.Main;
 import courtscheduler.domain.*;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.PrintOrientation;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFPrintSetup;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
@@ -95,14 +94,15 @@ public class CourtScheduleIO {
                 printSetup.setOrientation(PrintOrientation.LANDSCAPE);
 
                 // Column widths determined by specific sizes of heading strings (further down)
-                sheet.setColumnWidth(0, 7424);
-                sheet.setColumnWidth(1, 1024);
-                sheet.setColumnWidth(2, 7424);
-                sheet.setColumnWidth(3, 3072);
-                sheet.setColumnWidth(4, 2816);
+				sheet.setColumnWidth(0, 3072);
+                sheet.setColumnWidth(1, 7424);
+                sheet.setColumnWidth(2, 1024);
+                sheet.setColumnWidth(3, 7424);
+                sheet.setColumnWidth(4, 3072);
                 sheet.setColumnWidth(5, 2816);
-                sheet.setColumnWidth(6, 2304);
-                sheet.setColumnWidth(7, 1792);
+                sheet.setColumnWidth(6, 2816);
+                sheet.setColumnWidth(7, 2304);
+                sheet.setColumnWidth(8, 1792);
 
                 /* FIXME lines below were attempts to set titles to larger font size and headings to bold
                 XSSFCellStyle cellStyle = workbook.createCellStyle();
@@ -115,11 +115,11 @@ public class CourtScheduleIO {
                 cellStyle.setFont(xSSFFont);
                 setFontHeight(28);      // end FIXME    */
 
-                header.createCell(0).setCellValue("THE COURTS");
+                header.createCell(1).setCellValue("THE COURTS");
 
                 // FIXME one more line attempted font size // xSSFFont.setFontHeightInPoints((short) 24);
 
-                header.createCell(2).setCellValue("Game Schedule");
+                header.createCell(3).setCellValue("Game Schedule");
                 rowNumber = rowNumber + 2;
 
                 header = sheet.createRow(rowNumber);
@@ -127,19 +127,21 @@ public class CourtScheduleIO {
                 rowNumber = rowNumber + 2;
 
                 header = sheet.createRow(rowNumber);
-                header.createCell(0).setCellValue("TEAM");
-                header.createCell(1).setCellValue(" ");
-                header.createCell(2).setCellValue("OPPONENT");
-                header.createCell(3).setCellValue("CONFERENCE");
-                header.createCell(4).setCellValue("DAY");
-                header.createCell(5).setCellValue("DATE");
-                header.createCell(6).setCellValue("TIME");
-                header.createCell(7).setCellValue("COURT");
+                header.createCell(1).setCellValue("TEAM");
+                header.createCell(2).setCellValue(" ");
+                header.createCell(3).setCellValue("OPPONENT");
+                header.createCell(4).setCellValue("CONFERENCE");
+                header.createCell(5).setCellValue("DAY");
+                header.createCell(6).setCellValue("DATE");
+                header.createCell(7).setCellValue("TIME");
+                header.createCell(8).setCellValue("COURT");
             }
 
             cellNumber = 0;
             rowNumber++;
             Row dataRow = sheet.createRow(rowNumber);
+
+			dataRow.createCell(cellNumber++).setCellValue(match.getCanPlayInCurrentSlot() ? "" : "WARNING");
 
             // TEAM
             String teamName1 = match.getTeam1().getTeamName();
