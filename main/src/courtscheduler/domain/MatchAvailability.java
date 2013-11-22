@@ -65,7 +65,7 @@ public class MatchAvailability {
         return notSameTimeAs;
     }
 
-    public boolean scheduleable(){
+    public boolean notScheduleable(){
         DateConstraint hardConstraints;
         if(this.onlyDates!=null){
             hardConstraints=new DateConstraint(this.onlyDates.getInverse(),this.badDates);

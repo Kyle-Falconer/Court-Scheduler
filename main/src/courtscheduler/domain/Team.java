@@ -162,7 +162,9 @@ public class Team {
 			return true;
         if (t1.getGameCount() == 0 || t2.getGameCount() == 0)
             return true;
-
+        MatchAvailability avail= new MatchAvailability(t1.getAvailability(),t2.getAvailability());
+        if(avail.notScheduleable())
+            return true;
 		List<Integer> t1BadTeams = t1.getDontPlay().getSharedTeamList();
 		List<Integer> t2BadTeams = t2.getDontPlay().getSharedTeamList();
 		return t1BadTeams.contains(t2.getTeamId()) || t2BadTeams.contains(t1.getTeamId());
