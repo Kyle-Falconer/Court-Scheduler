@@ -293,7 +293,7 @@ public class DateConstraint extends Constraint{
         for(int i=0; i<info.getNumberOfConferenceDays();i++){
             for(int j=0; j<info.getNumberOfTimeSlotsPerDay();i++){
                 if(!this.dates[i][j]){
-                    full=false;
+                    return false;
                 }
             }
         }
