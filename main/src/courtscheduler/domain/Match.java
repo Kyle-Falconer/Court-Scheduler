@@ -165,7 +165,7 @@ public class Match implements Comparable<Match> {
     }
 
 	public String getConference() {
-		if (team1.getConference().equals(team2.getConference())) {
+		if (!team1.getConference().equals(team2.getConference())) {
 			System.err.println("WARNING: Match " + this + " has teams from different conferences.");
 		}
 		return team1.getConference();

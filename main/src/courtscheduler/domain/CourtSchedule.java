@@ -57,15 +57,25 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
 
     private List<Match> roundRobin(List<Team> teamList) {
         List<Match> matches= new ArrayList<Match>();
-        for(int i=0;i<teamList.size();i++){
-            for(int j=i+1; j<teamList.size();j++){
-                if (!Team.cannotPlay(teamList.get(i), teamList.get(j))) {
-                    Match nextMatch = new Match(teamList.get(i),teamList.get(j));
-                    nextMatch.setMatchSlot(new MatchSlot(-1, -1, -1));
-                    matches.add(nextMatch);
+        boolean done = false;
+
+        while(!done) {
+            done = true;
+            for (Team team1 : teamList) {
+                for (Team team2 : teamList) {
+                    if (!Team.cannotPlay(team1, team2)) {
+                        Match nextMatch = new Match(team1, team2);
+                        nextMatch.setMatchSlot(new MatchSlot(-1, -1, -1));
+                        matches.add(nextMatch);
+                        team1.setGameCount(team1.getGameCount() - 1);
+                        team2.setGameCount(team2.getGameCount() - 1);
+                    }
                 }
+                if (team1.getGameCount() > 0)
+                    done = false;
             }
         }
+
         return matches;
     }
 

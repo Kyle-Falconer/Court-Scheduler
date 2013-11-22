@@ -19,7 +19,16 @@ public class Team {
 	private SharedTeams dontPlay;
 
     private MatchAvailability avail;
-    private Integer gamesScheduled = 10;
+
+    public Integer getGameCount() {
+        return gameCount;
+    }
+
+    public void setGameCount(Integer gameCount) {
+        this.gameCount = gameCount;
+    }
+
+    private Integer gameCount = 10;
 
 
     public Team() {
@@ -147,9 +156,13 @@ public class Team {
     }
 
 	public static boolean cannotPlay(Team t1, Team t2) {
-		if (t1.getConference() != t2.getConference()) {
+		if (t1 == t2)
+            return true;
+        if (!t1.getConference().equals(t2.getConference()))
 			return true;
-		}
+        if (t1.getGameCount() == 0 || t2.getGameCount() == 0)
+            return true;
+
 		List<Integer> t1BadTeams = t1.getDontPlay().getSharedTeamList();
 		List<Integer> t2BadTeams = t2.getDontPlay().getSharedTeamList();
 		return t1BadTeams.contains(t2.getTeamId()) || t2BadTeams.contains(t1.getTeamId());
