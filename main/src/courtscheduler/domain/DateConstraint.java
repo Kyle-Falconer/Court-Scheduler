@@ -278,7 +278,7 @@ public class DateConstraint extends Constraint{
 	public static CourtScheduleInfo getInfo() {
 		return info;
 	}
-    private DateConstraint getInverse(){
+    public DateConstraint getInverse(){
         DateConstraint inverse = new DateConstraint();
         for(int i=0; i<info.getNumberOfConferenceDays();i++){
             for(int j=0; j<info.getNumberOfTimeSlotsPerDay();i++){
@@ -286,5 +286,17 @@ public class DateConstraint extends Constraint{
             }
         }
         return inverse;
+    }
+
+    public boolean isFull(){
+        boolean full = true;
+        for(int i=0; i<info.getNumberOfConferenceDays();i++){
+            for(int j=0; j<info.getNumberOfTimeSlotsPerDay();i++){
+                if(!this.dates[i][j]){
+                    full=false;
+                }
+            }
+        }
+        return full;
     }
 }
