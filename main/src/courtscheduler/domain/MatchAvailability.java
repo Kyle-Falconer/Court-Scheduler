@@ -64,4 +64,17 @@ public class MatchAvailability {
     public SharedTeams getNotSameTimeAs() {
         return notSameTimeAs;
     }
+
+    public boolean scheduleable(){
+        DateConstraint hardConstraints;
+        if(this.onlyDates!=null){
+            hardConstraints=new DateConstraint(this.onlyDates.getInverse(),this.badDates);
+        }
+        else{
+            hardConstraints= this.badDates;
+        }
+
+        return hardConstraints.isFull();
+    }
+
 }
