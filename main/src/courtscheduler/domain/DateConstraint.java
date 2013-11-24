@@ -280,8 +280,8 @@ public class DateConstraint extends Constraint{
 	}
     public DateConstraint getInverse(){
         DateConstraint inverse = new DateConstraint();
-        for(int i=0; i<info.getNumberOfConferenceDays();i++){
-            for(int j=0; j<info.getNumberOfTimeSlotsPerDay();i++){
+        for(int i=0; i<dates.length;i++){
+            for(int j=0; j<dates[i].length;j++){
                 inverse.dates[i][j]=! this.dates[i][j];
             }
         }
@@ -290,8 +290,8 @@ public class DateConstraint extends Constraint{
 
     public boolean isFull(){
         boolean full = true;
-        for(int i=0; i<info.getNumberOfConferenceDays();i++){
-            for(int j=0; j<info.getNumberOfTimeSlotsPerDay();i++){
+		for(int i=0; i<dates.length;i++){
+			for(int j=0; j<dates[i].length;j++){
                 if(!this.dates[i][j]){
                     return false;
                 }
