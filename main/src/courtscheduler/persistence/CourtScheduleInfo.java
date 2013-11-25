@@ -215,8 +215,8 @@ public class CourtScheduleInfo {
         return conferenceEndDate;
     }
 
-    public int getNumberOfTimeSlotsPerDay() {
-        return numberOfTimeSlotsPerDay;
+    public int getNumberOfTimeSlotsPerDay(int dayIndex) {
+        return DateConstraint.getStandardDates()[dayIndex].length;
     }
 
     public int getNumberOfCourts() {
@@ -239,8 +239,8 @@ public class CourtScheduleInfo {
         return conferenceStartDate.isBefore(date) && conferenceEndDate.isAfter(date);
     }
 
-    public int getFinalTimeSlotIndex() {
-        return numberOfTimeSlotsPerDay - 1;
+    public int getFinalTimeSlotIndex(int dayIndex) {
+        return getNumberOfTimeSlotsPerDay(dayIndex) - 1;
     }
 
     public String getHumanReadableTime(int index) {

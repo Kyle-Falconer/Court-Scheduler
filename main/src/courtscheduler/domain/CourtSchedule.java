@@ -191,7 +191,7 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
         if (matchSlots == null || matchSlots.size() == 0){
             matchSlots = new ArrayList<MatchSlot>();
             for (int dayIndex = 0; dayIndex < info.getNumberOfConferenceDays(); dayIndex++)  {
-                for (int slotIndex = 0; slotIndex < info.getNumberOfTimeSlotsPerDay(); slotIndex++)  {
+                for (int slotIndex = 0; slotIndex < info.getNumberOfTimeSlotsPerDay(dayIndex); slotIndex++)  {
                     for (int courtIndex = 0; courtIndex < info.getNumberOfCourts(); courtIndex++)  {
                         matchSlots.add(new MatchSlot(dayIndex, slotIndex, courtIndex));
                     }

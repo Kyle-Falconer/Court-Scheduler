@@ -113,6 +113,7 @@ rule "noEarlyBird"
 		scoreHolder.addSoftConstraintMatch(kcontext, -1);
 end
 // prefer not to use the latest time slot
+/*
 rule "noNightOwl"
 	when
 		CourtScheduleInfo($time : finalTimeSlotIndex)
@@ -120,6 +121,7 @@ rule "noNightOwl"
 	then
 		scoreHolder.addSoftConstraintMatch(kcontext, -1);
 end
+*/
 
 // prefer not to schedule teams that share coaches at the same time as each other
 rule "notSameTimeAs"

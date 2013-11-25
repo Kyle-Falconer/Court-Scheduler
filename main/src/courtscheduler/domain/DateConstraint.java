@@ -308,4 +308,7 @@ public class DateConstraint extends Constraint{
 	public static void setStandardDates(boolean[][] standardSchedule) {
 		standardDates = standardSchedule;
 	}
+	public static boolean[][] getStandardDates() {
+		return standardDates;
+	}
 }
