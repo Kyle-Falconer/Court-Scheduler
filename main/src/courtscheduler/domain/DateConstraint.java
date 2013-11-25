@@ -21,10 +21,14 @@ public class DateConstraint extends Constraint{
 
 	private static CourtScheduleInfo info;
 	private static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("M/d/yy");
+	private static boolean[][] standardDates;
 
     //constructors
     public DateConstraint(){
-        dates = new boolean[info.getNumberOfConferenceDays()][info.getNumberOfTimeSlotsPerDay()];
+		dates = new boolean[standardDates.length][];
+		for (int i = 0; i < standardDates.length; i++) {
+			dates[i] = standardDates[i].clone();
+		}
     }
 
 	public DateConstraint(DateConstraint a, DateConstraint b) {
@@ -259,6 +263,7 @@ public class DateConstraint extends Constraint{
         }
     }
 
+	// returns Integer[] of all indexes of all of that weekday
     public Integer[] findDayOfWeek(int weekday){
         LocalDate firstDay = info.getConferenceStartDate().withDayOfWeek(weekday);
 		ArrayList<Integer> days = new ArrayList<Integer>();
@@ -299,4 +304,8 @@ public class DateConstraint extends Constraint{
         }
         return full;
     }
+
+	public static void setStandardDates(boolean[][] standardSchedule) {
+		standardDates = standardSchedule;
+	}
 }

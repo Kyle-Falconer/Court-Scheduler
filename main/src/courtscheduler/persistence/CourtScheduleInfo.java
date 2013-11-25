@@ -109,6 +109,7 @@ public class CourtScheduleInfo {
             }
 
         }
+		DateConstraint.setStandardDates(this.createStandardSchedule());
         return 0;
     }
 
@@ -318,4 +319,16 @@ public class CourtScheduleInfo {
 
         return result.toString();
     }
+
+	public int getDayOfWeek(int index) {
+		return this.conferenceStartDate.plusDays(index).getDayOfWeek();
+	}
+
+	public boolean[][] createStandardSchedule() {
+		boolean[][] standardSchedule = new boolean[getNumberOfConferenceDays()][numberOfTimeSlotsPerDay];
+		// TODO construct jagged array properly depending on weekday timeslots
+		// TODO mark holidays
+		return standardSchedule;
+	}
+
 }
