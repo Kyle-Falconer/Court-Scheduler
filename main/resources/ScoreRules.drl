@@ -103,25 +103,8 @@ rule "preferredDates"
 	when
 		Match(PreferToPlayInCurrentSlot == true)
 	then
-		scoreHolder.addSoftConstraintMatch(kcontext, 3);
+		scoreHolder.addSoftConstraintMatch(kcontext, 3000);
 end
-// prefer not to use the earliest time slot
-rule "noEarlyBird"
-	when
-		Match(time == 0)
-	then
-		scoreHolder.addSoftConstraintMatch(kcontext, -1);
-end
-// prefer not to use the latest time slot
-/*
-rule "noNightOwl"
-	when
-		CourtScheduleInfo($time : finalTimeSlotIndex)
-		Match(time == $time)
-	then
-		scoreHolder.addSoftConstraintMatch(kcontext, -1);
-end
-*/
 
 // prefer not to schedule teams that share coaches at the same time as each other
 rule "notSameTimeAs"
@@ -129,7 +112,7 @@ rule "notSameTimeAs"
 		Match($teamlist : notSameTimeAs, $matchSlot : matchSlot)
 		Match($matchSlot == matchSlot && (team1.teamId memberOf $teamlist || team2.teamId memberOf $teamlist))
 	then
-		scoreHolder.addSoftConstraintMatch(kcontext, -10);
+		scoreHolder.addSoftConstraintMatch(kcontext, -1000);
 end
 
 rule "dontWantBackToBack"
@@ -140,7 +123,7 @@ rule "dontWantBackToBack"
         Match(containsTeam($team) == true, $date : Date, $time : Time)
         Match(containsTeam($team) == true, Date == $date, Time == $time + 1)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -7);
+        scoreHolder.addSoftConstraintMatch(kcontext, -7000);
 end
 
 rule "dontWantDoubleHeaders"
@@ -151,7 +134,7 @@ rule "dontWantDoubleHeaders"
         Match(containsTeam($teamId) == true, $date : Date, $time : Time)
         Match(containsTeam($teamId) == true, Date == $date, Time == $time + 2 || Time == $time + 3)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -5);
+        scoreHolder.addSoftConstraintMatch(kcontext, -5000);
 end
 
 rule "dontWantFarApartGames"
@@ -161,18 +144,28 @@ rule "dontWantFarApartGames"
         Match(containsTeam($teamId) == true, this != $match, Date == $date, (Time > $time1 + 3), $time2 : time)
     then
         int modifier = $time2 - $time1 > 2 ? 1 : 0;
-        scoreHolder.addSoftConstraintMatch(kcontext, -10 * modifier);
+        scoreHolder.addSoftConstraintMatch(kcontext, -1000 * modifier);
 end
 
-rule "preferEarlierGames"
+rule "preferEarlierTimes"
     when
         Team($teamId : teamId)
         $match : Match(containsTeam($teamId) == true, $time1 : Time)
     then
-        int modifier = 24 - $time1;
+        int modifier = - $time1 * 100;
+        scoreHolder.addSoftConstraintMatch(kcontext, modifier);
+end
+rule "preferEarlierDates"
+    when
+        Team($teamId : teamId)
+        $match : Match(containsTeam($teamId) == true, $date : Date)
+    then
+        int modifier = - $date;
         scoreHolder.addSoftConstraintMatch(kcontext, modifier);
 end
 
+// ############################################################################################
+// Old rules
 /*
 // team likes double headers and wants to play them whenever possible
 rule "preferBackToBack"
@@ -182,10 +175,9 @@ rule "preferBackToBack"
         Match($match : this, containsTeam($team) == true, Date == $date, Time == $time + 1)
         not Match(containsTeam($team) == true, Date == $date, Time != $time + 1 && Time != $time)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, 5);
+        scoreHolder.addSoftConstraintMatch(kcontext, 50);
 end
-*/
-/*
+
 // team likes back to back
 rule "backToBack"
     when
@@ -193,18 +185,17 @@ rule "backToBack"
         $Match2 : Match(t1 == $t1, Date = $date, Time != $time + 1)
         Team(teamName : $t1, BackToBack == true)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, BackToBackPreference.getWeight());
+        scoreHolder.addSoftConstraintMatch(kcontext, 10 * BackToBackPreference.getWeight());
 end
-*/
 
-/*
+
 // prefer to only schedule games with one gender on a particular day and court
 rule "gender"
 	when
 		Match($date : date, $court : court, $gender : gender)
 		Match(date == $date, court == $court, gender != $gender)
 	then
-		scoreHolder.addSoftConstraintMatch(kcontext, -3);
+		scoreHolder.addSoftConstraintMatch(kcontext, -30);
 end
 
 rule "basketHeight"
@@ -212,5 +203,24 @@ rule "basketHeight"
 		Match($bh : basketHeight, $date : date, $court : court)
 		Match(date == $date, court == $court, $bh != basketHeight)
 	then
-		scoreHolder.addSoftConstraintMatch(kcontext, -3);
-end*/
+		scoreHolder.addSoftConstraintMatch(kcontext, -30);
+end
+
+
+// prefer not to use the earliest time slot
+rule "noEarlyBird"
+	when
+		Match(time == 0)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -1);
+end
+// prefer not to use the latest time slot
+
+rule "noNightOwl"
+	when
+		CourtScheduleInfo($time : finalTimeSlotIndex)
+		Match(time == $time)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -100);
+end
+*/

@@ -79,7 +79,7 @@ public class Main {
             solver.solve();
 			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
 
-            utils.writeXlsx(bestSolution.getMatchList(), info, out_filename);
+            out_filename = utils.writeXlsx(bestSolution.getMatchList(), info, out_filename);
             openExcelFile(out_filename);
         } catch(Exception e){
             e.printStackTrace(); //FIXME
@@ -89,16 +89,18 @@ public class Main {
     }
 
     private static void openExcelFile(String filename){
-        try {
-            if (System.getProperty("os.name").contains("Windows")){
-                Process p = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + filename);
-            } else {
-                Desktop dt = Desktop.getDesktop();
-                dt.open(new File(filename));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		if (filename != null) {
+        	try {
+        	    if (System.getProperty("os.name").contains("Windows")){
+        	        Process p = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + filename);
+        	    } else {
+        	        Desktop dt = Desktop.getDesktop();
+        	        dt.open(new File(filename));
+        	    }
+        	} catch (Exception e) {
+        	    e.printStackTrace();
+        	}
+		}
     }
 
     private static XmlSolverFactory loadConfig(String defaultConfigXmlFilename) {

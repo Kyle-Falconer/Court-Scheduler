@@ -5,6 +5,7 @@ import org.joda.time.LocalDate;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @PlanningEntity
-public class Match implements Comparable<Match> {
+public class Match {
 
     // defining properties: teams
     private Team team1;
@@ -148,13 +149,22 @@ public class Match implements Comparable<Match> {
         }
     }
 
-    public int compareTo(Match o){
-		int confCompare = this.getConference().compareTo(o.getConference());
-        if (confCompare != 0)
-			return confCompare;
-		else
-			return this.compareDateTimes(o);
-    }
+	// sorts by time
+	public static Comparator<Match> timeComparator = new Comparator<Match>() {
+		public int compare(Match m1, Match m2) {
+			return m1.compareDateTimes(m2);
+		}
+	};
+	// sorts by conference
+	public static Comparator<Match> conferenceComparator = new Comparator<Match>() {
+		public int compare(Match m1, Match m2) {
+			int confCompare = m1.getConference().compareTo(m2.getConference());
+			if (confCompare != 0)
+				return confCompare;
+			else
+				return m1.compareDateTimes(m2);
+		}
+	};
 
 	public boolean overlapsWith(MatchSlot other) {
 		return matchSlot.getDay().equals(other.getDay()) && matchSlot.getTime().equals(other.getTime());

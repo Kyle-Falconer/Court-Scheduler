@@ -26,6 +26,8 @@ public class CourtScheduleIO {
 	private static DateTimeFormatter normalTime = DateTimeFormat.forPattern("h:mma");
 	private static DateTimeFormatter militaryTime = DateTimeFormat.forPattern("H:mm");
 
+	private int rowNumber;
+
     public CourtScheduleIO(CourtScheduleInfo info) {
         matchList = new ArrayList<Match>();
         teamList = new ArrayList<Team>();
@@ -67,126 +69,37 @@ public class CourtScheduleIO {
         return teamList;
     }
 
-    public void writeXlsx(List<Match> matches, CourtScheduleInfo info, String filepath) throws IOException {
+    public String writeXlsx(List<Match> matches, CourtScheduleInfo info, String filepath) throws IOException {
 
-        Collections.sort(matches);
+
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet;
         sheet = null;
-        int rowNumber = 0;
+        rowNumber = 0;
         int cellNumber = 0;
-        String conf = "";
+        String lastConf = "";
+
+		// print out master schedule
+		Collections.sort(matches, Match.timeComparator);
+		sheet = initializePage(workbook, "Master");
+		for (Match match : matches) {
+			rowNumber++;
+			printMatch(sheet.createRow(rowNumber), match, info);
+		}
+
+		// print out individual conferences
+		rowNumber = 0;
+		Collections.sort(matches, Match.conferenceComparator);
 
         for(Match match : matches) {
-
-            // CONFERENCE
-            String conference = match.getConference();
-
-            if (!conference.equals(conf)) {
-                // Create a new sheet with titles and headings for each new conference
-                sheet = workbook.createSheet(conference);
-                rowNumber = 0;
-                Row header = sheet.createRow(rowNumber);
-
-                // Set sheet to Landscape so all columns will fit on one page
-                XSSFPrintSetup printSetup = sheet.getPrintSetup();
-                printSetup.setOrientation(PrintOrientation.LANDSCAPE);
-
-                // Column widths determined by specific sizes of heading strings (further down)
-                sheet.setColumnWidth(0, 7424);
-                sheet.setColumnWidth(1, 1024);
-                sheet.setColumnWidth(2, 7424);
-                sheet.setColumnWidth(3, 3072);
-                sheet.setColumnWidth(4, 2816);
-                sheet.setColumnWidth(5, 2816);
-                sheet.setColumnWidth(6, 2304);
-                sheet.setColumnWidth(7, 1792);
-
-                /* FIXME lines below were attempts to set titles to larger font size and headings to bold
-                XSSFCellStyle cellStyle = workbook.createCellStyle();
-                cellStyle = workbook.createCellStyle();
-                XSSFFont xSSFFont = workbook.createFont();
-                xSSFFont.setFontName(XSSFFont.DEFAULT_FONT_NAME);
-                xSSFFont.setFontHeightInPoints((short) 28);
-                xSSFFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
-                hSSFFont.setColor(HSSFColor.GREEN.index);
-                cellStyle.setFont(xSSFFont);
-                setFontHeight(28);      // end FIXME    */
-
-                header.createCell(0).setCellValue("THE COURTS");
-
-                // FIXME one more line attempted font size // xSSFFont.setFontHeightInPoints((short) 24);
-
-                header.createCell(2).setCellValue("Game Schedule");
-                rowNumber = rowNumber + 2;
-
-                header = sheet.createRow(rowNumber);
-                header.createCell(0).setCellValue("Conference " + conference);
-                rowNumber = rowNumber + 2;
-
-                header = sheet.createRow(rowNumber);
-                header.createCell(0).setCellValue("TEAM");
-                header.createCell(1).setCellValue(" ");
-                header.createCell(2).setCellValue("OPPONENT");
-                header.createCell(3).setCellValue("CONFERENCE");
-                header.createCell(4).setCellValue("DAY");
-                header.createCell(5).setCellValue("DATE");
-                header.createCell(6).setCellValue("TIME");
-                header.createCell(7).setCellValue("COURT");
+            if (!match.getConference().equals(lastConf)) {
+				sheet = initializePage(workbook, match.getConference());
             }
 
-            cellNumber = 0;
             rowNumber++;
-            Row dataRow = sheet.createRow(rowNumber);
-
-            // TEAM
-            String teamName1 = match.getTeam1().getTeamName();
-            dataRow.createCell(cellNumber++).setCellValue(teamName1);
-
-            // VS
-            String vs = "vs.";
-            dataRow.createCell(cellNumber++).setCellValue(vs);
-
-            // OPPONENT
-            String teamName2 = match.getTeam2().getTeamName();
-            dataRow.createCell(cellNumber++).setCellValue(teamName2);
-
-            // CONFERENCE
-            conference = match.getTeam1().getConference();
-            
-            dataRow.createCell(cellNumber++).setCellValue(conference);
-
-            // DAY
-            Integer matchDateIndex = match.getMatchSlot().getDay();
-            LocalDate matchDate = info.getConferenceStartDate().plusDays(matchDateIndex);
-            String day = matchDate.dayOfWeek().getAsText();
-            dataRow.createCell(cellNumber++).setCellValue(day);
-
-            // DATE
-            String date = matchDate.toString();
-            if (Main.LOG_LEVEL > 1) {
-                date = date + " [" + matchDateIndex + "]";
-            }
-            dataRow.createCell(cellNumber++).setCellValue(date);
-
-            // TIME
-            Integer matchTime = match.getMatchSlot().getTime();
-            String time = info.getHumanReadableTime(matchTime);
-            if (Main.LOG_LEVEL > 1) {
-                time = time + " [" + matchTime + "]";
-            }
-            dataRow.createCell(cellNumber++).setCellValue(time);
-
-            // COURT
-            Integer courtId = match.getMatchSlot().getCourt();
-            // normal people like their courts indexed from one, not zero,
-            // so add one if we're printing for the client
-            dataRow.createCell(cellNumber++).setCellValue(courtId + (Main.LOG_LEVEL > 1 ? 0 : 1));
-
-			dataRow.createCell(cellNumber).setCellValue(match.getCanPlayInCurrentSlot() ? "" : "WARNING: Team is scheduled when they cannot play");
-
-            conf = match.getConference();
+            printMatch(sheet.createRow(rowNumber), match, info);
+            lastConf = match.getConference();
         }
 
         Scanner input = new Scanner(System.in);
@@ -210,7 +123,7 @@ public class CourtScheduleIO {
                 System.out.println("To quit: type 'q'.");
                 reply = input.nextLine();
                 if (reply.regionMatches(true, 0, "q", 0, 1))
-                    return;
+                    return null;
                 else if (reply.equals(""))
                     continue;
                 else
@@ -221,12 +134,104 @@ public class CourtScheduleIO {
                 System.out.println("Output error.  Please enter new name or path for this output file, or 'q' to quit: ");
                 reply = input.nextLine();
                 if (reply.regionMatches(true, 0, "q", 0, 1))
-                    return;
+                    return null;
                 else
                     filepath = reply;
             }
         } while (continueInput);
+		return filepath;
     }
+
+	private void printMatch(XSSFRow dataRow, Match match, CourtScheduleInfo info) {
+		int cellNumber = 0;
+		// TEAM
+		String teamName1 = match.getTeam1().getTeamName();
+		dataRow.createCell(cellNumber++).setCellValue(teamName1);
+
+		// VS
+		String vs = "vs.";
+		dataRow.createCell(cellNumber++).setCellValue(vs);
+
+		// OPPONENT
+		String teamName2 = match.getTeam2().getTeamName();
+		dataRow.createCell(cellNumber++).setCellValue(teamName2);
+
+		// CONFERENCE
+		String conference = match.getConference();
+
+		dataRow.createCell(cellNumber++).setCellValue(conference);
+
+		// DAY
+		Integer matchDateIndex = match.getMatchSlot().getDay();
+		LocalDate matchDate = info.getConferenceStartDate().plusDays(matchDateIndex);
+		String day = matchDate.dayOfWeek().getAsText();
+		dataRow.createCell(cellNumber++).setCellValue(day);
+
+		// DATE
+		String date = matchDate.toString();
+		if (Main.LOG_LEVEL > 1) {
+			date = date + " [" + matchDateIndex + "]";
+		}
+		dataRow.createCell(cellNumber++).setCellValue(date);
+
+		// TIME
+		Integer matchTime = match.getMatchSlot().getTime();
+		String time = info.getHumanReadableTime(matchTime);
+		if (Main.LOG_LEVEL > 1) {
+			time = time + " [" + matchTime + "]";
+		}
+		dataRow.createCell(cellNumber++).setCellValue(time);
+
+		// COURT
+		Integer courtId = match.getMatchSlot().getCourt();
+		// normal people like their courts indexed from one, not zero,
+		// so add one if we're printing for the client
+		dataRow.createCell(cellNumber++).setCellValue(courtId + (Main.LOG_LEVEL > 1 ? 0 : 1));
+
+		dataRow.createCell(cellNumber).setCellValue(match.getCanPlayInCurrentSlot() ? "" : "WARNING: Team is scheduled when they cannot play");
+	}
+
+	private XSSFSheet initializePage(XSSFWorkbook workbook, String conference) {
+		// Create a new sheet with titles and headings for each new conference
+		XSSFSheet sheet = workbook.createSheet(conference);
+		rowNumber = 0;
+		Row header = sheet.createRow(rowNumber);
+
+		// Set sheet to Landscape so all columns will fit on one page
+		XSSFPrintSetup printSetup = sheet.getPrintSetup();
+		printSetup.setOrientation(PrintOrientation.LANDSCAPE);
+
+		// Column widths determined by specific sizes of heading strings (further down)
+		sheet.setColumnWidth(0, 7424);
+		sheet.setColumnWidth(1, 1024);
+		sheet.setColumnWidth(2, 7424);
+		sheet.setColumnWidth(3, 3072);
+		sheet.setColumnWidth(4, 2816);
+		sheet.setColumnWidth(5, 2816);
+		sheet.setColumnWidth(6, 2304);
+		sheet.setColumnWidth(7, 1792);
+
+		header.createCell(0).setCellValue("THE COURTS");
+
+		header.createCell(2).setCellValue("Game Schedule");
+		rowNumber = rowNumber + 2;
+
+		header = sheet.createRow(rowNumber);
+		header.createCell(0).setCellValue("Conference " + conference);
+		rowNumber = rowNumber + 2;
+
+		header = sheet.createRow(rowNumber);
+		header.createCell(0).setCellValue("TEAM");
+		header.createCell(1).setCellValue(" ");
+		header.createCell(2).setCellValue("OPPONENT");
+		header.createCell(3).setCellValue("CONFERENCE");
+		header.createCell(4).setCellValue("DAY");
+		header.createCell(5).setCellValue("DATE");
+		header.createCell(6).setCellValue("TIME");
+		header.createCell(7).setCellValue("COURT");
+
+		return sheet;
+	}
 
     private Team processRow(Row currentRow, CourtScheduleInfo info) {
         short columnCount = currentRow.getLastCellNum();
