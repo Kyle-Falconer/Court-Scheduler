@@ -164,6 +164,15 @@ rule "dontWantFarApartGames"
         scoreHolder.addSoftConstraintMatch(kcontext, -10 * modifier);
 end
 
+rule "preferEarlierGames"
+    when
+        Team($teamId : teamId)
+        $match : Match(containsTeam($teamId) == true, $time1 : Time)
+    then
+        int modifier = 24 - $time1;
+        scoreHolder.addSoftConstraintMatch(kcontext, modifier);
+end
+
 /*
 // team likes double headers and wants to play them whenever possible
 rule "preferBackToBack"
