@@ -20,7 +20,7 @@ public class DateConstraint extends Constraint{
     private boolean dates[][];
 
 	private static CourtScheduleInfo info;
-	private static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("M/d/yy");
+	public static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("M/d/yy");
 	private static DateConstraint standardDates;
 
     //constructors

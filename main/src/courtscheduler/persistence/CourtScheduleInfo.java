@@ -106,7 +106,23 @@ public class CourtScheduleInfo {
                 this.badConferenceDays.put(confDays[0], confDays[1]);
                 this.primaryDays.put(confDays[0], confDays[2]);
                 this.secondaryDays.put(confDays[0], confDays[3]);
-            }
+            } else if (key.startsWith("holiday")) {
+				if (!value.contains("-")) {
+					// one date
+					holidays.add(LocalDate.parse(value, DateConstraint.dateFormat));
+				}
+				else {
+					// date range
+					LocalDate start = LocalDate.parse(value.substring(0, value.indexOf("-")), DateConstraint.dateFormat);
+					LocalDate end = LocalDate.parse(value.substring(value.indexOf("-")+1), DateConstraint.dateFormat);
+					LocalDate next = start;
+					while (next.isBefore(end)) {
+						holidays.add(next);
+						next = next.plusDays(1);
+					}
+					holidays.add(end);
+				}
+			}
 
         }
 		DateConstraint.setStandardDates(this.createStandardSchedule());
@@ -328,6 +344,8 @@ public class CourtScheduleInfo {
 		DateConstraint standardSchedule = new DateConstraint();
 		// TODO construct jagged array properly depending on weekday timeslots
 		// TODO mark holidays
+		for (LocalDate holiday : holidays)
+			standardSchedule.addDate(standardSchedule.findDate(holiday));
 		return standardSchedule;
 	}
 
