@@ -63,7 +63,7 @@ public class CourtScheduleIO {
             for (int x = 0; x < teamList.size(); x++) {
                 System.out.println(teamList.get(x));
             }
-            System.out.println(new java.util.Date() + "[INFO] Processing finished.");
+            System.out.println(new java.util.Date() + " [INFO] Input parsed. Constructing possible matches...");
         }
 
         return teamList;

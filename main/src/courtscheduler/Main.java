@@ -73,7 +73,8 @@ public class Main {
         CourtSchedule testSchedule;
         try{
             testSchedule= new CourtSchedule(utils.readXlsx(in_filename, info), info);
-
+			if (LOG_LEVEL > 1)
+				System.out.println(new java.util.Date() + " [INFO] Matches constructed. Sending data to solver engine...");
             // solve the problem (gee, it sounds so easy when you put it like that)
             solver.setPlanningProblem(testSchedule);
             solver.solve();
