@@ -208,7 +208,7 @@ public class CourtScheduleIO {
 		sheet.setColumnWidth(3, 3072);
 		sheet.setColumnWidth(4, 2816);
 		sheet.setColumnWidth(5, 2816);
-		sheet.setColumnWidth(6, 2304);
+		sheet.setColumnWidth(6, 2403);
 		sheet.setColumnWidth(7, 1792);
 
 		header.createCell(0).setCellValue("THE COURTS");
@@ -437,6 +437,9 @@ public class CourtScheduleIO {
             else if(request.contains("after")){
                 requestAfterTime(request, team, dates);
             }
+			else {
+				System.out.printf("ERROR: Unknown time-based constraint for team %d [%s]\n", team.getTeamId(), request);
+			}
         }
         else{
             requestDayOfWeek(request, team, dates);

@@ -1,6 +1,7 @@
 package courtscheduler.persistence;
 
 import courtscheduler.domain.DateConstraint;
+import courtscheduler.domain.Team;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
+import static courtscheduler.persistence.CourtScheduleIO.parseDateConstraints;
 
 /**
  * Created with IntelliJ IDEA.
@@ -73,6 +75,7 @@ public class CourtScheduleInfo {
                     "Expected the configuration file to be found at: " + FileSystems.getDefault().getPath(filepath).toAbsolutePath());
             return -1;
         }
+		String[] scheduleDescription = null;
         for (String line : raw_lines) {
             if (line.startsWith(";", 0) || line.trim().length() == 0) {
                 // this line is a comment or empty line
@@ -123,9 +126,12 @@ public class CourtScheduleInfo {
 					holidays.add(end);
 				}
 			}
+			else if (key.startsWith("schedule_description")) {
+				scheduleDescription = value.split(", ");
+			}
 
         }
-		DateConstraint.setStandardDates(this.createStandardSchedule());
+		DateConstraint.setStandardDates(this.createStandardSchedule(scheduleDescription));
         return 0;
     }
 
@@ -340,13 +346,44 @@ public class CourtScheduleInfo {
 		return this.conferenceStartDate.plusDays(index).getDayOfWeek();
 	}
 
-	public DateConstraint createStandardSchedule() {
+	public DateConstraint createStandardSchedule(String[] description) {
 		DateConstraint standardSchedule = new DateConstraint();
 		// TODO construct jagged array properly depending on weekday timeslots
 		// TODO mark holidays
 		for (LocalDate holiday : holidays)
 			standardSchedule.addDate(standardSchedule.findDate(holiday));
+		Team noTeam = null;
+		ArrayList<DateConstraint> components = new ArrayList<DateConstraint>();
+		for (String request : description) {
+			request = request.trim().toLowerCase();
+			for (String longDay : LONG_DAYS) {
+				DateConstraint nextComponent = null;
+				if (request.contains(longDay) && request.contains(":")) {
+					// special constraint: [day] before/after [time]
+					// restrict if both on this day AND at this time-- so take the intersection
+					DateConstraint day = parseDateConstraints(longDay, noTeam, new DateConstraint());
+					DateConstraint time = parseDateConstraints(cleanRequest(request, longDay), noTeam, new DateConstraint());
+					nextComponent = DateConstraint.getIntersection(day, time);
+					components.add(nextComponent);
+				}
+			}
+		}
+		for (DateConstraint c : components) {
+			// and then OR all the components together
+			standardSchedule = new DateConstraint(standardSchedule, c);
+		}
+
 		return standardSchedule;
 	}
-
+	private String cleanRequest(String r, String longDay) {
+		String request = r.replace(longDay, "").trim();
+		// don't even ask
+		if (request.contains("before")) {
+			request = request.replace("before", "after");
+		}
+		else {
+			request = request.replace("after", "before");
+		}
+		return request;
+	}
 }
