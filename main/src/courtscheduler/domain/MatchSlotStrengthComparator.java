@@ -11,7 +11,7 @@ import java.util.Comparator;
  * Time: 3:50 PM
  * To change this template use File | Settings | File Templates.
  */
-public class MatchStrengthComparator implements Comparator<MatchSlot> {
+public class MatchSlotStrengthComparator implements Comparator<MatchSlot> {
     public int compare(MatchSlot a, MatchSlot b) {
         /* This method will compare two teams based on their constraints.
         * Teams with fewer constraints should sort "higher" than teams with more constraints,

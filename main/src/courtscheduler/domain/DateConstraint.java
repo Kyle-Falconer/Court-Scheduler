@@ -21,14 +21,11 @@ public class DateConstraint extends Constraint{
 
 	private static CourtScheduleInfo info;
 	private static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("M/d/yy");
-	private static boolean[][] standardDates;
+	private static DateConstraint standardDates;
 
     //constructors
     public DateConstraint(){
-		dates = new boolean[standardDates.length][];
-		for (int i = 0; i < standardDates.length; i++) {
-			dates[i] = standardDates[i].clone();
-		}
+		dates = new boolean[info.getNumberOfConferenceDays()][info.getNumberOfTimeSlotsPerDay()];
     }
 
 	public DateConstraint(DateConstraint a, DateConstraint b) {
@@ -42,6 +39,7 @@ public class DateConstraint extends Constraint{
 		// So, since we assume they can play all times by default, we use "false" to mean it's okay,
 		// and "true" to mean they can't play then.
 		// Confusing, I know, but the performance benefit is nontrivial. --MS
+		// Premature optimization is the root of all evil. --MS, a month later
 		if (day < 0 || timeSlot < 0 || day >= this.dates.length || timeSlot >= this.dates[day].length){
             System.out.println("Date/time ("+day+"/"+timeSlot+") requested is outside the start-end dates of the conference");
             return true;
@@ -174,11 +172,6 @@ public class DateConstraint extends Constraint{
 
     //conversion methods for days
 
-    //matchDate -> int day (calls calendar find date)
-    public int findDate(MatchDate Date){
-        return findDate(Date.getDate());
-    }
-
     //string date->int day (calls calendar find date)
     public Integer findDate(String date){
         LocalDate ldate= LocalDate.parse(date, dateFormat);
@@ -198,15 +191,6 @@ public class DateConstraint extends Constraint{
             return null;
         }
         return day;
-    }
-    //array of matchDate inputs -> array of int days
-    public int[] findDates(List<MatchDate> Dates){
-        int[] days= new int[Dates.size()];
-        for(int i=0;i<Dates.size();i++){
-            days[i]=findDate(Dates.get(i).getDate());
-        }
-        return days;
-
     }
 
 
@@ -305,10 +289,10 @@ public class DateConstraint extends Constraint{
         return full;
     }
 
-	public static void setStandardDates(boolean[][] standardSchedule) {
+	public static void setStandardDates(DateConstraint standardSchedule) {
 		standardDates = standardSchedule;
 	}
-	public static boolean[][] getStandardDates() {
+	public static DateConstraint getStandardDates() {
 		return standardDates;
 	}
 }

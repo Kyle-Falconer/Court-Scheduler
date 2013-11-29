@@ -334,7 +334,6 @@ public class CourtScheduleIO {
         String[] requestArray = requests.split(splitToken);
         //debug(requests);
 
-        List<MatchTime> offTimeList = new ArrayList<MatchTime>();//dateConstraint, deprecate
         List<Integer> playOnceTeamList = new ArrayList<Integer>();
         boolean likesDoubleHeaders = false;//flat bool
         boolean likesBackToBack = false;//flat bool
@@ -413,7 +412,6 @@ public class CourtScheduleIO {
         	parseDateConstraints(badDays, team, badDates);
 		}
 
-        team.setOffTimes(new OffTimes(offTimeList));
         team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));
         team.setDoubleHeaderPreference(new DoubleHeaderPreference(likesDoubleHeaders));
         team.setBackToBackPreference(new BackToBackPreference(likesBackToBack));

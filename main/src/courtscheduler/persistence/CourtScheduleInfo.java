@@ -215,8 +215,8 @@ public class CourtScheduleInfo {
         return conferenceEndDate;
     }
 
-    public int getNumberOfTimeSlotsPerDay(int dayIndex) {
-        return DateConstraint.getStandardDates()[dayIndex].length;
+    public int getNumberOfTimeSlotsPerDay() {
+        return numberOfTimeSlotsPerDay;
     }
 
     public int getNumberOfCourts() {
@@ -239,8 +239,8 @@ public class CourtScheduleInfo {
         return conferenceStartDate.isBefore(date) && conferenceEndDate.isAfter(date);
     }
 
-    public int getFinalTimeSlotIndex(int dayIndex) {
-        return getNumberOfTimeSlotsPerDay(dayIndex) - 1;
+    public int getFinalTimeSlotIndex() {
+        return getNumberOfTimeSlotsPerDay() - 1;
     }
 
     public String getHumanReadableTime(int index) {
@@ -324,8 +324,8 @@ public class CourtScheduleInfo {
 		return this.conferenceStartDate.plusDays(index).getDayOfWeek();
 	}
 
-	public boolean[][] createStandardSchedule() {
-		boolean[][] standardSchedule = new boolean[getNumberOfConferenceDays()][numberOfTimeSlotsPerDay];
+	public DateConstraint createStandardSchedule() {
+		DateConstraint standardSchedule = new DateConstraint();
 		// TODO construct jagged array properly depending on weekday timeslots
 		// TODO mark holidays
 		return standardSchedule;

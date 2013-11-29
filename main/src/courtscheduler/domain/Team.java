@@ -14,7 +14,6 @@ public class Team {
 
     private DoubleHeaderPreference doubleHeaderPreference;
     private BackToBackPreference backToBackPreference;
-    private OffTimes offTimes;
     private PlayOnceRequests playOnceRequests;
 	private SharedTeams dontPlay;
 
@@ -34,7 +33,6 @@ public class Team {
     public Team() {
         doubleHeaderPreference = new DoubleHeaderPreference(false);
         backToBackPreference = new BackToBackPreference(false);
-        offTimes = new OffTimes();
         playOnceRequests = new PlayOnceRequests();
 		this.avail = new MatchAvailability();
 		dontPlay = new SharedTeams();
@@ -110,14 +108,6 @@ public class Team {
 
     public void setBackToBackPreference(BackToBackPreference backToBackPreference) {
         this.backToBackPreference = backToBackPreference;
-    }
-
-    public OffTimes getOffTimes() {
-        return offTimes;
-    }
-
-    public void setOffTimes(OffTimes offTimes) {
-        this.offTimes = offTimes;
     }
 
     public SharedTeams getDontPlay() {

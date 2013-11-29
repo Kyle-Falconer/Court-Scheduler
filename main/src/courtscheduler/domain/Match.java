@@ -1,7 +1,5 @@
 package courtscheduler.domain;
 
-import org.apache.commons.lang.builder.CompareToBuilder;
-import org.joda.time.LocalDate;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
@@ -28,7 +26,7 @@ public class Match {
         this.matchSlot = matchSlot;
     }
 
-    @PlanningVariable(valueRangeProviderRefs = "matchSlot", strengthComparatorClass = MatchStrengthComparator.class)
+    @PlanningVariable(valueRangeProviderRefs = "matchSlot", strengthComparatorClass = MatchSlotStrengthComparator.class)
     public MatchSlot getMatchSlot() {
         return this.matchSlot;
     }
@@ -56,14 +54,6 @@ public class Match {
 
     public Integer getTeam2Id(){
         return this.team2.getTeamId();
-    }
-
-    public MatchDate getMatchDate(LocalDate dateScale) {
-        MatchDate date = new MatchDate();
-        dateScale.plusDays(matchSlot.getDay());
-        date.setDate(dateScale);
-        date.setDayOfWeek(DayOfWeek.valueOfCalendar(dateScale.getDayOfWeek()));
-        return date;
     }
 
     public Integer getTime() {

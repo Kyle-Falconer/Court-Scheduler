@@ -2,7 +2,6 @@ package courtscheduler.domain.solver;
 
 import courtscheduler.domain.CourtSchedule;
 import courtscheduler.domain.Match;
-import courtscheduler.domain.MatchDate;
 import org.optaplanner.core.impl.heuristic.selector.common.decorator.SelectionFilter;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 
@@ -20,10 +19,6 @@ public class MovableMatchSelectionFilter implements SelectionFilter<Match> {
     }
 
     public boolean accept(CourtSchedule courtSchedule, Match match) {
-        /*
-		MatchDate matchDate = match.getMatchDate(courtSchedule.getFirstDay());
-        return courtSchedule.getCourtScheduleInfo().isInPlanningWindow(matchDate);
-        */
 		return true; // FIXME do we even still need this?
     }
 
