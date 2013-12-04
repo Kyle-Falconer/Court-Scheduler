@@ -164,6 +164,14 @@ rule "preferEarlierDates"
         scoreHolder.addSoftConstraintMatch(kcontext, modifier);
 end
 
+rule "orderMatchesByConference"
+    when
+        Match($conf1 : Conference, $date : Date, $time : Time)
+        Match(Conference.compareTo($conf1) == 1, Date == $date, Time == $time + 1)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -1000);
+end
+
 // ############################################################################################
 // Old rules
 /*
