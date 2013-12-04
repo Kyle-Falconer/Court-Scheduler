@@ -415,7 +415,7 @@ public class CourtScheduleIO {
         }
 
 		// put all conference primary days on prefDates
-		String prefDays = info.getPrimaryDays().get(team.getConference());
+		String prefDays = info.getPrimaryDays().get(team.getGradeString());
 		if (prefDays != null){
 			parseDateConstraints(prefDays, team, prefDates);
         }
@@ -424,7 +424,7 @@ public class CourtScheduleIO {
 		// do nothing with secondary days-- they're neither preferred nor unplayable
 
         // put all dates that are not conference primary/secondary days on the badDates object
-		String badDays = info.getBadConferenceDays().get(team.getConference());
+		String badDays = info.getBadConferenceDays().get(team.getGradeString());
 		if (badDays != null && badDays.length() != 7) {
         	parseDateConstraints(badDays, team, badDates);
 		}
