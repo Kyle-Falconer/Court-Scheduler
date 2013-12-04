@@ -82,7 +82,9 @@ public class Main {
             System.out.println("\n\nconfiguration loaded...");
         }
 
-        String in_filename = forceGetArg(args, 0, "Please enter the path of the input file: ");
+        //String in_filename = forceGetArg(args, 0, "Please enter the path of the input file: ");
+        String in_filename= info.getFileLocation();
+        System.out.println("File Location is at: " + in_filename);
         String out_filename = getOptArg(args, 1, "output.xlsx");
 
 
