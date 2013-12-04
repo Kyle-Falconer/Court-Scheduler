@@ -1,3 +1,20 @@
+/*
+ * Copyright 2013 Michael Adams, CJ Done, Charles Eswine, Kyle Falconer,
+ *  Will Gorman, Stephen Kaysen, Pat McCroskey and Matthew Swinney
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+
 package courtscheduler.persistence;
 
 import courtscheduler.Main;
@@ -398,7 +415,7 @@ public class CourtScheduleIO {
         }
 
 		// put all conference primary days on prefDates
-		String prefDays = info.getPrimaryDays().get(team.getConference());
+		String prefDays = info.getPrimaryDays().get(team.getGradeString());
 		if (prefDays != null){
 			parseDateConstraints(prefDays, team, prefDates);
         }
@@ -407,7 +424,7 @@ public class CourtScheduleIO {
 		// do nothing with secondary days-- they're neither preferred nor unplayable
 
         // put all dates that are not conference primary/secondary days on the badDates object
-		String badDays = info.getBadConferenceDays().get(team.getConference());
+		String badDays = info.getBadConferenceDays().get(team.getGradeString());
 		if (badDays != null && badDays.length() != 7) {
         	parseDateConstraints(badDays, team, badDates);
 		}
