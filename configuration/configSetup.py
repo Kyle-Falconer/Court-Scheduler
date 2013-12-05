@@ -22,7 +22,7 @@ class schedulerConfig(Frame):
         saveOffDates = []
         saveOffCourts = []
         self.grid()
-        
+                
         #Creating Interface
         frame1 = Frame(self)
             
@@ -425,10 +425,10 @@ class schedulerConfig(Frame):
                     days = open("config2.txt", 'r').read()
                     session = open("config3.txt", 'r').read()
                     final.write(initial + "\n" + time + '\n' + days + "\n" + session)
-                    os.remove("C:\Python27\Config1.txt")
-                    os.remove("C:\Python27\Config2.txt")
-                    os.remove("C:\Python27\Config3.txt")
-                    os.remove("C:\Python27\Config5.txt")
+                    os.remove("Config1.txt")
+                    os.remove("Config2.txt")
+                    os.remove("Config3.txt")
+                    os.remove("Config5.txt")
                     final.write("input_file="+ filename)
                     final.close()
                     stop()
@@ -547,30 +547,33 @@ class schedulerConfig(Frame):
                         save += 1
                         tkMessageBox.showinfo("Integer", "Make sure entry values are integers")
                         
-                    if len(strtdate) != 3 or len(endate) != 3:
-                        tkMessageBox.showinfo("Failure to Initialize", "Make sure values are in the proper format")
-                    else:
-                        config = open("Config1.txt", "w")
-                            
-                        if int(strtdate[0]) in year and int(strtdate[1]) in months and int(strtdate[2]) in days:
-                            config.write( "conference_start=" + strtdate[1] + '/' + strtdate[2] + '/' + strtdate[0] +"\n")
+                    try:
+                        if len(strtdate) != 3 or len(endate) != 3:
+                            tkMessageBox.showinfo("Failure to Initialize", "Make sure values are in the proper format")
                         else:
-                            save += 1
-                            tkMessageBox.showinfo("Failure to Initialize", "Start Date not in the proper format")
-                        if int(endate[0]) in year and int(endate[1]) in months and int(endate[2]) in days:
-                            config.write( "conference_end=" +endate[1] + '/' + endate[2] + '/' + endate[0] + "\n")
-                        else:
-                            save += 1
-                            tkMessageBox.showinfo("Failure to Initialize", "End Date not in the proper format")
+                            config = open("Config1.txt", "w")
                             
-                        if save == 0:
-                            config.write( "court_count=" + ntryCourts.get() + "\n" + "\n")
-                            config.write("timeslots_start=5:00am" + "\n")
-                            config.write("timeslots_count=20" + "\n")
-                            config.write( "timeslot_duration_minutes=" + ntryMatchLength.get() + "\n")
-                            Initial.grid_forget()
-                            btnSubmit.grid_forget()
-                            time()
+                            if int(strtdate[0]) in year and int(strtdate[1]) in months and int(strtdate[2]) in days:
+                                config.write( "conference_start=" + strtdate[1] + '/' + strtdate[2] + '/' + strtdate[0] +"\n")
+                            else:
+                                save += 1
+                                tkMessageBox.showinfo("Failure to Initialize", "Start Date not in the proper format")
+                            if int(endate[0]) in year and int(endate[1]) in months and int(endate[2]) in days:
+                                config.write( "conference_end=" +endate[1] + '/' + endate[2] + '/' + endate[0] + "\n")
+                            else:
+                                save += 1
+                                tkMessageBox.showinfo("Failure to Initialize", "End Date not in the proper format")
+                            
+                            if save == 0:
+                                config.write( "court_count=" + ntryCourts.get() + "\n" + "\n")
+                                config.write("timeslots_start=5:00am" + "\n")
+                                config.write("timeslots_count=20" + "\n")
+                                config.write( "timeslot_duration_minutes=" + ntryMatchLength.get() + "\n")
+                                Initial.grid_forget()
+                                btnSubmit.grid_forget()
+                                time()
+                    except:
+                            pass
 
                 else:
                     tkMessageBox.showinfo("Failure to Initialize", "Make sure you have inserted values in the Initial Setup and they are in the proper format")
@@ -736,6 +739,7 @@ def stop():
 def main():
     global root
     root = schedulerConfig()
+    root.master.resizable(0,0)
     root.mainloop()
 
 
