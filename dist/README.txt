@@ -47,7 +47,7 @@ How to run:
     plus button to bring up another primary day.
     The right side of the window contains the secondary days for each grade.
     This information must be entered as the full name, ex. Monday or Tuesday.
-    If there are multiple secondary days for a grade, you can seperate
+    If there are multiple secondary days for a grade, you can separate
     them with commas (ex. Monday, Wednesday, Saturday).
 
     The next window allows you to type in the holidays or other days that
@@ -71,9 +71,14 @@ How to run:
     Each consecutive tab is labelled by their conference name, and contains the schedule for that
     particular conference.
 
-    Note: If the scheduler could not implement constraints specified, "WARNING" will display
-    to the left of the match that violates the constraint. This will help you identify
-    which matches may need to be moved around manually.
+    Note: If the scheduler could not fit a match into the times the teams are available,
+    "WARNING" will appear to the right of the match that violates the constraint.
+    This will help you identify which matches may need to be moved around manually.
+    
+    HOWEVER, note that this will only automatically detect teams who are scheduled when they
+    cannot play. It will not automatically warn you about teams scheduled for double-headers or
+    back-to-back games, or any other situation.
+	
 
 
 
@@ -127,7 +132,7 @@ Kyle Falconer  (kfalconer@gmail.com)
 Will Gorman (Gorman1@live.missouristate.edu)
 Stephen Kaysen (Kaysen7@live.missouristate.edu)
 Pat McCroskey (McCroskey236@live.missouristate.edu)
-Matthew Swinney (Matthew054@live.missouristate.edu)
+Matthew Swinney (MatthewGSwinney@gmail.com)
 
 
 
