@@ -11,6 +11,8 @@ from os.path import expanduser
 from tkFileDialog import askopenfilename
 import sys
 
+root = None
+
 class schedulerConfig(Frame):
 
     def __init__(self):
@@ -109,7 +111,6 @@ class schedulerConfig(Frame):
                     if day not in days:
                         save += 1
                 if save == 0:
-                    print pr1
                     currFile = open("Config2.txt", 'w')
                     for x in xrange(0, 10):
                         if pr1[x] == "Thursday":
@@ -120,7 +121,6 @@ class schedulerConfig(Frame):
                             pr1[x] = ""
                         else:
                             pr1[x] = pr1[x][0]
-                    print pr1
                     for day in dayDict:
                         if dayDict[day][0] == "Thursday":
                             currFile.write("conference=" + day + "-" + "R" + pr1[counter] +":")
@@ -400,6 +400,7 @@ class schedulerConfig(Frame):
                 btnSessSubmit.grid_forget()
                 btnSessBack.grid_forget()
                 daySetup()
+
                 
             def holidaySubmit():
                 config = open("Config3.txt", 'w')
@@ -430,7 +431,7 @@ class schedulerConfig(Frame):
                     os.remove("C:\Python27\Config5.txt")
                     final.write("input_file="+ filename)
                     final.close()
-                    quit()
+                    stop()
                 
             def clearSessionUnavail():
                 while len(saveOffDates) > 0:
@@ -600,6 +601,7 @@ class schedulerConfig(Frame):
             ntryMatchLength.grid(row = 3, column = 1, pady=4, padx=5, sticky=W)
 
             #Submit
+            #btnSubmit = Button(self, text = "Submit", width = 25, command = submitInitial)
             btnSubmit = Button(self, text = "Submit", width = 25, command = submitInitial)
             btnSubmit.grid(row = 4, columnspan = 1, column = 0, sticky = E, padx = 5)
             
@@ -727,8 +729,14 @@ class schedulerConfig(Frame):
 
         config()
 
+def stop():
+    root.quit()
+    os._exit(0)
+
 def main():
-    schedulerConfig().mainloop()
+    global root
+    root = schedulerConfig()
+    root.mainloop()
 
 
 
