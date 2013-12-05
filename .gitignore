@@ -34,3 +34,4 @@ output.xlsx
 # Package Files #
 *.war
 *.ear
+dist/configuration/*

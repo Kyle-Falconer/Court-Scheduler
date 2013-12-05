@@ -42,11 +42,18 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-
         if (LOG_LEVEL >= 1) {
             System.out.println("Court Scheduler");
             System.out.println("============================================================");
         }
+
+        String configurationUtilityFilename = getOptArg(args, 1, "configuration/configSetup.exe");
+        if (blockRunProgram(configurationUtilityFilename) != 0){
+            System.out.println("[Error] Could not run the configuration utility.");
+            return;
+        }
+
+
 
         if (LOG_LEVEL >= 3) {
             System.out.println("Current working directory = " + System.getProperty("user.dir"));
@@ -60,7 +67,7 @@ public class Main {
         }
 
         // This filename needs to be relative to the application's classpath
-        String solverConfigFilename = getOptArg(args, 2, "/SolverConfig.xml");
+        String solverConfigFilename = "/SolverConfig.xml";
 
 		// initialize CourtSchedule configuration
 		CourtScheduleInfo info = new CourtScheduleInfo("config.ini");
@@ -105,7 +112,7 @@ public class Main {
 			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
 
             output_filename = utils.writeXlsx(bestSolution.getMatchList(), info, output_filename);
-            openExcelFile(output_filename);
+            openFile(output_filename);
         } catch(Exception e){
             e.printStackTrace(); //FIXME
         }
@@ -113,8 +120,25 @@ public class Main {
 
     }
 
+    private static int blockRunProgram(String filename){
+        if (filename != null) {
+            try {
+                Process p = Runtime.getRuntime().exec("cmd /C start /wait "+filename);
+                int exitVal = p.waitFor();
+                return exitVal;
 
-    private static void openExcelFile(String filename){
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+        return -1;
+    }
+
+
+
+
+    private static void openFile(String filename){
 		if (filename != null) {
         	try {
         	    if (System.getProperty("os.name").contains("Windows")){
