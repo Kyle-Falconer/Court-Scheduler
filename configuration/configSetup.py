@@ -419,7 +419,7 @@ class schedulerConfig(Frame):
                 if save != 0:
                     pass
                 else:
-                    final = open("Config.ini", 'w')
+                    final = open("config.ini", 'w')
                     initial = open("config1.txt", 'r').read()
                     time = open("config5.txt", 'r').read()
                     days = open("config2.txt", 'r').read()
