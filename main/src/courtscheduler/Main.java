@@ -87,7 +87,7 @@ public class Main {
             in_filename = forceGetArg(args, 0, "Please enter the path of the input file: ");
         }
         System.out.println("Input file location is at: " + in_filename);
-        String output_folder = info.getInputFileLocation() == null ? parentDirectory(in_filename) : info.getOutputFolderLocation();
+        String output_folder = info.getOutputFolderLocation() == null ? parentDirectory(in_filename) : info.getOutputFolderLocation();
         output_folder = parseFolder(output_folder);
         System.out.println("Output folder location is at: " + output_folder);
         String output_filename = output_folder+"output.xlsx";
