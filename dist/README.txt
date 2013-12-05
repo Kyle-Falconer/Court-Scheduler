@@ -36,9 +36,10 @@ How to run:
 
     The next window is the Courts Availability window.
     Here you can enter the Starting and Ending time for each day of the week
-    following this format: 10:00am or 11:30pm. The allowed times are every ten minutes
+    following this format: 9:00am or 11:30pm (no space between the number and
+    the am or pm). The allowed times are every ten minutes
     or each quarter of an hour (ex. 10:15pm, or 8:30am).
-    When each text box is filled with information following the correct format,
+    When all text boxes are filled with information following the correct format,
     you will be able to click next and go to the next page.
 
     Next you will see the Primary/Secondary day setup page.
@@ -47,8 +48,8 @@ How to run:
     plus button to bring up another primary day.
     The right side of the window contains the secondary days for each grade.
     This information must be entered as the full name, ex. Monday or Tuesday.
-    If there are multiple secondary days for a grade, you can separate
-    them with commas (ex. Monday, Wednesday, Saturday).
+    If there are multiple secondary days for a grade, you must separate
+    them with a comma and a space (ex. Monday, Wednesday, Saturday).
 
     The next window allows you to type in the holidays or other days that
     the courts will be closed. You can type in each date into the
