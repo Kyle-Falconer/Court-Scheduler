@@ -324,10 +324,10 @@ public class CourtScheduleInfo {
         int index = (int) Math.ceil((minutes - this.timeslotMidnightOffsetInMinutes) / this.timeslotDurationInMinutes);
         if (index < 0 ) {
             System.out.println("ERROR: Time " + time + " is before the start time.");
-            return -1;
+            return 0;
         } else if (index >= this.numberOfTimeSlotsPerDay){
             System.out.println("ERROR: Time " + time + " is after the end time.");
-            return -1;
+            return this.numberOfTimeSlotsPerDay-1;
         }
         return index;
     }
@@ -336,10 +336,10 @@ public class CourtScheduleInfo {
 		int index = (int) Math.ceil((minutes - this.timeslotMidnightOffsetInMinutes) / this.timeslotDurationInMinutes);
 		if (index < 0 ) {
 			System.out.println("ERROR: Time " + time + " is before the start time.");
-			return -1;
+			return 0;
 		} else if (index >= this.numberOfTimeSlotsPerDay){
 			System.out.println("ERROR: Time " + time + " is after the end time.");
-			return -1;
+			return this.numberOfTimeSlotsPerDay-1;
 		}
 		return index;
 	}
