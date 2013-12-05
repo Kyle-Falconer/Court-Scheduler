@@ -55,7 +55,8 @@ public class CourtScheduleInfo {
     private Map<String, String> primaryDays;
     private Map<String, String> secondaryDays;
     private Map<String, String> badConferenceDays;
-    private String fileLocation;
+    private String inputFileLocation;
+    private String outputFolderLocation;
 
     private List<String> raw_lines;
 
@@ -148,17 +149,26 @@ public class CourtScheduleInfo {
 				scheduleDescription = value.split(", ");
 			}
 
-            else if (key.startsWith("FILE_LOCATION")){
-                fileLocation = value;
+            else if (key.startsWith("input_file")){
+                inputFileLocation = value;
+            }
+
+            else if (key.startsWith("output_folder")){
+                outputFolderLocation = value;
             }
         }
 		DateConstraint.setStandardDates(this.createStandardSchedule(scheduleDescription));
         return 0;
     }
 
-    public String getFileLocation(){
-        return this.fileLocation;
+    public String getInputFileLocation(){
+        return this.inputFileLocation;
     }
+
+    public String getOutputFolderLocation(){
+        return this.outputFolderLocation;
+    }
+
 
     public Map<String,String> getBadConferenceDays(){
         return this.badConferenceDays;

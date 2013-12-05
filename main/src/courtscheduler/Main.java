@@ -82,11 +82,16 @@ public class Main {
             System.out.println("\n\nconfiguration loaded...");
         }
 
-        //String in_filename = forceGetArg(args, 0, "Please enter the path of the input file: ");
-        String in_filename= info.getFileLocation();
-        System.out.println("File Location is at: " + in_filename);
-        String out_filename = getOptArg(args, 1, "output.xlsx");
-
+        String in_filename= info.getInputFileLocation();
+        if (in_filename == null){
+            in_filename = forceGetArg(args, 0, "Please enter the path of the input file: ");
+        }
+        System.out.println("Input file location is at: " + in_filename);
+        String output_folder = info.getInputFileLocation() == null ? parentDirectory(in_filename) : info.getOutputFolderLocation();
+        output_folder = parseFolder(output_folder);
+        System.out.println("Output folder location is at: " + output_folder);
+        String output_filename = output_folder+"output.xlsx";
+        System.out.println("Main output file location is at: " + output_filename);
 
         CourtScheduleIO utils = new CourtScheduleIO(info);
         CourtSchedule testSchedule;
@@ -99,14 +104,15 @@ public class Main {
             solver.solve();
 			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
 
-            out_filename = utils.writeXlsx(bestSolution.getMatchList(), info, out_filename);
-            openExcelFile(out_filename);
+            output_filename = utils.writeXlsx(bestSolution.getMatchList(), info, output_filename);
+            openExcelFile(output_filename);
         } catch(Exception e){
             e.printStackTrace(); //FIXME
         }
 
 
     }
+
 
     private static void openExcelFile(String filename){
 		if (filename != null) {
@@ -169,6 +175,35 @@ public class Main {
             result = args[argIndex];
         }
         return result;
+    }
+
+    /**
+     *
+     * @param filename The absolute or relative path of a filename
+     * @return The string path representing the parent directory of {@code filename}.
+     */
+    public static String parentDirectory(String filename){
+        File file = new File(filename);
+        File parentDir = file.getParentFile();
+        String parentDirString = file.getParent();
+        if (parentDirString == null || parentDirString.equals(".")){
+            return "."+File.separator;
+        }
+        parentDirString = parentDirString.replace("\\", File.separator);
+        parentDirString = parentDirString.replace("/", File.separator);
+        return parentDirString;
+    }
+
+    public static String parseFolder(String folder) {
+
+        String result = folder.replace("\\", File.separator);
+        result = folder.replace("/", File.separator);
+        String lastCharacter = result.substring(folder.length()-1);
+        if (lastCharacter.equals(File.separator)){
+            return result;
+        }
+        return result+File.separator;
+
     }
 
 }

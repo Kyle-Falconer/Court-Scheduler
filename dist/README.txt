@@ -58,12 +58,13 @@ How to run:
     The format for a range of dates is seperating the dates with a dash (no spaces): 12/24/2014-12/30/2014
 
     When this is completed, click the "Submit" button. This will bring up
-    a browse window where you will select your input excel file.
-    Once a file has been selected, confirm your selection and the
-    program will run.
+    a browse window where you will select your input excel file. The file 
+    extension of this Excel file should be ".xlsx"; the older file format 
+    for Excel (".xls") will not work with the program. Once a file has been 
+    selected, confirm your selection and the program will run.
 
-    Depending on the number of conferences to be scheduled, the program could take
-    several hours to complete.
+    Depending on the number of conferences to be scheduled and the scheduling 
+    constraints, the program could take several hours to complete.
 
     Once the program is finished running, it will automatically open the schedule in an excel file.
     The first tab on the excel file is the master schedule, sorted by date and time. This has every
