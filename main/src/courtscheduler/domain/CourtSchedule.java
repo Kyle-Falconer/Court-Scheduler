@@ -73,13 +73,15 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     private List<Match> roundRobin(List<Team> teamList) {
         List<Match> matches= new ArrayList<Match>();
         boolean done = false;
+        boolean impossible = false;
+        int numIterations = 0;
 		MatchSlot nullSlot = new MatchSlot(-1, -1, -1);
 
-        while(!done) {
+        while(!done && !impossible) {
             done = true;
             for (Team team1 : teamList) {
                 for (Team team2 : teamList) {
-                    if (!Team.cannotPlay(team1, team2)) {
+                    if (!Team.cannotPlay(team1, team2)&& team1.getGameCount() > 0 && team2.getGameCount() > 0) {
                         Match nextMatch = new Match(team1, team2);
                         nextMatch.setMatchSlot(nullSlot);
                         matches.add(nextMatch);
@@ -90,6 +92,8 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
                 if (team1.getGameCount() > 0)
                     done = false;
             }
+            numIterations++;
+            impossible = numIterations > teamList.size() *2;
         }
 
         return matches;
