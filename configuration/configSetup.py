@@ -26,6 +26,7 @@ from tkFileDialog import askopenfilename
 import sys
 
 root = None
+DEBUG = True
 
 WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 WEEKDAY_ABBR = {'Monday':'M', 'Tuesday':'T', 'Wednesday':'W', 'Thursday':'R', 'Friday':'F', 'Saturday':'S', 'Sunday':'U'}
@@ -211,6 +212,8 @@ class schedulerConfig(Frame):
                 if save != 0:
                     pass
                 else:
+                    if DEBUG:
+                        print("writing the config.ini")
                     final = open("config.ini", 'w')
                     initial = open("config1.txt", 'r').read()
                     time = open("config5.txt", 'r').read()
@@ -513,15 +516,17 @@ class schedulerConfig(Frame):
         config()
 
 def stop():
+    if DEBUG:
+        print("Closing the configuration utility.")
     root.quit()
     os._exit(0)
 
 def main():
     global root
-    
+    if DEBUG:
+        print("Starting the configuration utility for Court Scheduler")
     populateTimeList()
     populateDayPrefs()
-    
     root = schedulerConfig()
     root.master.resizable(0,0)
     root.mainloop()
