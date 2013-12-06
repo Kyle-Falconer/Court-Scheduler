@@ -71,7 +71,12 @@ public class CourtScheduleIO {
         while (rowNumber <= rowCount) {
             Row currentRow = sh.getRow(rowNumber);
             if (currentRow != null && currentRow.getLastCellNum() > 0) {
-                teamList.add(processRow(currentRow, info));
+				Team nextTeam = processRow(currentRow, info);
+				if (nextTeam != null && nextTeam.getTeamId() != null) {
+                	teamList.add(nextTeam);
+				}
+				else
+					break;
             }
             rowNumber += 1;
         }
@@ -79,6 +84,7 @@ public class CourtScheduleIO {
         if (Main.LOG_LEVEL >= 1) {
             for (int x = 0; x < teamList.size(); x++) {
                 System.out.println(teamList.get(x));
+				System.out.println(">> " + teamList.get(x).getTeamId());
             }
             System.out.println(new java.util.Date() + " [INFO] Input parsed. Constructing possible matches...");
         }
@@ -277,6 +283,9 @@ public class CourtScheduleIO {
 
             if (columnCounter == 0) {
                 try {
+					if (cell.toString().trim().equals("")) {
+						return null;
+					}
                     int index = cell.toString().indexOf(".");
                     teamId = Integer.parseInt(cell.toString().substring(0, index));
                     team.setTeamId(teamId);
@@ -316,6 +325,7 @@ public class CourtScheduleIO {
             else if (columnCounter == 7) {
                 requests = cell.toString();
                 //debug(team.getTeamId().toString()+":"+requests);
+				System.out.println(team.getTeamId() + ": " + requests);
                 processRequestConstraints(team, requests, info);
             }
             else if (columnCounter == 8) {
