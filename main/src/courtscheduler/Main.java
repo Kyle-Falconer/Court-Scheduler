@@ -25,7 +25,7 @@ import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
 
 import java.awt.*;
-import java.io.File;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Scanner;
@@ -40,6 +40,10 @@ public class Main {
 
     public static int LOG_LEVEL = 1;
 
+    private static FileOutputStream fileOut = null;
+    private static InputStream procErr = null;
+    private static InputStream procOut = null;
+
     public static void main(String[] args) throws Exception {
 
         if (LOG_LEVEL >= 1) {
@@ -47,7 +51,7 @@ public class Main {
             System.out.println("============================================================");
         }
 
-        String configurationUtilityFilename = getOptArg(args, 1, "configuration/configSetup.exe");
+        String configurationUtilityFilename = getOptArg(args, 1, "configuration"+File.separator+"configSetup.exe");
         if (blockRunProgram(configurationUtilityFilename) != 0){
             System.out.println("[Error] Could not run the configuration utility.");
             return;
@@ -120,13 +124,35 @@ public class Main {
 
     }
 
-    private static int blockRunProgram(String filename){
+    public static void pipeStream(InputStream input, OutputStream output) throws IOException
+    {
+        byte buffer[] = new byte[1024];
+        int numRead = 0;
+
+        do
+        {
+            numRead = input.read(buffer);
+            output.write(buffer, 0, numRead);
+        } while (input.available() > 0);
+
+        output.flush();
+    }
+
+    private static int blockRunProgram(String filename) {
         if (filename != null) {
             try {
-                Process p = Runtime.getRuntime().exec("cmd /C start /wait "+filename);
+                fileOut = new FileOutputStream("configuration_log.txt");
+
+                String[] cmd = {"cmd", "/c", filename};
+                Process p = Runtime.getRuntime().exec(cmd);
+                
+                procOut = p.getInputStream();
+                procErr = p.getErrorStream();
+                pipeStream(procOut, fileOut);
+                pipeStream(procErr, fileOut);
+
                 int exitVal = p.waitFor();
                 return exitVal;
-
             } catch (Exception e) {
                 e.printStackTrace();
                 return -1;
@@ -134,8 +160,6 @@ public class Main {
         }
         return -1;
     }
-
-
 
 
     private static void openFile(String filename){
