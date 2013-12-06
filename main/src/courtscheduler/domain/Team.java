@@ -25,7 +25,7 @@ public class Team {
     private String teamName;
     private String year = "";
     private String gender;
-    private Integer grade;
+    private String grade;
     private String level;
     private String conference;
 
@@ -87,11 +87,11 @@ public class Team {
       return gender;
     }
 
-    public void setGrade(Integer grade) {
+    public void setGrade(String grade) {
       this.grade = grade;
     }
 
-    public Integer getGrade() {
+    public String getGrade() {
       return grade;
     }
 
