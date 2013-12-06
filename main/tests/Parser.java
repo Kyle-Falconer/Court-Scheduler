@@ -82,8 +82,8 @@ public class Parser {
             DateConstraint tODates2=team[i].getOnlyDates();
             assertEquals("\""+tODates1+"\" must be \""+tODates2+"\"", tODates2, tODates1);
 
-            int tGrade1=t1.getGrade();
-            int tGrade2=team[i].getGrade();
+            String tGrade1=t1.getGrade();
+            String tGrade2=team[i].getGrade();
             assertEquals("\""+tGrade1+"\" must be \""+tGrade2+"\"", tGrade2, tGrade1);
 
             String tGender1=t1.getGender();
@@ -107,13 +107,13 @@ public class Parser {
     private Team team1(){
         Team team = new Team();
         team.setTeamId(101);
-        team.setTeamName("Evil Douches");
+        team.setTeamName("Imperial Stormtroopers");
 
         team.setPreferredDates(new DateConstraint());
         team.setBadDates(new DateConstraint());
         team.setOnlyDates(null);
 
-        team.setGrade(1);
+        team.setGrade("1");
         team.setGender("B");
         team.setYear("");
 
@@ -133,7 +133,7 @@ public class Parser {
         team.setBadDates(dates);
         team.setOnlyDates(null);
 
-        team.setGrade(1);
+        team.setGrade("1");
         team.setGender("B");
         team.setYear("");
 
@@ -153,7 +153,7 @@ public class Parser {
         team.setBadDates(new DateConstraint());
         team.setOnlyDates(dates);
 
-        team.setGrade(1);
+        team.setGrade("1");
         team.setGender("B");
         team.setYear("");
 
@@ -170,7 +170,7 @@ public class Parser {
         team.setBadDates(new DateConstraint());
         team.setOnlyDates(null);
 
-        team.setGrade(1);
+        team.setGrade("1");
         team.setGender("B");
         team.setYear("");
 
@@ -181,7 +181,7 @@ public class Parser {
     private Team team5(){
         Team team = new Team();
         team.setTeamId(105);
-        team.setTeamName("Preferred Procreation");
+        team.setTeamName("Electrical Engineers");
         DateConstraint dates = new DateConstraint();
         dates.addDates(dates.findDayOfWeek("thursday"));
         dates.addRestrictedTimes(dates.makeTimeArray("7:00", "8:00"));
@@ -190,7 +190,7 @@ public class Parser {
         team.setBadDates(new DateConstraint());
         team.setOnlyDates(null);
 
-        team.setGrade(1);
+        team.setGrade("1");
         team.setGender("B");
         team.setYear("");
 
@@ -212,7 +212,7 @@ public class Parser {
         dates.addRestrictedTimes(dates.makeTimeArray("0:00","19:00"));
         team.setOnlyDates(dates);
 
-        team.setGrade(1);
+        team.setGrade("1");
         team.setGender("B");
         team.setYear("");
 
@@ -235,7 +235,7 @@ public class Parser {
         dates.addRestrictedTimes(dates.makeTimeArray("10:00", "23:59"));
         team.setOnlyDates(dates);
 
-        team.setGrade(1);
+        team.setGrade("1");
         team.setGender("B");
         team.setYear("");
 
@@ -258,7 +258,7 @@ public class Parser {
         dates.addDates(dates.findDateRange("1/10/14","1/13/14"));
         team.setOnlyDates(dates);
 
-        team.setGrade(1);
+        team.setGrade("1");
         team.setGender("B");
         team.setYear("");
 
@@ -283,7 +283,7 @@ public class Parser {
         dates.addDates(dates.findDayOfWeek("monday"));
         team.setOnlyDates(dates);
 
-        team.setGrade(1);
+        team.setGrade("1");
         team.setGender("B");
         team.setYear("");
 

@@ -192,8 +192,15 @@ public class CourtScheduleInfo {
     private String[] parseConferenceDays(String conferenceString){
         // example line 'conference=11-MW:FS'
         String conference = conferenceString.substring(0, conferenceString.indexOf("-"));
-        String primaryShortDays = conferenceString.split(":")[0];
-        String secondaryShortDays = conferenceString.split(":")[1];
+		String primaryShortDays, secondaryShortDays;
+		if (conferenceString.indexOf(":") != -1) {
+        	primaryShortDays = conferenceString.split(":")[0];
+        	secondaryShortDays = conferenceString.split(":")[1];
+		}
+		else {
+			primaryShortDays = conferenceString;
+			secondaryShortDays = "";
+		}
         StringBuilder primaryDays = new StringBuilder();
         StringBuilder secondaryDays = new StringBuilder();
         StringBuilder badDays = new StringBuilder();

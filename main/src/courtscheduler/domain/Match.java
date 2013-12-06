@@ -109,7 +109,7 @@ public class Match {
         return okay;
     }
 
-	public int getBasketHeight() {
+	public String getBasketHeight() {
 		return team1.getGrade(); // FIXME
 	}
 

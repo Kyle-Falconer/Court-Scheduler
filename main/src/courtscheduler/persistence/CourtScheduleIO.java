@@ -43,7 +43,7 @@ public class CourtScheduleIO {
 	private static DateTimeFormatter normalTime = DateTimeFormat.forPattern("h:mma");
 	private static DateTimeFormatter militaryTime = DateTimeFormat.forPattern("H:mm");
 
-	private int rowNumber;
+	private static int rowNumber;
 
     public CourtScheduleIO(CourtScheduleInfo info) {
         matchList = new ArrayList<Match>();
@@ -60,7 +60,7 @@ public class CourtScheduleIO {
         // Get worksheet by index
         XSSFSheet sh = wb.getSheetAt(0);
 
-        Integer rowCounter = 2;
+        rowNumber = 2;
         Integer rowCount = sh.getLastRowNum();
 
         if (Main.LOG_LEVEL >= 1) {
@@ -68,12 +68,12 @@ public class CourtScheduleIO {
             System.out.println(new java.util.Date() + "[INFO] Worksheet has " + (rowCount - 1) + " lines of data.");
         }
 
-        while (rowCounter <= rowCount) {
-            Row currentRow = sh.getRow(rowCounter);
+        while (rowNumber <= rowCount) {
+            Row currentRow = sh.getRow(rowNumber);
             if (currentRow != null && currentRow.getLastCellNum() > 0) {
                 teamList.add(processRow(currentRow, info));
             }
-            rowCounter += 1;
+            rowNumber += 1;
         }
 
         if (Main.LOG_LEVEL >= 1) {
@@ -259,7 +259,7 @@ public class CourtScheduleIO {
         Integer conference = null;
         String year = "";
         String gender = "";
-        Integer grade = null;
+        String grade = "";
         String level = "";
         String requests = "";
         String notSameTimeAs = "";
@@ -302,8 +302,7 @@ public class CourtScheduleIO {
             }
             else if (columnCounter == 5) {
                 try {
-                    int index = cell.toString().indexOf(".");
-                    grade = Integer.parseInt(cell.toString().substring(0, index));
+                    grade = cell.toString();
                     team.setGrade(grade);
                 } catch (NumberFormatException e) {
                     // still don't know what to do about this, this is bad
@@ -411,7 +410,7 @@ public class CourtScheduleIO {
                 notSameTime = requestNotSameTime(request, team, notSameTime);
 
             else
-                System.out.println("Unknown constraint:" + request);
+                System.out.println("Unknown constraint in row " + (rowNumber+1) + ": " + request);
         }
 
 		// put all conference primary days on prefDates
