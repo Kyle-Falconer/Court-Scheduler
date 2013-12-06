@@ -132,7 +132,9 @@ public class Main {
         do
         {
             numRead = input.read(buffer);
-            output.write(buffer, 0, numRead);
+            if (numRead > 0){
+                output.write(buffer, 0, numRead);
+            }
         } while (input.available() > 0);
 
         output.flush();
@@ -145,7 +147,7 @@ public class Main {
 
                 String[] cmd = {"cmd", "/c", filename};
                 Process p = Runtime.getRuntime().exec(cmd);
-                
+
                 procOut = p.getInputStream();
                 procErr = p.getErrorStream();
                 pipeStream(procOut, fileOut);
