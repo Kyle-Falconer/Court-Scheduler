@@ -54,6 +54,10 @@ public class CourtScheduleIO {
     public List<Team> readXlsx(String filename, CourtScheduleInfo info) throws Exception {
 
         File file = new File(filename);
+        if (!file.exists()){
+            return null;
+        }
+
         FileInputStream fis = new FileInputStream(file);
         XSSFWorkbook wb = new XSSFWorkbook(fis);
 
