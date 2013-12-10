@@ -18,6 +18,7 @@
 package courtscheduler;
 
 import courtscheduler.domain.CourtSchedule;
+import courtscheduler.domain.Team;
 import courtscheduler.persistence.CourtScheduleIO;
 import courtscheduler.persistence.CourtScheduleInfo;
 import org.optaplanner.core.api.solver.Solver;
@@ -28,7 +29,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Scanner;
+import java.util.*;
 
 
 /**
@@ -46,17 +47,11 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        if (LOG_LEVEL >= 1) {
-            System.out.println("Court Scheduler");
-            System.out.println("============================================================");
-        }
+        System.out.println("Court Scheduler");
+        System.out.println("================================================================================");
 
-        String configurationUtilityFilename = getOptArg(args, 1, "configuration"+File.separator+"configSetup.exe");
-        if (blockRunProgram(configurationUtilityFilename) != 0){
-            System.out.println("[Error] Could not run the configuration utility.");
-            //return;
-        }
 
+        runConfigurationUtility(getOptArg(args, 1, "configuration"+File.separator+"configSetup.exe"));
 
 
         if (LOG_LEVEL >= 3) {
@@ -94,20 +89,30 @@ public class Main {
         }
 
         String in_filename= info.getInputFileLocation();
-        if (in_filename == null){
+        while (in_filename == null){
             in_filename = forceGetArg(args, 0, "Please enter the path of the input file: ");
+            File file = new File(in_filename);
+            if (!file.exists()){
+                in_filename = null;
+            }
         }
-        System.out.println("Input file location is at: " + in_filename);
+
+        System.out.println("Input file location is at: \"" + in_filename+"\"");
         String output_folder = info.getOutputFolderLocation() == null ? parentDirectory(in_filename) : info.getOutputFolderLocation();
         output_folder = parseFolder(output_folder);
-        System.out.println("Output folder location is at: " + output_folder);
+        System.out.println("Output folder location is at: \"" + output_folder +"\"");
         String output_filename = output_folder+"output.xlsx";
-        System.out.println("Main output file location is at: " + output_filename);
+        System.out.println("Main output file location is at: \"" + output_filename+"\"");
 
         CourtScheduleIO utils = new CourtScheduleIO(info);
         CourtSchedule testSchedule;
         try{
-            testSchedule= new CourtSchedule(utils.readXlsx(in_filename, info), info);
+            java.util.List<Team> input = utils.readXlsx(in_filename, info);
+            if (input == null){
+                errorQuit("Expected to use the file with the following path as input, but it could not be found:\n\t"+in_filename);
+            }
+
+            testSchedule= new CourtSchedule(input, info);
 			if (LOG_LEVEL > 1)
 				System.out.println(new java.util.Date() + " [INFO] Matches constructed. Sending data to solver engine...");
             // solve the problem (gee, it sounds so easy when you put it like that)
@@ -118,9 +123,8 @@ public class Main {
             output_filename = utils.writeXlsx(bestSolution.getMatchList(), info, output_filename);
             openFile(output_filename);
         } catch(Exception e){
-            e.printStackTrace(); //FIXME
+            e.printStackTrace();
         }
-
 
     }
 
@@ -138,6 +142,16 @@ public class Main {
         } while (input.available() > 0);
 
         output.flush();
+    }
+
+    private static void runConfigurationUtility(String filename){
+        File configFile = new File(filename);
+        if (!configFile.exists()){
+            errorQuit("Expected the configuration utility to be found at the following location:\n"+configFile.getAbsolutePath());
+        }
+        if (blockRunProgram(filename) != 0){
+            errorQuit("Could not run the configuration utility.");
+        }
     }
 
     private static int blockRunProgram(String filename) {
@@ -177,6 +191,16 @@ public class Main {
         	    e.printStackTrace();
         	}
 		}
+    }
+
+    public static void errorQuit(String message){
+        System.out.println("\n================================================================================");
+        System.out.println("ERROR:");
+        System.out.println(message);
+        System.out.print("\nPress any key to close the program.");
+        Scanner s = new Scanner(System.in);
+        s.nextLine();
+        System.exit(1);
     }
 
     private static XmlSolverFactory loadConfig(String defaultConfigXmlFilename) {

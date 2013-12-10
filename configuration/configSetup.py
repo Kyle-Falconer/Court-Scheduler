@@ -1,38 +1,174 @@
-'''
-    Copyright 2013 Court Scheduler Development Team
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
+#
+#    Copyright 2013 Court Scheduler Development Team
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#
+#
+#   Author: Stephen Kaysen and Kyle Falconer
+#   Purpose: Gui for court scheduler information
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
-Author: Stephen Kaysen and Kyle Falconer
-Purpose: Gui for court scheduler information
-'''
 
 from Tkinter import *
 from calWidget import *
 import tkMessageBox
 import os
-from os.path import expanduser
+from os.path import expanduser, exists
 from tkFileDialog import askopenfilename
 import sys
 
 root = None
 DEBUG = True
 
+CONFIG_FILENAME = 'config.ini'
 WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-WEEKDAY_ABBR = {'Monday':'M', 'Tuesday':'T', 'Wednesday':'W', 'Thursday':'R', 'Friday':'F', 'Saturday':'S', 'Sunday':'U'}
+WEEKDAY_ABBR = dict(zip(WEEKDAYS, ['M','T','W','R','F','S','U']))
 
+
+presetDayPrefs = None 
+scheduleDescriptionPrefs = None
+                
+class scheduleDescription():
+    def __init__(self):
+        self.schedule_description = dict(zip(WEEKDAYS, [[None, None]]*7))
+        
+    def parseConfigString(self, configuration_string ):
+        """
+        >>> sched1 = scheduleDescription()
+        >>> sched1.parseConfigString('monday after 10:00am, monday before 10:00pm, tuesday after 10:00am, tuesday before 10:00pm, friday after 10:00am, friday before 10:00pm, wednesday after 10:00am, wednesday before 10:00pm, thursday after 10:00am, thursday before 10:00pm, sunday after 10:00am, sunday before 10:00pm, saturday after 10:00am, saturday before 10:00pm')
+        >>> sched1.toConfigString()
+        'schedule_description=monday after 10:00am, monday before 10:00pm, tuesday after 10:00am, tuesday before 10:00pm, wednesday after 10:00am, wednesday before 10:00pm, thursday after 10:00am, thursday before 10:00pm, friday after 10:00am, friday before 10:00pm, saturday after 10:00am, saturday before 10:00pm, sunday after 10:00am, sunday before 10:00pm'
+        """
+        raw_schedule = configuration_string.split(",")
+        for raw_s in raw_schedule:
+            
+            before_or_after = 1 if 'before' in raw_s else 0
+            
+            s = None
+            if before_or_after is 1:
+                s = [sr.strip() for sr in raw_s.split('before')]
+            else:
+                s = [sr.strip() for sr in raw_s.split('after')]
+                
+            if len(s) < 2:
+                print('Malformed configuration string: '+str(s))
+                
+            else:
+                for day in self.schedule_description.keys():
+                    if s[0].lower() == day.lower():
+                        self.schedule_description[day][before_or_after] = s[1]
+            
+    def toConfigString(self):
+        result = []
+        for DAY in WEEKDAYS:
+            result.extend([DAY.lower() + ' after ' + self.schedule_description[DAY][0],
+                           DAY.lower() + ' before ' + self.schedule_description[DAY][1]])
+                           
+        return 'schedule_description='+ (', '.join(result))
+        
+        
+class dayPref():
+    def __init__(self, abbreviation=None, label=None, primary_days=None, secondary_days=None):
+        
+        self.abbr = abbreviation
+        self.prettyLabel = label
+        self.primaryDays = primary_days if secondary_days is not None else []
+        self.secondaryDays = secondary_days if secondary_days is not None else []
+        
+    def parseConfigString(self, configuration_string):
+        """
+        >>> conf1 = dayPref()
+        >>> conf1.parseConfigString("1-U:MTR")
+        >>> conf1.toConfigString()
+        'conference=1-U:MTR'
+        >>> conf2 = dayPref()
+        >>> conf2.parseConfigString("2-T:S")
+        >>> conf2.toConfigString()
+        'conference=2-T:S'
+        >>> conf3 = dayPref()
+        >>> conf3.parseConfigString("")
+        >>> conf3.toConfigString()
+        ''
+        >>> conf6 = dayPref()
+        >>> conf6.parseConfigString("6-T:WUS")
+        >>> conf6.toConfigString()
+        'conference=6-T:WUS'
+        """
+        raw_abbr = configuration_string.split("-")
+        if len(raw_abbr) > 1:
+            self.abbr = raw_abbr[0]
+            raw_days = [d.strip() for d in raw_abbr[1].split(":")]
+            if len(raw_days) > 1:
+                weekday_inverse = {v:k for k, v in WEEKDAY_ABBR.items()}
+                self.primaryDays = [weekday_inverse[d] for d in raw_days[0]]
+                self.secondaryDays = [weekday_inverse[d] for d in raw_days[1]]
+    
+    def toConfigString(self):
+        self.primaryDays = filter(None, self.primaryDays)
+        self.secondaryDays = filter(None, self.secondaryDays)
+        primaryDayAbbrs = '' if len(self.primaryDays) is 0 else ''.join(WEEKDAY_ABBR[d] for d in self.primaryDays)
+        secondaryDayAbbrs = '' if len(self.secondaryDays) is 0 else ''.join(WEEKDAY_ABBR[d] for d in self.secondaryDays)
+        abbreviationString = str(self.abbr) if self.abbr is not None else ""
+        if len(abbreviationString) is 0 and len(primaryDayAbbrs) is 0 and len(secondaryDayAbbrs) is 0:
+            return ""
+        else:
+            return "conference=" + abbreviationString + "-" + primaryDayAbbrs + ":" + secondaryDayAbbrs
+        
+        
+     
+ 
+def populateDayPrefs():       
+    labels = ["K-1", "2", "3", "4", "5", "6", "7", "8", "Junior Varsity", "Varsity"]
+    presetDayPrefs.append(dayPref("1", labels[0], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref("2", labels[1], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref("3", labels[2],  secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref("4", labels[3], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref("5", labels[4], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref("6", labels[5], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref("7", labels[6], secondary_days=["Saturday"]))
+    presetDayPrefs.append(dayPref("8", labels[7], secondary_days=["Sunday"]))
+    presetDayPrefs.append(dayPref("9", labels[8], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref("10", labels[9], secondary_days=["Wednesday","Sunday","Saturday"]))
+
+def parseConfigFile():
+    global scheduleDescriptionPrefs
+    global presetDayPrefs
+    scheduleDescriptionPrefs = scheduleDescription()
+    presetDayPrefs = []
+    if os.path.exists(CONFIG_FILENAME) and os.path.isfile(CONFIG_FILENAME):
+        print('I have found an existing configuration file and am attempting to read it.')
+        with open(CONFIG_FILENAME) as f:
+            for line in f:
+                content = line.split('=')
+                if len(content) < 2:
+                    continue
+                if 'schedule_description' in content[0]:
+                    scheduleDescriptionPrefs.parseConfigString(content[1])
+                    
+                if 'conference' in content[0]:
+                    presetDayPref = dayPref()
+                    presetDayPref.parseConfigString(content[1])
+                    presetDayPrefs.append(presetDayPref)
+            
+        print scheduleDescriptionPrefs.toConfigString()
+        print str('\n'.join([p.toConfigString() for p in presetDayPrefs]))
+        
+    
+
+    
+    
 timeList = []
-
 def populateTimeList():
     hours = range(1,13)
     times = ["00", "10", "15", "20", "30", "40", "45", "50"]
@@ -40,40 +176,6 @@ def populateTimeList():
         for hour in hours:
             for time in times:
                 timeList.append(str(hour)+":"+time+m);
-
-
-                
-class dayPref():
-    def __init__(self, abbr, label, pDays, sDays):
-        self.abbr = abbr
-        self.prettyLabel = label
-        self.primaryDays = pDays
-        self.secondaryDays = sDays
-    
-    def toConfigString(self):
-        self.primaryDays = filter(None, self.primaryDays)
-        self.secondaryDays = filter(None, self.secondaryDays)
-        primaryDayAbbrs = ''.join(WEEKDAY_ABBR[d] for d in self.primaryDays)
-        secondaryDayAbbrs = ''.join(WEEKDAY_ABBR[d] for d in self.secondaryDays)
-        return "conference=" + str(self.abbr) + "-" + primaryDayAbbrs + ":" + secondaryDayAbbrs
-        
-        
-presetDayPrefs = []      
- 
-def populateDayPrefs():       
-    labels = ["K-1", "2", "3", "4", "5", "6", "7", "8", "Junior Varsity", "Varsity"]
-    presetDayPrefs.append(dayPref("1", labels[0], [], ["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("2", labels[1], [], ["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("3", labels[2], [], ["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("4", labels[3], [], ["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("5", labels[4], [], ["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("6", labels[5], [], ["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("7", labels[6], [], ["Saturday"]))
-    presetDayPrefs.append(dayPref("8", labels[7], [], ["Sunday"]))
-    presetDayPrefs.append(dayPref("9", labels[8], [], ["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("10", labels[9], [], ["Wednesday","Sunday","Saturday"]))
-
-    
 
 
 class schedulerConfig(Frame):
@@ -110,7 +212,6 @@ class schedulerConfig(Frame):
             def passData():
             
                 valid = True
-                
                 
                 
                 for entryNum in range(len(presetDayPrefs)):
@@ -531,6 +632,10 @@ def main():
     root.master.resizable(0,0)
     root.mainloop()
 
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+    main()
 
 
-main()
+
