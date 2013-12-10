@@ -312,4 +312,13 @@ public class DateConstraint extends Constraint{
 	public static DateConstraint getStandardDates() {
 		return standardDates;
 	}
+
+	// please never use this
+	// refactor this out as soon as possible
+	public void blockFirstDay() {
+		// FIXME
+		for (int i = 0; i < dates[0].length; i++) {
+			dates[0][i] = true;
+		}
+	}
 }

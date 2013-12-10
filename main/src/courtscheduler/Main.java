@@ -54,7 +54,7 @@ public class Main {
         String configurationUtilityFilename = getOptArg(args, 1, "configuration"+File.separator+"configSetup.exe");
         if (blockRunProgram(configurationUtilityFilename) != 0){
             System.out.println("[Error] Could not run the configuration utility.");
-            return;
+            //return;
         }
 
 
