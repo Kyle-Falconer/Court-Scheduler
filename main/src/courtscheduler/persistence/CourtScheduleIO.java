@@ -86,9 +86,9 @@ public class CourtScheduleIO {
         }
 
         if (Main.LOG_LEVEL >= 1) {
-            for (int x = 0; x < teamList.size(); x++) {
+            /*for (int x = 0; x < teamList.size(); x++) {
                 System.out.println(teamList.get(x));
-            }
+            }*/
             System.out.println(new java.util.Date() + " [INFO] Input parsed. Constructing possible matches...");
         }
 
@@ -290,8 +290,14 @@ public class CourtScheduleIO {
 
 
             if (cell == null) {
-                columnCounter++;
-                continue;  // if the cell is null just jump to the next iteration
+				if (teamId == null) {
+					System.out.println("================================================================================");
+					break;
+				}
+				else {
+                	columnCounter++;
+                	continue;  // if the cell is null just jump to the next iteration
+				}
             }
 
             if (columnCounter == 0) {
@@ -322,7 +328,7 @@ public class CourtScheduleIO {
             else if (columnCounter == 5) {
                 team.setGrade(getStringValueOfInt(cell.toString()));
 				if (team.getGrade().trim().equals("")) {
-					System.err.println("ERROR: Team " + teamId + " has no grade!");
+					System.out.println("ERROR: Team " + teamId + " has no grade!");
 				}
             }
             else if (columnCounter == 6) {
