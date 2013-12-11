@@ -345,19 +345,13 @@ public class CourtScheduleIO {
                 notSameTimeAs = cell.toString();
                 String[] tempSplit = notSameTimeAs.split(",");
 
-                for (String teamIdStr : tempSplit) {
-                    try {
-                        int index = teamIdStr.indexOf(".");
-                        if (index > -1) {
-                            teamId = Integer.parseInt(teamIdStr.substring(0, index));
-                            team.getAvailability().getNotSameTimeAs().addSharedTeam(teamId);
-                            team.getDontPlay().addSharedTeam(teamId);
-                        }
-                    } catch (NumberFormatException nfe) {
-                        System.out.println("Unable to add team " + teamIdStr + "to shared team list. Unparsable.");
-                    } catch (NullPointerException npe) {
-                        System.out.println("team.availability or team.availability.notSameTimeAs is null for " + teamIdStr);
-                    }
+                for (String otherTeamName : tempSplit) {
+					if (otherTeamName.trim().equals("")) {
+						continue;
+					}
+                    team.getAvailability().getNotSameTimeAs().addSharedTeam(otherTeamName);
+                	team.getDontPlay().addSharedTeam(otherTeamName);
+					System.out.println(teamId + " won't play " + otherTeamName);
                 }
             }
 
@@ -561,25 +555,13 @@ public class CourtScheduleIO {
     private static SharedTeams requestDontPlay(String request, Team team, SharedTeams dontPlay) {
         //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
         request = request.replace("xplay ", "");
-        Integer teamId = null;
-        try {
-            teamId = Integer.parseInt(request);
-        } catch (NumberFormatException nfe) {
-            System.out.println("Team" + team.getTeamId() + "xplay constraint teamID error." + request); // FIXME: this is not human readable enough!
-        }
-        dontPlay.addSharedTeam(teamId);
+        dontPlay.addSharedTeam(request.trim());
         return dontPlay;
     }
 
     private static SharedTeams requestNotSameTime(String request, Team team, SharedTeams notSameTime) {
         request = request.replace("nst ", "");
-        Integer teamId = null;
-        try {
-            teamId = Integer.parseInt(request);
-        } catch (NumberFormatException nfe) {
-            System.out.println("Team" + team.getTeamId() + "nst constraint teamId error." + request); // FIXME: this is not human readable enough!
-        }
-        notSameTime.addSharedTeam(teamId);
+        notSameTime.addSharedTeam(request.trim());
         return notSameTime;
     }
 

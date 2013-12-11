@@ -132,7 +132,7 @@ public class Match {
 		return avail.isPreferredSlot(matchSlot);
 	}
 
-	public List<Integer> getNotSameTimeAs() {
+	public List<String> getNotSameTimeAs() {
 		return avail.notSameTimeAs.getSharedTeamList();
 	}
 

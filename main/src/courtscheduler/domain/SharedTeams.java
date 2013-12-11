@@ -30,28 +30,28 @@ import java.util.List;
  */
 public class SharedTeams extends Constraint {
 
-    private List<Integer> sharedTeamList;
+    private List<String> sharedTeamList;
 
 	public SharedTeams() {
-		sharedTeamList = new ArrayList<Integer>();
+		sharedTeamList = new ArrayList<String>();
 	}
 
     public SharedTeams(SharedTeams s1, SharedTeams s2) {
         this();
 
-        for (Integer teamId : s1.getSharedTeamList())
+        for (String teamId : s1.getSharedTeamList())
             addSharedTeam(teamId);
 
-        for (Integer teamId : s2.getSharedTeamList())
+        for (String teamId : s2.getSharedTeamList())
             if(!this.sharedTeamList.contains(teamId))
                 addSharedTeam(teamId);
     }
 
-    public List<Integer> getSharedTeamList() {
+    public List<String> getSharedTeamList() {
         return sharedTeamList;
     }
 
-    public void addSharedTeam(Integer teamId){
+    public void addSharedTeam(String teamId){
         this.sharedTeamList.add(teamId);
     }
 }
