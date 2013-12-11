@@ -95,10 +95,6 @@ public class Team {
       return grade;
     }
 
-    public String getGradeString(){
-        return (String.valueOf(grade));
-    }
-
     public void setLevel(String level) {
       this.level = level;
     }

@@ -88,7 +88,6 @@ public class CourtScheduleIO {
         if (Main.LOG_LEVEL >= 1) {
             for (int x = 0; x < teamList.size(); x++) {
                 System.out.println(teamList.get(x));
-				System.out.println(">> " + teamList.get(x).getTeamId());
             }
             System.out.println(new java.util.Date() + " [INFO] Input parsed. Constructing possible matches...");
         }
@@ -260,6 +259,16 @@ public class CourtScheduleIO {
 		return sheet;
 	}
 
+	private String getStringValueOfInt(String cell) {
+		int index = cell.indexOf(".");
+		if (index > -1)  {
+			return cell.substring(0, index);
+		}
+		else {
+			return cell;
+		}
+	}
+
     private Team processRow(Row currentRow, CourtScheduleInfo info) {
         short columnCount = currentRow.getLastCellNum();
         int columnCounter = 0;
@@ -287,9 +296,6 @@ public class CourtScheduleIO {
 
             if (columnCounter == 0) {
                 try {
-					if (cell.toString().trim().equals("")) {
-						return null;
-					}
                     int index = cell.toString().indexOf(".");
                     teamId = Integer.parseInt(cell.toString().substring(0, index));
                     team.setTeamId(teamId);
@@ -299,8 +305,8 @@ public class CourtScheduleIO {
                 }
             }
             else if (columnCounter == 1) {
-                team.setConference(cell.toString());
-            }
+				team.setConference(getStringValueOfInt(cell.toString()));
+			}
             else if (columnCounter == 2) {
                 teamName = cell.toString();
                 team.setTeamName(teamName);
@@ -314,13 +320,10 @@ public class CourtScheduleIO {
                 team.setGender(gender);
             }
             else if (columnCounter == 5) {
-                try {
-                    grade = cell.toString();
-                    team.setGrade(grade);
-                } catch (NumberFormatException e) {
-                    // still don't know what to do about this, this is bad
-                    e.printStackTrace();
-                }
+                team.setGrade(getStringValueOfInt(cell.toString()));
+				if (team.getGrade().trim().equals("")) {
+					System.err.println("ERROR: Team " + teamId + " has no grade!");
+				}
             }
             else if (columnCounter == 6) {
                 level = cell.toString();
@@ -428,7 +431,8 @@ public class CourtScheduleIO {
         }
 
 		// put all conference primary days on prefDates
-		String prefDays = info.getPrimaryDays().get(team.getGradeString());
+		// FIXME
+		String prefDays = info.getPrimaryDays().get(team.getGrade());
 		if (prefDays != null){
 			parseDateConstraints(prefDays, team, prefDates);
         }
@@ -437,9 +441,11 @@ public class CourtScheduleIO {
 		// do nothing with secondary days-- they're neither preferred nor unplayable
 
         // put all dates that are not conference primary/secondary days on the badDates object
-		String badDays = info.getBadConferenceDays().get(team.getGradeString());
+		String badDays = info.getBadConferenceDays().get(team.getGrade());
 		if (badDays != null && badDays.length() != 7) {
         	parseDateConstraints(badDays, team, badDates);
+		} else {
+			System.out.println("WARNING: team " + team.getTeamId() + " has no conference days! Is this intentional?");
 		}
 
         team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));
