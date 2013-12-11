@@ -321,6 +321,9 @@ public class CourtScheduleIO {
             }
             else if (columnCounter == 5) {
                 team.setGrade(getStringValueOfInt(cell.toString()));
+				if (team.getGrade().trim().equals("")) {
+					System.err.println("ERROR: Team " + teamId + " has no grade!");
+				}
             }
             else if (columnCounter == 6) {
                 level = cell.toString();
@@ -429,7 +432,7 @@ public class CourtScheduleIO {
 
 		// put all conference primary days on prefDates
 		// FIXME
-		String prefDays = info.getPrimaryDays().get(team.getConference());
+		String prefDays = info.getPrimaryDays().get(team.getGrade());
 		if (prefDays != null){
 			parseDateConstraints(prefDays, team, prefDates);
         }
@@ -438,9 +441,11 @@ public class CourtScheduleIO {
 		// do nothing with secondary days-- they're neither preferred nor unplayable
 
         // put all dates that are not conference primary/secondary days on the badDates object
-		String badDays = info.getBadConferenceDays().get(team.getConference());
+		String badDays = info.getBadConferenceDays().get(team.getGrade());
 		if (badDays != null && badDays.length() != 7) {
         	parseDateConstraints(badDays, team, badDates);
+		} else {
+			System.out.println("WARNING: team " + team.getTeamId() + " has no conference days! Is this intentional?");
 		}
 
         team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));
