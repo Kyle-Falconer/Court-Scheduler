@@ -68,6 +68,7 @@ class scheduleDescription():
                 for day in self.schedule_description.keys():
                     if s[0].lower() == day.lower():
                         self.schedule_description[day][before_or_after] = s[1]
+                        
             
     def toConfigString(self):
         result = []
@@ -130,16 +131,16 @@ class dayPref():
  
 def populateDayPrefs():       
     labels = ["K-1", "2", "3", "4", "5", "6", "7", "8", "Junior Varsity", "Varsity"]
-    presetDayPrefs.append(dayPref("1", labels[0], secondary_days=["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("2", labels[1], secondary_days=["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("3", labels[2],  secondary_days=["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("4", labels[3], secondary_days=["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("5", labels[4], secondary_days=["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("6", labels[5], secondary_days=["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("7", labels[6], secondary_days=["Saturday"]))
-    presetDayPrefs.append(dayPref("8", labels[7], secondary_days=["Sunday"]))
-    presetDayPrefs.append(dayPref("9", labels[8], secondary_days=["Wednesday","Sunday","Saturday"]))
-    presetDayPrefs.append(dayPref("10", labels[9], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref(abbreviation="1", label=labels[0], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref(abbreviation="2", label=labels[1], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref(abbreviation="3", label=labels[2],  secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref(abbreviation="4", label=labels[3], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref(abbreviation="5", label=labels[4], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref(abbreviation="6", label=labels[5], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref(abbreviation="7", label=labels[6], secondary_days=["Saturday"]))
+    presetDayPrefs.append(dayPref(abbreviation="8", label=labels[7], secondary_days=["Sunday"]))
+    presetDayPrefs.append(dayPref(abbreviation="9", label=labels[8], secondary_days=["Wednesday","Sunday","Saturday"]))
+    presetDayPrefs.append(dayPref(abbreviation="10", label=labels[9], secondary_days=["Wednesday","Sunday","Saturday"]))
 
 def parseConfigFile():
     global scheduleDescriptionPrefs
