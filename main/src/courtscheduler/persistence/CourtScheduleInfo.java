@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static courtscheduler.Main.error;
+import static courtscheduler.Main.warning;
 import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
 import static courtscheduler.persistence.CourtScheduleIO.parseDateConstraints;
 
@@ -44,6 +46,7 @@ import static courtscheduler.persistence.CourtScheduleIO.parseDateConstraints;
  * To change this template use File | Settings | File Templates.
  */
 public class CourtScheduleInfo {
+    private static final String EOL = System.getProperty("line.separator");
     private String filepath;
     private LocalDate conferenceStartDate;
     private LocalDate conferenceEndDate;
@@ -90,9 +93,8 @@ public class CourtScheduleInfo {
     public int configure() {
         raw_lines = slurpConfigFile(this.filepath);
         if (raw_lines.size() == 0) {
-            printStandardErrorMessage("Could not read anything from the configuration file.\n" +
+            error(true, "Could not read anything from the configuration file."+EOL +
                     "Expected the configuration file to be found at: " + FileSystems.getDefault().getPath(filepath).toAbsolutePath());
-            return -1;
         }
 		String[] scheduleDescription = null;
         for (String line : raw_lines) {
@@ -256,16 +258,11 @@ public class CourtScheduleInfo {
                 lines.add(line);
             }
         } catch (IOException x) {
-            printStandardErrorMessage(String.format("IOException: %s%n", x));
+            error(String.format("Could not read the configuration file with file name: %s", filename));
         }
         return lines;
     }
 
-    private void printStandardErrorMessage(String message) {
-        System.out.println("ERROR:\n" +
-                message + "\n" +
-                "Try rebuilding the configuration file using the provided configuration utility.");
-    }
 
     public int getNumberOfConferenceDays() {
         return Days.daysBetween(conferenceStartDate, conferenceEndDate).getDays();
@@ -330,10 +327,10 @@ public class CourtScheduleInfo {
         int minutes = timeStringToMinutes(time);
         int index = (int) Math.ceil((minutes - this.timeslotMidnightOffsetInMinutes) / this.timeslotDurationInMinutes);
         if (index < 0 ) {
-            System.out.println("ERROR: Time " + time + " is before the start time.");
+            warning("Configuration time " + time + " is before the start time.");
             return 0;
         } else if (index >= this.numberOfTimeSlotsPerDay){
-            System.out.println("ERROR: Time " + time + " is after the end time.");
+            warning("Configuration time " + time + " is after the end time.");
             return this.numberOfTimeSlotsPerDay-1;
         }
         return index;
@@ -342,10 +339,10 @@ public class CourtScheduleInfo {
 		int minutes = timeStringToMinutes(time);
 		int index = (int) Math.ceil((minutes - this.timeslotMidnightOffsetInMinutes) / this.timeslotDurationInMinutes);
 		if (index < 0 ) {
-			System.out.println("ERROR: Time " + time + " is before the start time.");
+            warning("Configuration time " + time + " is before the start time.");
 			return 0;
 		} else if (index >= this.numberOfTimeSlotsPerDay){
-			System.out.println("ERROR: Time " + time + " is after the end time.");
+            warning("Configuration time " + time + " is after the end time.");
 			return this.numberOfTimeSlotsPerDay-1;
 		}
 		return index;
@@ -364,21 +361,21 @@ public class CourtScheduleInfo {
     public String toString() {
         StringBuilder result = new StringBuilder();
 
-        result.append("; " + FileSystems.getDefault().getPath(filepath).toAbsolutePath() + "\n");
+        result.append("; " + FileSystems.getDefault().getPath(filepath).toAbsolutePath() + EOL);
 
         if (conferenceStartDate != null)
-            result.append("conference_start=" + conferenceStartDate.toString() + "\n");
+            result.append("conference_start=" + conferenceStartDate.toString() + EOL);
 
         if (conferenceEndDate != null)
-            result.append("conference_end=" + conferenceEndDate.toString() + "\n");
+            result.append("conference_end=" + conferenceEndDate.toString() + EOL);
 
-        result.append("court_count=" + numberOfCourts + "\n");
-        result.append("timeslots_start=" + timeslotMidnightOffsetInMinutes + "\n");
-        result.append("timeslots_count=" + numberOfTimeSlotsPerDay + "\n");
-        result.append("timeslot_duration_minutes=" + timeslotDurationInMinutes + "\n");
+        result.append("court_count=" + numberOfCourts + EOL);
+        result.append("timeslots_start=" + timeslotMidnightOffsetInMinutes + EOL);
+        result.append("timeslots_count=" + numberOfTimeSlotsPerDay + EOL);
+        result.append("timeslot_duration_minutes=" + timeslotDurationInMinutes + EOL);
 
         for (LocalDate holiday : holidays) {
-            result.append("holiday = " + holiday.toString() +"\n");
+            result.append("holiday = " + holiday.toString() +EOL);
         }
 
         return result.toString();

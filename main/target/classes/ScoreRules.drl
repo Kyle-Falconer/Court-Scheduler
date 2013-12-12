@@ -114,7 +114,7 @@ rule "notSameTimeAs"
 		Match($teamlist : notSameTimeAs, $matchSlot : matchSlot)
 		Match($matchSlot == matchSlot && (team1.teamId memberOf $teamlist || team2.teamId memberOf $teamlist))
 	then
-		scoreHolder.addSoftConstraintMatch(kcontext, -1000);
+		scoreHolder.addHardConstraintMatch(kcontext, -15);
 end
 
 rule "dontWantBackToBack"
@@ -185,7 +185,7 @@ rule "preferBackToBack"
         Match($match : this, containsTeam($team) == true, Date == $date, Time == $time + 1)
         not Match(containsTeam($team) == true, Date == $date, Time != $time + 1 && Time != $time)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, 50);
+        scoreHolder.addSoftConstraintMatch(kcontext, -50);
 end
 
 // team likes back to back

@@ -35,13 +35,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import static courtscheduler.Main.warning;
+
 
 public class CourtScheduleIO {
 
+    private static final String EOL = System.getProperty("line.separator");
     private List<Match> matchList;
     private static List<Team> teamList;
 	private static DateTimeFormatter normalTime = DateTimeFormat.forPattern("h:mma");
 	private static DateTimeFormatter militaryTime = DateTimeFormat.forPattern("H:mm");
+
+    public static int currentRowNum;
+    public static int currentColumnNum;
 
 	private static int rowNumber;
 
@@ -273,6 +279,9 @@ public class CourtScheduleIO {
         short columnCount = currentRow.getLastCellNum();
         int columnCounter = 0;
 
+        currentRowNum = currentRow.getRowNum();
+        currentColumnNum = 0;
+
         Integer teamId = null;
         String teamName = "";
         Integer conference = null;
@@ -300,14 +309,18 @@ public class CourtScheduleIO {
 				}
             }
 
+            currentColumnNum = cell.getColumnIndex();
             if (columnCounter == 0) {
+                int index = cell.toString().indexOf(".");
+                String teamString = cell.toString().substring(0, index);
                 try {
-                    int index = cell.toString().indexOf(".");
-                    teamId = Integer.parseInt(cell.toString().substring(0, index));
+                    teamId = Integer.parseInt(teamString);
                     team.setTeamId(teamId);
                 } catch (NumberFormatException e) {
                     //not sure what we should do here, this means a team's id is not being captured
-                    e.printStackTrace();
+                    String niceMessage = String.format("Could not determine the team id from '%s'", teamString);
+                    niceMessage = niceMessage + "\tFound in "+currentCell();
+                    Main.error( niceMessage, e.toString());
                 }
             }
             else if (columnCounter == 1) {
@@ -328,7 +341,8 @@ public class CourtScheduleIO {
             else if (columnCounter == 5) {
                 team.setGrade(getStringValueOfInt(cell.toString()));
 				if (team.getGrade().trim().equals("")) {
-					System.out.println("ERROR: Team " + teamId + " has no grade!");
+                    warning("Team \"" + teamId + "\" has no grade!" +
+                            "\tFound in "+currentCell());
 				}
             }
             else if (columnCounter == 6) {
@@ -354,9 +368,11 @@ public class CourtScheduleIO {
                             team.getDontPlay().addSharedTeam(teamId);
                         }
                     } catch (NumberFormatException nfe) {
-                        System.out.println("Unable to add team " + teamIdStr + "to shared team list. Unparsable.");
+                        warning("Unable to add team \"" + teamIdStr + "\" to shared team list because it is not a number"+
+                                "\tFound in "+currentCell());
                     } catch (NullPointerException npe) {
-                        System.out.println("team.availability or team.availability.notSameTimeAs is null for " + teamIdStr);
+                        warning("team.availability or team.availability.notSameTimeAs is null for " + teamIdStr+
+                                "\tFound in "+currentCell());
                     }
                 }
             }
@@ -433,7 +449,8 @@ public class CourtScheduleIO {
                 notSameTime = requestNotSameTime(request, team, notSameTime);
 
             else
-                System.out.println("Unknown constraint in row " + (rowNumber+1) + ": " + request);
+                warning("Unknown constraint: \"" + request + "\"" +
+                        "\tFound in "+currentCell());
         }
 
 		// put all conference primary days on prefDates
@@ -451,7 +468,8 @@ public class CourtScheduleIO {
 		if (badDays != null && badDays.length() != 7) {
         	parseDateConstraints(badDays, team, badDates);
 		} else {
-			System.out.println("WARNING: team " + team.getTeamId() + " has no conference days! Is this intentional?");
+            warning("Team "+team.getTeamId()+" has no conference days!"+
+                    "\tFound in "+currentCell());
 		}
 
         team.setPlayOnceRequests(new PlayOnceRequests(playOnceTeamList));
@@ -461,6 +479,7 @@ public class CourtScheduleIO {
         team.setBadDates(badDates);
         team.setPreferredDates(prefDates);
     }
+
     public static DateConstraint parseDateConstraints(String request, Team team, DateConstraint dates){
         if (request == null){
             // FIXME
@@ -480,7 +499,9 @@ public class CourtScheduleIO {
                 requestAfterTime(request, team, dates);
             }
 			else {
-				System.out.printf("ERROR: Unknown time-based constraint for team %d [%s]\n", team.getTeamId(), request);
+                warning("Unknown time-based constraint for team " + team.getTeamId() + EOL +
+                        "\tThe request was: \"" + request + "\"" +
+                        "\tFound in "+currentCell());
 			}
         }
         else{
@@ -516,7 +537,9 @@ public class CourtScheduleIO {
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
 		request = request.replace("after ", "");
         if (isAfternoon(request) == null) {
-            System.out.println("Team" + team.getTeamId() + "after constraint time has no am/pm." + request);
+            warning("Could not determine a valid time from \"" + request + "\" on Request After Time (\"after\") constraint"+EOL +
+                    "\tThe request was: \"" + request + "\"" +
+                    "\tFound in "+currentCell());
         }
         request = getMilitaryTime(request);
         //System.out.println(request);
@@ -524,10 +547,11 @@ public class CourtScheduleIO {
     }
 
     public static void requestBeforeTime(String request, Team team, DateConstraint badDates){
-        // incomplete; need to ensure that each time has pm or am so that it can be converted to military
 		request = request.replace("before ", "");
         if (isAfternoon(request) == null) {
-            System.out.println("Team" + team.getTeamId() + "before constraint time has no am/pm." + request);
+            warning("Could not determine a valid time from \"" + request + "\" on Request Before Time (\"before\") constraint"+EOL+
+                    "\tThe request was: \""+ request+"\""+
+                    "\tFound in "+currentCell());
         }
 		LocalTime t = normalTime.parseLocalTime(request);
 		// if we're saying not before an exact hour, we need to not schedule them to start AT that hour
@@ -539,7 +563,9 @@ public class CourtScheduleIO {
         String[] times = request.split("-");
         for (int i = 0; i < times.length; i++){
             if (isAfternoon(times[i]) == null) {
-                System.out.println("Team" + team.getTeamId() + "xr constraint time has no am/pm on time "+i+"." + request);  // FIXME: is this the right error message?
+                warning("Could not determine a valid time from \"" + times[i] + "\" on Request Time Off (\"xr\") constraint"+EOL +
+                        "\tThe request was: \"" + request + "\"" +
+                        "\tFound in "+currentCell());
             }
         }
         times[0] = getMilitaryTime(times[0]);
@@ -557,7 +583,6 @@ public class CourtScheduleIO {
         return playOnceTeamList;
     }
 
-
     private static SharedTeams requestDontPlay(String request, Team team, SharedTeams dontPlay) {
         //parse the request for the teams Id or name or whatever Shane wants to use (ID would be best for us)
         request = request.replace("xplay ", "");
@@ -565,7 +590,9 @@ public class CourtScheduleIO {
         try {
             teamId = Integer.parseInt(request);
         } catch (NumberFormatException nfe) {
-            System.out.println("Team" + team.getTeamId() + "xplay constraint teamID error." + request); // FIXME: this is not human readable enough!
+            warning("Could not determine a team ID from \"" + team.getTeamId() + "\" on Request Don't Play (\"xplay\") constraint"+EOL+
+                    "\tThe request was: \""+ request+"\""+
+                    "\tFound in "+currentCell());
         }
         dontPlay.addSharedTeam(teamId);
         return dontPlay;
@@ -577,7 +604,10 @@ public class CourtScheduleIO {
         try {
             teamId = Integer.parseInt(request);
         } catch (NumberFormatException nfe) {
-            System.out.println("Team" + team.getTeamId() + "nst constraint teamId error." + request); // FIXME: this is not human readable enough!
+            warning("Could not determine a team ID from \"" + team.getTeamId() + "\", from Not Same Time As (\"nst\") constraint."+EOL+
+                    "\tThe entire constraint given was: \""+ request+"\""+
+                    "\tFound in "+currentCell()
+            );
         }
         notSameTime.addSharedTeam(teamId);
         return notSameTime;
@@ -595,9 +625,10 @@ public class CourtScheduleIO {
                 hour = Integer.parseInt(hourString);
                 isPM = hour >= 12;
             } catch (NumberFormatException nfe){
-                System.out.println("Time not formatted correctly? " +
+                warning("Time not formatted correctly? " +
                         "Could not read a number from: \"" + hourString + "\", " +
-                        "given a time of " + time);
+                        "given a time of " + time +
+                        "\tFound in "+currentCell());
                 return null;
             }
             if (!isPM && hour != 0){
@@ -622,7 +653,8 @@ public class CourtScheduleIO {
 
             String[] t = time.split(":");
             if (t.length < 2) {
-                System.out.println("Time not formatted correctly: " + time);
+                warning("Time not formatted correctly: " + time +
+                        "\tFound in "+currentCell());
                 return "";
             }
             try {
@@ -632,19 +664,19 @@ public class CourtScheduleIO {
                 }
                 return timeInt.toString() + ":" + t[1];
             } catch (NumberFormatException e) {
-                System.out.println("Time not formatted correctly? " +
+                warning("Time not formatted correctly? " +
                         "Could not read a number from: \"" + t[0] + "\", " +
-                        "given a time of " + time);
-                if (Main.LOG_LEVEL > 1) {
-                    e.printStackTrace();
-                }
+                        "given a time of " + time +
+                        "\tFound in "+currentCell(), e.toString());
+
                 return "";
             }
         } else {
 
             String[] t = time.split(":");
             if (t.length < 2) {
-                System.out.println("Time not formatted correctly: " + time);
+                warning("Time not formatted correctly: " + time +
+                        "\tFound in "+currentCell());
                 return "";
             }
             try {
@@ -654,18 +686,34 @@ public class CourtScheduleIO {
                 }
                 return timeInt + ":" + t[1];
             } catch (NumberFormatException e) {
-                System.out.println("Time not formatted correctly? " +
+                warning("Time not formatted correctly? " +
                         "Could not read a number from: \"" + t[0] + "\", " +
-                        "given a time of " + time);
-                if (Main.LOG_LEVEL > 1) {
-                    e.printStackTrace();
-                }
+                        "given a time of " + time +
+                        "\tFound in "+currentCell(), e.toString());
+                
                 return "";
             }
 
         }
     }
 
+    public static String excelColumn(int columnNumber){
+        String converted = "";
+        // Repeatedly divide the number by 26 and convert the
+        // remainder into the appropriate letter.
+        int colNumber = columnNumber;
+        while (colNumber >= 0)
+        {
+            int remainder = colNumber % 26;
+            converted = (char)(remainder + 'A') + converted;
+            colNumber = (colNumber / 26) - 1;
+        }
+        return converted;
+    }
+
+    public static String currentCell(){
+        return "cell "+excelColumn(currentColumnNum)+currentRowNum;
+    }
 
     public short getColumnWidth(File file) throws Exception {
 

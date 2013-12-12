@@ -21,6 +21,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import static courtscheduler.Main.timeDiff;
 import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
 import static courtscheduler.persistence.CourtScheduleIO.isAfternoon;
 import static courtscheduler.persistence.CourtScheduleInfo.parseDateString;
@@ -47,6 +51,33 @@ public class Time {
         };
         for (String[] test : tests){
             assertEquals("\""+test[0]+"\" must be \""+test[1]+"\"", test[1], getMilitaryTime(test[0]).toString());
+        }
+    }
+
+    @Test
+    public void hhmmss(){
+        Calendar base = new GregorianCalendar(1, 1, 1, 0, 0, 0);
+        Calendar[] testDates = {
+                new GregorianCalendar(1, 1, 1, 0, 0, 0),
+                new GregorianCalendar(1, 1, 1, 0, 0, 1),
+                new GregorianCalendar(1, 1, 1, 0, 1, 0),
+                new GregorianCalendar(1, 1, 1, 0, 1, 1),
+                new GregorianCalendar(1, 1, 1, 0, 0, 61),
+                new GregorianCalendar(1, 1, 1, 1, 1, 1),
+                new GregorianCalendar(1, 1, 1, 1, 61, 1)
+        };
+        String[] results = {
+                "0s",
+                "1s",
+                "1m0s",
+                "1m1s",
+                "1m1s",
+                "1h1m1s",
+                "2h1m1s"
+        };
+        for (int i = 0; i < testDates.length; i++){
+            String result = timeDiff(base.getTime(), testDates[i].getTime());
+            assertEquals("\""+result+"\" must be "+results[i], results[i], result);
         }
     }
 

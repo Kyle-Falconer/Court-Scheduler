@@ -26,6 +26,9 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 
+import static courtscheduler.Main.warning;
+import static courtscheduler.persistence.CourtScheduleIO.currentCell;
+
 /**
  * Created with IntelliJ IDEA.
  * User: CJ
@@ -58,7 +61,8 @@ public class DateConstraint extends Constraint{
 		// Confusing, I know, but the performance benefit is nontrivial. --MS
 		// Premature optimization is the root of all evil. --MS, a month later
 		if (day < 0 || timeSlot < 0 || day >= this.dates.length || timeSlot >= this.dates[day].length){
-            System.out.println("Date/time ("+day+"/"+timeSlot+") requested is outside the start-end dates of the conference");
+            warning("Date/time (" + day + "/" + timeSlot + ") requested is outside the start-end dates of the conference" +
+                    "\tFound in " + currentCell());
             return true;
         }
 
@@ -104,7 +108,8 @@ public class DateConstraint extends Constraint{
         for(int i=0;i<this.dates[0].length;i++){
             //and if true=ok, or if false=ok
             if (day < 0 || day >= this.dates.length || i >= this.dates[day].length || i >= times.length){
-                System.out.println("Date/time ("+day+"/"+i+") requested is outside the start-end dates of the conference");
+                warning("Date/time ("+day+"/"+i+") requested is outside the start-end dates of the conference" +
+                        "\tFound in " + currentCell());
                 continue;
             }
             this.dates[day][i] = (times[i]||this.dates[day][i]);
@@ -114,7 +119,8 @@ public class DateConstraint extends Constraint{
     //specific slot add
     public void addTime(int day, int time){
         if (day >= this.dates.length || time >= this.dates[day].length){
-            System.out.println("Date/time ("+day+"/"+time+") requested is outside the start-end dates of the conference");
+            warning("Date/time (" + day + "/" + time + ") requested is outside the start-end dates of the conference" +
+                    "\tFound in " + currentCell());
             return;
         }
         this.dates[day][time]=true;
@@ -200,11 +206,13 @@ public class DateConstraint extends Constraint{
         int day = Days.daysBetween(info.getConferenceStartDate(), date).getDays();
         int conferenceLength= info.getNumberOfConferenceDays();
         if(day< 0){
-            System.out.println("ERROR: date "+date+" is before conference start.");
+            warning("date \""+date+"\" is before conference start." +
+                    "\tFound in " + currentCell());
             return null;
         }
         if(day>conferenceLength){
-            System.out.println("ERROR: date "+date+" is after conference end.");
+            warning("date \"" + date + "\" is after conference start." +
+                    "\tFound in " + currentCell());
             return null;
         }
         return day;
@@ -258,7 +266,8 @@ public class DateConstraint extends Constraint{
             return findDayOfWeek(i);
         }
         else{
-            System.out.println("Error: day of week "+weekday+" is not recognized");
+            warning("day of week \"" + weekday + "\" is not recognized" +
+                    "\tFound in " + currentCell());
             Integer[] fail = new Integer[0];
             return fail;
         }

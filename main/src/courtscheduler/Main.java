@@ -27,9 +27,8 @@ import org.optaplanner.core.config.solver.XmlSolverFactory;
 
 import java.awt.*;
 import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Date;
+import java.util.Scanner;
 
 
 /**
@@ -41,28 +40,42 @@ public class Main {
 
     public static int LOG_LEVEL = 1;
 
-    private static FileOutputStream fileOut = null;
+    private static String main_log_filename = "cs_log.txt";
+    private static StringBuilder log_strings = new StringBuilder();
+
+    private static FileOutputStream configuration_log_out = null;
     private static InputStream procErr = null;
     private static InputStream procOut = null;
+
+    public static final String EOL = System.getProperty("line.separator");
+
+    private static Date startTime;
 
     public static void main(String[] args) throws Exception {
 
         System.out.println("Court Scheduler");
         System.out.println("================================================================================");
+        log_strings = new StringBuilder();
+        startTime = new Date();
+        log_strings.append("start time: "+startTime.toString()+EOL);
 
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                Date stopTime = new Date();
+                String elapsedString = timeDiff(startTime, stopTime);
+
+                log_strings.append("stop time: " + stopTime.toString() + EOL);
+                log_strings.append("time elapsed: " + elapsedString + EOL);
+                writeToFile(main_log_filename, log_strings.toString());
+            }
+        });
 
         runConfigurationUtility(getOptArg(args, 1, "configuration"+File.separator+"configSetup.exe"));
 
-
-        if (LOG_LEVEL >= 3) {
+        if (LOG_LEVEL >= 2) {
             System.out.println("Current working directory = " + System.getProperty("user.dir"));
             ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-            System.out.println("Current classpaths: ");
-                    URL[] urls = ((URLClassLoader) cl).getURLs();
-            for (URL url : urls) {
-                System.out.println(url.getFile());
-            }
         }
 
         // This filename needs to be relative to the application's classpath
@@ -85,7 +98,7 @@ public class Main {
         Solver solver = solverConfig.buildSolver();
 
         if (LOG_LEVEL >= 2) {
-            System.out.println("\n\nconfiguration loaded...");
+            System.out.println(EOL+"configuration loaded...");
         }
 
         String in_filename= info.getInputFileLocation();
@@ -109,7 +122,7 @@ public class Main {
         try{
             java.util.List<Team> input = utils.readXlsx(in_filename, info);
             if (input == null){
-                errorQuit("Expected to use the file with the following path as input, but it could not be found:\n\t"+in_filename);
+                error("Expected to use the file with the following path as input, but it could not be found:"+EOL+"\t" + in_filename);
             }
 
             testSchedule= new CourtSchedule(input, info);
@@ -119,13 +132,40 @@ public class Main {
             solver.setPlanningProblem(testSchedule);
             solver.solve();
 			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
+            log_strings.append("Best score: "+solver.getBestSolution().getScore());
 
             output_filename = utils.writeXlsx(bestSolution.getMatchList(), info, output_filename);
             openFile(output_filename);
         } catch(Exception e){
-            e.printStackTrace();
+            error(true, "Fatal error", e.toString());
         }
 
+    }
+
+    public static String timeDiff(Date startTime, Date stopTime) {
+        long elapsedMilliseconds = stopTime.getTime() - startTime.getTime();
+        int elapsedSeconds = (int)Math.floor(elapsedMilliseconds / 1000)%60;
+        int elapsedMinutes = (int) Math.floor(elapsedMilliseconds / 1000 / 60)%60;
+        int elapsedHours = (int) Math.floor(elapsedMilliseconds / 1000 / 60 / 60);
+
+        String elapsedString = (elapsedHours>0?elapsedHours+"h":"")+
+                (elapsedMinutes>0?elapsedMinutes+"m":"")+
+                elapsedSeconds+"s";
+        return elapsedString;
+    }
+
+    public static void writeToFile(String filename, String contents){
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(filename, "UTF-8");
+            writer.println(contents);
+        } catch (FileNotFoundException e) {
+            error(false, "When trying to write the log to a file, the file \""+filename+"\" could not be found", e.toString());
+        } catch (UnsupportedEncodingException e) {
+            error(false, "Encoding exception when trying to write the log to a file.", e.toString());
+        }finally {
+            writer.close();
+        }
     }
 
     public static void pipeStream(InputStream input, OutputStream output) throws IOException
@@ -147,25 +187,25 @@ public class Main {
     private static void runConfigurationUtility(String filename){
         File configFile = new File(filename);
         if (!configFile.exists()){
-            errorQuit("Expected the configuration utility to be found at the following location:\n"+configFile.getAbsolutePath());
+            error("Expected the configuration utility to be found at the following location:"+EOL + configFile.getAbsolutePath());
         }
         if (blockRunProgram(filename) != 0){
-            errorQuit("Could not run the configuration utility.");
+            error("Could not run the configuration utility.");
         }
     }
 
     private static int blockRunProgram(String filename) {
         if (filename != null) {
             try {
-                fileOut = new FileOutputStream("configuration_log.txt");
+                configuration_log_out = new FileOutputStream("configuration_log.txt");
 
                 String[] cmd = {"cmd", "/c", filename};
                 Process p = Runtime.getRuntime().exec(cmd);
 
                 procOut = p.getInputStream();
                 procErr = p.getErrorStream();
-                pipeStream(procOut, fileOut);
-                pipeStream(procErr, fileOut);
+                pipeStream(procOut, configuration_log_out);
+                pipeStream(procErr, configuration_log_out);
 
                 int exitVal = p.waitFor();
                 return exitVal;
@@ -193,14 +233,55 @@ public class Main {
 		}
     }
 
-    public static void errorQuit(String message){
-        System.out.println("\n================================================================================");
-        System.out.println("ERROR:");
-        System.out.println(message);
-        System.out.print("\nPress any key to close the program.");
-        Scanner s = new Scanner(System.in);
-        s.nextLine();
-        System.exit(1);
+    public static void error(String message){
+        error(false, message, null);
+    }
+
+    public static void error(String message, String stacktrace){
+        error(false, message, stacktrace);
+    }
+
+    public static void error(boolean fatal, String message){
+        error(fatal, message, null);
+    }
+
+    public static void error(boolean fatal, String message, String stacktrace){
+        StringBuilder full_message = new StringBuilder();
+        full_message.append(EOL+"================================================================================"+EOL);
+        full_message.append("ERROR:"+EOL);
+        if (stacktrace != null && Main.LOG_LEVEL >= 2){
+            full_message.append("MESSAGE:"+EOL+message+EOL+EOL+"STACKTRACE:"+EOL+stacktrace+EOL);
+        } else {
+            full_message.append(message + EOL);
+        }
+        full_message.append(EOL+"================================================================================"+EOL);
+        if (fatal){
+            full_message.append(EOL+"The program will now quit."+EOL);
+            log_strings.append(full_message.toString());
+            System.out.print(full_message.toString());
+            Scanner s = new Scanner(System.in);
+            s.nextLine();
+            writeToFile(main_log_filename, log_strings.toString());
+            System.exit(1);
+        }
+        log_strings.append(full_message.toString());
+        System.out.print(full_message.toString());
+    }
+
+    public static void warning(String message){
+        warning(message, null);
+    }
+
+    public static void warning(String message, String stacktrace){
+        StringBuilder full_message = new StringBuilder();
+        full_message.append("WARNING: " + message);
+
+        if (stacktrace != null && Main.LOG_LEVEL >= 2){
+            full_message.append(EOL+"STACKTRACE:"+EOL+stacktrace);
+        }
+        full_message.append(EOL);
+        log_strings.append(full_message.toString());
+        System.out.print(full_message.toString());
     }
 
     private static XmlSolverFactory loadConfig(String defaultConfigXmlFilename) {
