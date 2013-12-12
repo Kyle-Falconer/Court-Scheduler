@@ -128,7 +128,6 @@ public class Main {
 				System.out.println(new java.util.Date() + " [INFO] Matches constructed. Sending data to solver engine...");
             // solve the problem (gee, it sounds so easy when you put it like that)
             solver.setPlanningProblem(testSchedule);
-            System.exit(0);
             solver.solve();
 			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
             log_strings.append("Best score: "+solver.getBestSolution().getScore());
