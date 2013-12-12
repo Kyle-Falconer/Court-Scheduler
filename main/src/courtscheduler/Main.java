@@ -41,11 +41,13 @@ public class Main {
     public static int LOG_LEVEL = 1;
 
     private static String main_log_filename = "cs_log.txt";
-    private static StringBuilder log_strings;
+    private static StringBuilder log_strings = new StringBuilder();
 
     private static FileOutputStream configuration_log_out = null;
     private static InputStream procErr = null;
     private static InputStream procOut = null;
+
+    public static final String EOL = System.getProperty("line.separator");
 
     private static Date startTime;
 
@@ -55,7 +57,7 @@ public class Main {
         System.out.println("================================================================================");
         log_strings = new StringBuilder();
         startTime = new Date();
-        log_strings.append("start time: "+startTime.toString()+"\n");
+        log_strings.append("start time: "+startTime.toString()+EOL);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -63,8 +65,8 @@ public class Main {
                 Date stopTime = new Date();
                 String elapsedString = timeDiff(startTime, stopTime);
 
-                log_strings.append("stop time: " + stopTime.toString() + "\n");
-                log_strings.append("time elapsed: " + elapsedString + "\n");
+                log_strings.append("stop time: " + stopTime.toString() + EOL);
+                log_strings.append("time elapsed: " + elapsedString + EOL);
                 writeToFile(main_log_filename, log_strings.toString());
             }
         });
@@ -96,7 +98,7 @@ public class Main {
         Solver solver = solverConfig.buildSolver();
 
         if (LOG_LEVEL >= 2) {
-            System.out.println("\n\nconfiguration loaded...");
+            System.out.println(EOL+"configuration loaded...");
         }
 
         String in_filename= info.getInputFileLocation();
@@ -120,7 +122,7 @@ public class Main {
         try{
             java.util.List<Team> input = utils.readXlsx(in_filename, info);
             if (input == null){
-                error("Expected to use the file with the following path as input, but it could not be found:\n\t" + in_filename);
+                error("Expected to use the file with the following path as input, but it could not be found:"+EOL+"\t" + in_filename);
             }
 
             testSchedule= new CourtSchedule(input, info);
@@ -140,15 +142,15 @@ public class Main {
 
     }
 
-    private static String timeDiff(Date startTime, Date stopTime) {
+    public static String timeDiff(Date startTime, Date stopTime) {
         long elapsedMilliseconds = stopTime.getTime() - startTime.getTime();
-        int elapsedSeconds = (int)((elapsedMilliseconds / 1000));
-        int elapsedMinutes = (int)(elapsedSeconds/ 60);
-        int elapsedHours = (int)(elapsedMinutes / 60);
+        int elapsedSeconds = (int)Math.floor(elapsedMilliseconds / 1000)%60;
+        int elapsedMinutes = (int) Math.floor(elapsedMilliseconds / 1000 / 60)%60;
+        int elapsedHours = (int) Math.floor(elapsedMilliseconds / 1000 / 60 / 60);
 
         String elapsedString = (elapsedHours>0?elapsedHours+"h":"")+
                 (elapsedMinutes>0?elapsedMinutes+"m":"")+
-                (elapsedSeconds>0?elapsedSeconds+"s":"");
+                elapsedSeconds+"s";
         return elapsedString;
     }
 
@@ -185,7 +187,7 @@ public class Main {
     private static void runConfigurationUtility(String filename){
         File configFile = new File(filename);
         if (!configFile.exists()){
-            error("Expected the configuration utility to be found at the following location:\n" + configFile.getAbsolutePath());
+            error("Expected the configuration utility to be found at the following location:"+EOL + configFile.getAbsolutePath());
         }
         if (blockRunProgram(filename) != 0){
             error("Could not run the configuration utility.");
@@ -245,16 +247,16 @@ public class Main {
 
     public static void error(boolean fatal, String message, String stacktrace){
         StringBuilder full_message = new StringBuilder();
-        full_message.append("\n================================================================================\n");
-        full_message.append("ERROR:\n");
+        full_message.append(EOL+"================================================================================"+EOL);
+        full_message.append("ERROR:"+EOL);
         if (stacktrace != null && Main.LOG_LEVEL >= 2){
-            full_message.append("MESSAGE:\n"+message+"\n\nSTACKTRACE:\n"+stacktrace+"\n");
+            full_message.append("MESSAGE:"+EOL+message+EOL+EOL+"STACKTRACE:"+EOL+stacktrace+EOL);
         } else {
-            full_message.append(message + "\n");
+            full_message.append(message + EOL);
         }
-        full_message.append("\n================================================================================\n");
+        full_message.append(EOL+"================================================================================"+EOL);
         if (fatal){
-            full_message.append("\nThe program will now quit.\n");
+            full_message.append(EOL+"The program will now quit."+EOL);
             log_strings.append(full_message.toString());
             System.out.print(full_message.toString());
             Scanner s = new Scanner(System.in);
@@ -275,9 +277,9 @@ public class Main {
         full_message.append("WARNING: " + message);
 
         if (stacktrace != null && Main.LOG_LEVEL >= 2){
-            full_message.append("\nSTACKTRACE:\n"+stacktrace);
+            full_message.append(EOL+"STACKTRACE:"+EOL+stacktrace);
         }
-        full_message.append("\n");
+        full_message.append(EOL);
         log_strings.append(full_message.toString());
         System.out.print(full_message.toString());
     }

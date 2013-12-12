@@ -40,6 +40,7 @@ import static courtscheduler.Main.warning;
 
 public class CourtScheduleIO {
 
+    private static final String EOL = System.getProperty("line.separator");
     private List<Match> matchList;
     private static List<Team> teamList;
 	private static DateTimeFormatter normalTime = DateTimeFormat.forPattern("h:mma");
@@ -498,7 +499,7 @@ public class CourtScheduleIO {
                 requestAfterTime(request, team, dates);
             }
 			else {
-                warning("Unknown time-based constraint for team " + team.getTeamId() + "\n" +
+                warning("Unknown time-based constraint for team " + team.getTeamId() + EOL +
                         "\tThe request was: \"" + request + "\"" +
                         "\tFound in "+currentCell());
 			}
@@ -536,7 +537,7 @@ public class CourtScheduleIO {
         // incomplete; need to ensure that each time has pm or am so that it can be converted to military
 		request = request.replace("after ", "");
         if (isAfternoon(request) == null) {
-            warning("Could not determine a valid time from \"" + request + "\" on Request After Time (\"after\") constraint\n" +
+            warning("Could not determine a valid time from \"" + request + "\" on Request After Time (\"after\") constraint"+EOL +
                     "\tThe request was: \"" + request + "\"" +
                     "\tFound in "+currentCell());
         }
@@ -548,7 +549,7 @@ public class CourtScheduleIO {
     public static void requestBeforeTime(String request, Team team, DateConstraint badDates){
 		request = request.replace("before ", "");
         if (isAfternoon(request) == null) {
-            warning("Could not determine a valid time from \"" + request + "\" on Request Before Time (\"before\") constraint\n"+
+            warning("Could not determine a valid time from \"" + request + "\" on Request Before Time (\"before\") constraint"+EOL+
                     "\tThe request was: \""+ request+"\""+
                     "\tFound in "+currentCell());
         }
@@ -562,7 +563,7 @@ public class CourtScheduleIO {
         String[] times = request.split("-");
         for (int i = 0; i < times.length; i++){
             if (isAfternoon(times[i]) == null) {
-                warning("Could not determine a valid time from \"" + times[i] + "\" on Request Time Off (\"xr\") constraint\n" +
+                warning("Could not determine a valid time from \"" + times[i] + "\" on Request Time Off (\"xr\") constraint"+EOL +
                         "\tThe request was: \"" + request + "\"" +
                         "\tFound in "+currentCell());
             }
@@ -589,7 +590,7 @@ public class CourtScheduleIO {
         try {
             teamId = Integer.parseInt(request);
         } catch (NumberFormatException nfe) {
-            warning("Could not determine a team ID from \"" + team.getTeamId() + "\" on Request Don't Play (\"xplay\") constraint\n"+
+            warning("Could not determine a team ID from \"" + team.getTeamId() + "\" on Request Don't Play (\"xplay\") constraint"+EOL+
                     "\tThe request was: \""+ request+"\""+
                     "\tFound in "+currentCell());
         }
@@ -603,7 +604,7 @@ public class CourtScheduleIO {
         try {
             teamId = Integer.parseInt(request);
         } catch (NumberFormatException nfe) {
-            warning("Could not determine a team ID from \"" + team.getTeamId() + "\", from Not Same Time As (\"nst\") constraint.\n"+
+            warning("Could not determine a team ID from \"" + team.getTeamId() + "\", from Not Same Time As (\"nst\") constraint."+EOL+
                     "\tThe entire constraint given was: \""+ request+"\""+
                     "\tFound in "+currentCell()
             );

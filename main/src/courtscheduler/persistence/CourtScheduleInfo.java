@@ -46,6 +46,7 @@ import static courtscheduler.persistence.CourtScheduleIO.parseDateConstraints;
  * To change this template use File | Settings | File Templates.
  */
 public class CourtScheduleInfo {
+    private static final String EOL = System.getProperty("line.separator");
     private String filepath;
     private LocalDate conferenceStartDate;
     private LocalDate conferenceEndDate;
@@ -92,7 +93,7 @@ public class CourtScheduleInfo {
     public int configure() {
         raw_lines = slurpConfigFile(this.filepath);
         if (raw_lines.size() == 0) {
-            error(true, "Could not read anything from the configuration file.\n" +
+            error(true, "Could not read anything from the configuration file."+EOL +
                     "Expected the configuration file to be found at: " + FileSystems.getDefault().getPath(filepath).toAbsolutePath());
         }
 		String[] scheduleDescription = null;
@@ -360,21 +361,21 @@ public class CourtScheduleInfo {
     public String toString() {
         StringBuilder result = new StringBuilder();
 
-        result.append("; " + FileSystems.getDefault().getPath(filepath).toAbsolutePath() + "\n");
+        result.append("; " + FileSystems.getDefault().getPath(filepath).toAbsolutePath() + EOL);
 
         if (conferenceStartDate != null)
-            result.append("conference_start=" + conferenceStartDate.toString() + "\n");
+            result.append("conference_start=" + conferenceStartDate.toString() + EOL);
 
         if (conferenceEndDate != null)
-            result.append("conference_end=" + conferenceEndDate.toString() + "\n");
+            result.append("conference_end=" + conferenceEndDate.toString() + EOL);
 
-        result.append("court_count=" + numberOfCourts + "\n");
-        result.append("timeslots_start=" + timeslotMidnightOffsetInMinutes + "\n");
-        result.append("timeslots_count=" + numberOfTimeSlotsPerDay + "\n");
-        result.append("timeslot_duration_minutes=" + timeslotDurationInMinutes + "\n");
+        result.append("court_count=" + numberOfCourts + EOL);
+        result.append("timeslots_start=" + timeslotMidnightOffsetInMinutes + EOL);
+        result.append("timeslots_count=" + numberOfTimeSlotsPerDay + EOL);
+        result.append("timeslot_duration_minutes=" + timeslotDurationInMinutes + EOL);
 
         for (LocalDate holiday : holidays) {
-            result.append("holiday = " + holiday.toString() +"\n");
+            result.append("holiday = " + holiday.toString() +EOL);
         }
 
         return result.toString();
