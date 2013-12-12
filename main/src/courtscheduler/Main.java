@@ -27,6 +27,7 @@ import org.optaplanner.core.config.solver.XmlSolverFactory;
 
 import java.awt.*;
 import java.io.*;
+import java.util.Date;
 import java.util.Scanner;
 
 
@@ -46,15 +47,24 @@ public class Main {
     private static InputStream procErr = null;
     private static InputStream procOut = null;
 
+    private static Date startTime;
+
     public static void main(String[] args) throws Exception {
 
         System.out.println("Court Scheduler");
         System.out.println("================================================================================");
         log_strings = new StringBuilder();
+        startTime = new Date();
+        log_strings.append("start time: "+startTime.toString()+"\n");
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
+                Date stopTime = new Date();
+                String elapsedString = timeDiff(startTime, stopTime);
+
+                log_strings.append("stop time: " + stopTime.toString() + "\n");
+                log_strings.append("time elapsed: " + elapsedString + "\n");
                 writeToFile(main_log_filename, log_strings.toString());
             }
         });
@@ -118,6 +128,7 @@ public class Main {
 				System.out.println(new java.util.Date() + " [INFO] Matches constructed. Sending data to solver engine...");
             // solve the problem (gee, it sounds so easy when you put it like that)
             solver.setPlanningProblem(testSchedule);
+            System.exit(0);
             solver.solve();
 			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
             log_strings.append("Best score: "+solver.getBestSolution().getScore());
@@ -128,6 +139,18 @@ public class Main {
             error(true, "Fatal error", e.toString());
         }
 
+    }
+
+    private static String timeDiff(Date startTime, Date stopTime) {
+        long elapsedMilliseconds = stopTime.getTime() - startTime.getTime();
+        int elapsedSeconds = (int)((elapsedMilliseconds / 1000));
+        int elapsedMinutes = (int)(elapsedSeconds/ 60);
+        int elapsedHours = (int)(elapsedMinutes / 60);
+
+        String elapsedString = (elapsedHours>0?elapsedHours+"h":"")+
+                (elapsedMinutes>0?elapsedMinutes+"m":"")+
+                (elapsedSeconds>0?elapsedSeconds+"s":"");
+        return elapsedString;
     }
 
     public static void writeToFile(String filename, String contents){
