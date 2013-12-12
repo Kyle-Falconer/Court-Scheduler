@@ -174,10 +174,7 @@ rule "orderMatchesByConference"
         scoreHolder.addSoftConstraintMatch(kcontext, -1000);
 end
 
-// ############################################################################################
-// Old rules
-/*
-// team likes double headers and wants to play them whenever possible
+// if B2B/DH, always prefer to have them as such
 rule "preferBackToBack"
     when
         Team(BackToBack == true, $team : teamId)
@@ -185,9 +182,22 @@ rule "preferBackToBack"
         Match($match : this, containsTeam($team) == true, Date == $date, Time == $time + 1)
         not Match(containsTeam($team) == true, Date == $date, Time != $time + 1 && Time != $time)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, 50);
+        scoreHolder.addSoftConstraintMatch(kcontext, 500);
+end
+// team likes double headers and wants to play them whenever possible
+rule "preferDoubleHeaders"
+    when
+        Team(DoubleHeader == true, $team : teamId)
+        Match(containsTeam($team) == true, $date : Date, $time : Time)
+        Match($match : this, containsTeam($team) == true, Date == $date, Time == $time + 2)
+        not Match(containsTeam($team) == true, Date == $date, Time != $time + 2 && Time != $time)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, 500);
 end
 
+// ############################################################################################
+// Old rules
+/*
 // team likes back to back
 rule "backToBack"
     when
