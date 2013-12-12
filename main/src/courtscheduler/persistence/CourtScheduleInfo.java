@@ -92,7 +92,7 @@ public class CourtScheduleInfo {
     public int configure() {
         raw_lines = slurpConfigFile(this.filepath);
         if (raw_lines.size() == 0) {
-            error("Could not read anything from the configuration file.\n" +
+            error(true, "Could not read anything from the configuration file.\n" +
                     "Expected the configuration file to be found at: " + FileSystems.getDefault().getPath(filepath).toAbsolutePath());
         }
 		String[] scheduleDescription = null;

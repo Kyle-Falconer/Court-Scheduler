@@ -27,9 +27,7 @@ import org.optaplanner.core.config.solver.XmlSolverFactory;
 
 import java.awt.*;
 import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Scanner;
 
 
 /**
@@ -53,8 +51,9 @@ public class Main {
         System.out.println("Court Scheduler");
         System.out.println("================================================================================");
         log_strings = new StringBuilder();
-        
+
         Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
             public void run() {
                 writeToFile(main_log_filename, log_strings.toString());
             }
@@ -62,16 +61,9 @@ public class Main {
 
         runConfigurationUtility(getOptArg(args, 1, "configuration"+File.separator+"configSetup.exe"));
 
-
-        if (LOG_LEVEL >= 3) {
+        if (LOG_LEVEL >= 2) {
             System.out.println("Current working directory = " + System.getProperty("user.dir"));
             ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-            System.out.println("Current classpaths: ");
-                    URL[] urls = ((URLClassLoader) cl).getURLs();
-            for (URL url : urls) {
-                System.out.println(url.getFile());
-            }
         }
 
         // This filename needs to be relative to the application's classpath
@@ -223,6 +215,10 @@ public class Main {
 
     public static void error(String message, String stacktrace){
         error(false, message, stacktrace);
+    }
+
+    public static void error(boolean fatal, String message){
+        error(fatal, message, null);
     }
 
     public static void error(boolean fatal, String message, String stacktrace){
