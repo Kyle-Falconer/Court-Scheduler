@@ -41,7 +41,10 @@ public class Main {
 
     public static int LOG_LEVEL = 1;
 
-    private static FileOutputStream fileOut = null;
+    private static String main_log_filename = "cs_log.txt";
+    private static StringBuilder log_strings;
+
+    private static FileOutputStream configuration_log_out = null;
     private static InputStream procErr = null;
     private static InputStream procOut = null;
 
@@ -49,7 +52,13 @@ public class Main {
 
         System.out.println("Court Scheduler");
         System.out.println("================================================================================");
-
+        log_strings = new StringBuilder();
+        
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                writeToFile(main_log_filename, log_strings.toString());
+            }
+        });
 
         runConfigurationUtility(getOptArg(args, 1, "configuration"+File.separator+"configSetup.exe"));
 
@@ -119,13 +128,28 @@ public class Main {
             solver.setPlanningProblem(testSchedule);
             solver.solve();
 			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
+            log_strings.append("Best score: "+solver.getBestSolution().getScore());
 
             output_filename = utils.writeXlsx(bestSolution.getMatchList(), info, output_filename);
             openFile(output_filename);
         } catch(Exception e){
-            e.printStackTrace();
+            error(true, "Fatal error", e.toString());
         }
 
+    }
+
+    public static void writeToFile(String filename, String contents){
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(filename, "UTF-8");
+            writer.println(contents);
+        } catch (FileNotFoundException e) {
+            error(false, "When trying to write the log to a file, the file \""+filename+"\" could not be found", e.toString());
+        } catch (UnsupportedEncodingException e) {
+            error(false, "Encoding exception when trying to write the log to a file.", e.toString());
+        }finally {
+            writer.close();
+        }
     }
 
     public static void pipeStream(InputStream input, OutputStream output) throws IOException
@@ -157,15 +181,15 @@ public class Main {
     private static int blockRunProgram(String filename) {
         if (filename != null) {
             try {
-                fileOut = new FileOutputStream("configuration_log.txt");
+                configuration_log_out = new FileOutputStream("configuration_log.txt");
 
                 String[] cmd = {"cmd", "/c", filename};
                 Process p = Runtime.getRuntime().exec(cmd);
 
                 procOut = p.getInputStream();
                 procErr = p.getErrorStream();
-                pipeStream(procOut, fileOut);
-                pipeStream(procErr, fileOut);
+                pipeStream(procOut, configuration_log_out);
+                pipeStream(procErr, configuration_log_out);
 
                 int exitVal = p.waitFor();
                 return exitVal;
@@ -202,20 +226,26 @@ public class Main {
     }
 
     public static void error(boolean fatal, String message, String stacktrace){
-        System.out.println("\n================================================================================");
-        System.out.println("ERROR:");
+        StringBuilder full_message = new StringBuilder();
+        full_message.append("\n================================================================================\n");
+        full_message.append("ERROR:\n");
         if (stacktrace != null && Main.LOG_LEVEL >= 2){
-            System.out.println("MESSAGE:\n"+message+"\n\nSTACKTRACE:\n"+stacktrace);
+            full_message.append("MESSAGE:\n"+message+"\n\nSTACKTRACE:\n"+stacktrace+"\n");
         } else {
-            System.out.println(message);
+            full_message.append(message + "\n");
         }
-        System.out.println("\n================================================================================");
+        full_message.append("\n================================================================================\n");
         if (fatal){
-            System.out.print("\nThe program will now quit.");
+            full_message.append("\nThe program will now quit.\n");
+            log_strings.append(full_message.toString());
+            System.out.print(full_message.toString());
             Scanner s = new Scanner(System.in);
             s.nextLine();
+            writeToFile(main_log_filename, log_strings.toString());
             System.exit(1);
         }
+        log_strings.append(full_message.toString());
+        System.out.print(full_message.toString());
     }
 
     public static void warning(String message){
@@ -223,11 +253,15 @@ public class Main {
     }
 
     public static void warning(String message, String stacktrace){
-        System.out.println("WARNING: " + message);
+        StringBuilder full_message = new StringBuilder();
+        full_message.append("WARNING: " + message);
+
         if (stacktrace != null && Main.LOG_LEVEL >= 2){
-            System.out.println("\nSTACKTRACE:\n"+stacktrace);
+            full_message.append("\nSTACKTRACE:\n"+stacktrace);
         }
-        System.out.print("\n");
+        full_message.append("\n");
+        log_strings.append(full_message.toString());
+        System.out.print(full_message.toString());
     }
 
     private static XmlSolverFactory loadConfig(String defaultConfigXmlFilename) {
