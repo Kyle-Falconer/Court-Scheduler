@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static courtscheduler.Main.error;
+import static courtscheduler.Main.warning;
 import static courtscheduler.persistence.CourtScheduleIO.getMilitaryTime;
 import static courtscheduler.persistence.CourtScheduleIO.parseDateConstraints;
 
@@ -90,9 +92,8 @@ public class CourtScheduleInfo {
     public int configure() {
         raw_lines = slurpConfigFile(this.filepath);
         if (raw_lines.size() == 0) {
-            printStandardErrorMessage("Could not read anything from the configuration file.\n" +
+            error("Could not read anything from the configuration file.\n" +
                     "Expected the configuration file to be found at: " + FileSystems.getDefault().getPath(filepath).toAbsolutePath());
-            return -1;
         }
 		String[] scheduleDescription = null;
         for (String line : raw_lines) {
@@ -256,16 +257,11 @@ public class CourtScheduleInfo {
                 lines.add(line);
             }
         } catch (IOException x) {
-            printStandardErrorMessage(String.format("IOException: %s%n", x));
+            error(String.format("Could not read the configuration file with file name: %s", filename));
         }
         return lines;
     }
 
-    private void printStandardErrorMessage(String message) {
-        System.out.println("ERROR:\n" +
-                message + "\n" +
-                "Try rebuilding the configuration file using the provided configuration utility.");
-    }
 
     public int getNumberOfConferenceDays() {
         return Days.daysBetween(conferenceStartDate, conferenceEndDate).getDays();
@@ -330,10 +326,10 @@ public class CourtScheduleInfo {
         int minutes = timeStringToMinutes(time);
         int index = (int) Math.ceil((minutes - this.timeslotMidnightOffsetInMinutes) / this.timeslotDurationInMinutes);
         if (index < 0 ) {
-            System.out.println("ERROR: Time " + time + " is before the start time.");
+            warning("Configuration time " + time + " is before the start time.");
             return 0;
         } else if (index >= this.numberOfTimeSlotsPerDay){
-            System.out.println("ERROR: Time " + time + " is after the end time.");
+            warning("Configuration time " + time + " is after the end time.");
             return this.numberOfTimeSlotsPerDay-1;
         }
         return index;
@@ -342,10 +338,10 @@ public class CourtScheduleInfo {
 		int minutes = timeStringToMinutes(time);
 		int index = (int) Math.ceil((minutes - this.timeslotMidnightOffsetInMinutes) / this.timeslotDurationInMinutes);
 		if (index < 0 ) {
-			System.out.println("ERROR: Time " + time + " is before the start time.");
+            warning("Configuration time " + time + " is before the start time.");
 			return 0;
 		} else if (index >= this.numberOfTimeSlotsPerDay){
-			System.out.println("ERROR: Time " + time + " is after the end time.");
+            warning("Configuration time " + time + " is after the end time.");
 			return this.numberOfTimeSlotsPerDay-1;
 		}
 		return index;

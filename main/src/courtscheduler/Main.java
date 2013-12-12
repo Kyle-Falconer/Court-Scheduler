@@ -109,7 +109,7 @@ public class Main {
         try{
             java.util.List<Team> input = utils.readXlsx(in_filename, info);
             if (input == null){
-                errorQuit("Expected to use the file with the following path as input, but it could not be found:\n\t"+in_filename);
+                error("Expected to use the file with the following path as input, but it could not be found:\n\t" + in_filename);
             }
 
             testSchedule= new CourtSchedule(input, info);
@@ -147,10 +147,10 @@ public class Main {
     private static void runConfigurationUtility(String filename){
         File configFile = new File(filename);
         if (!configFile.exists()){
-            errorQuit("Expected the configuration utility to be found at the following location:\n"+configFile.getAbsolutePath());
+            error("Expected the configuration utility to be found at the following location:\n" + configFile.getAbsolutePath());
         }
         if (blockRunProgram(filename) != 0){
-            errorQuit("Could not run the configuration utility.");
+            error("Could not run the configuration utility.");
         }
     }
 
@@ -193,14 +193,41 @@ public class Main {
 		}
     }
 
-    public static void errorQuit(String message){
+    public static void error(String message){
+        error(false, message, null);
+    }
+
+    public static void error(String message, String stacktrace){
+        error(false, message, stacktrace);
+    }
+
+    public static void error(boolean fatal, String message, String stacktrace){
         System.out.println("\n================================================================================");
         System.out.println("ERROR:");
-        System.out.println(message);
-        System.out.print("\nPress any key to close the program.");
-        Scanner s = new Scanner(System.in);
-        s.nextLine();
-        System.exit(1);
+        if (stacktrace != null && Main.LOG_LEVEL >= 2){
+            System.out.println("MESSAGE:\n"+message+"\n\nSTACKTRACE:\n"+stacktrace);
+        } else {
+            System.out.println(message);
+        }
+        System.out.println("\n================================================================================");
+        if (fatal){
+            System.out.print("\nThe program will now quit.");
+            Scanner s = new Scanner(System.in);
+            s.nextLine();
+            System.exit(1);
+        }
+    }
+
+    public static void warning(String message){
+        warning(message, null);
+    }
+
+    public static void warning(String message, String stacktrace){
+        System.out.println("WARNING: " + message);
+        if (stacktrace != null && Main.LOG_LEVEL >= 2){
+            System.out.println("\nSTACKTRACE:\n"+stacktrace);
+        }
+        System.out.print("\n");
     }
 
     private static XmlSolverFactory loadConfig(String defaultConfigXmlFilename) {

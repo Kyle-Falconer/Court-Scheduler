@@ -25,6 +25,7 @@ import org.junit.runners.JUnit4;
 
 import java.util.List;
 
+import static courtscheduler.persistence.CourtScheduleIO.excelColumn;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -35,6 +36,21 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(JUnit4.class)
 public class Parser {
+
+    @Test
+    public void excel()   {
+        String[][] tests = {
+                {"0", "A"},
+                {"1", "B"},
+                {"2", "C"},
+                {"25", "Z"},
+                {"26", "AA"},
+                {"27", "AB"}
+        };
+        for (String[] test : tests){
+            assertEquals("\""+test[0]+"\" must be \""+test[1]+"\"", test[1], excelColumn(Integer.parseInt(test[0])));
+        }
+    }
 
     @Test
     public void parser() throws Exception {
