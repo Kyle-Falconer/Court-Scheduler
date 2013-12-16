@@ -111,8 +111,8 @@ end
 // prefer not to schedule teams that share coaches at the same time as each other
 rule "notSameTimeAs"
 	when
-		Match($teamlist : notSameTimeAs, $matchSlot : matchSlot)
-		Match($matchSlot == matchSlot && (team1.teamId memberOf $teamlist || team2.teamId memberOf $teamlist))
+		Match($teamlist : notSameTimeAs, $date : Date, $time : Time)
+		Match(Date == $date && Time == $time && (team1.teamId memberOf $teamlist || team2.teamId memberOf $teamlist))
 	then
 		scoreHolder.addHardConstraintMatch(kcontext, -15);
 end
