@@ -149,6 +149,7 @@ rule "dontWantFarApartGames"
         scoreHolder.addSoftConstraintMatch(kcontext, -1000 * modifier);
 end
 
+/*
 rule "preferEarlierTimes"
     when
         Team($teamId : teamId)
@@ -165,6 +166,7 @@ rule "preferEarlierDates"
         int modifier = - $date;
         scoreHolder.addSoftConstraintMatch(kcontext, modifier);
 end
+*/
 
 rule "orderMatchesByConference"
     when
@@ -179,21 +181,26 @@ rule "preferBackToBack"
     when
         Team(BackToBack == true, $team : teamId)
         Match(containsTeam($team) == true, $date : Date, $time : Time)
-        Match($match : this, containsTeam($team) == true, Date == $date, Time == $time + 1)
-        not Match(containsTeam($team) == true, Date == $date, Time != $time + 1 && Time != $time)
+        not Match($match : this, containsTeam($team) == true, Date == $date, Time == $time + 1 || Time == $time - 1)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, 500);
+        scoreHolder.addHardConstraintMatch(kcontext, -5);
 end
 // team likes double headers and wants to play them whenever possible
 rule "preferDoubleHeaders"
     when
         Team(DoubleHeader == true, $team : teamId)
         Match(containsTeam($team) == true, $date : Date, $time : Time)
-        Match($match : this, containsTeam($team) == true, Date == $date, Time == $time + 2)
-        not Match(containsTeam($team) == true, Date == $date, Time != $time + 2 && Time != $time)
+        not Match($match : this, containsTeam($team) == true, Date == $date, Time == $time + 2 || Time == $time - 2)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, 500);
+        scoreHolder.addHardConstraintMatch(kcontext, -5);
 end
+
+/*rule "preferWeekdays"
+	when
+		Match(isOnWeekend == true)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -10);
+end*/
 
 // ############################################################################################
 // Old rules

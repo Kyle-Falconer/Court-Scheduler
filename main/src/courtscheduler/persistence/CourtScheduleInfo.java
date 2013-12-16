@@ -18,6 +18,7 @@
 package courtscheduler.persistence;
 
 import courtscheduler.domain.DateConstraint;
+import courtscheduler.domain.Match;
 import courtscheduler.domain.Team;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -88,6 +89,7 @@ public class CourtScheduleInfo {
 		this.holidays = new ArrayList<LocalDate>();
 
         DateConstraint.setInfo(this);
+		Match.setInfo(this);
     }
 
     public int configure() {

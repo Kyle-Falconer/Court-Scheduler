@@ -18,6 +18,8 @@
 
 package courtscheduler.domain;
 
+import courtscheduler.persistence.CourtScheduleInfo;
+import org.joda.time.DateTimeConstants;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
@@ -39,6 +41,8 @@ public class Match {
     private Team team2;
     MatchAvailability avail;   // calculated based on the intersection of the teams' availabilities
     private MatchSlot matchSlot;
+
+	private static CourtScheduleInfo info;
 
     public void setMatchSlot(MatchSlot matchSlot) {
         this.matchSlot = matchSlot;
@@ -187,5 +191,14 @@ public class Match {
 			System.err.println("WARNING: Match " + this + " has teams from different conferences.");
 		}
 		return team1.getConference();
+	}
+
+	public boolean getIsOnWeekend() {
+		int weekday = info.getDayOfWeek(this.getMatchSlot().getDay());
+		return weekday == DateTimeConstants.SATURDAY || weekday == DateTimeConstants.SUNDAY;
+	}
+
+	public static void setInfo(CourtScheduleInfo info) {
+		Match.info = info;
 	}
 }
