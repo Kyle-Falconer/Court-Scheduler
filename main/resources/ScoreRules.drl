@@ -105,7 +105,7 @@ rule "preferredDates"
 	when
 		Match(PreferToPlayInCurrentSlot == true)
 	then
-		scoreHolder.addSoftConstraintMatch(kcontext, 3000);
+		scoreHolder.addSoftConstraintMatch(kcontext, 10000);
 end
 
 // prefer not to schedule teams that share coaches at the same time as each other
@@ -149,7 +149,7 @@ rule "dontWantFarApartGames"
         scoreHolder.addSoftConstraintMatch(kcontext, -1000 * modifier);
 end
 
-/*
+
 rule "preferEarlierTimes"
     when
         Team($teamId : teamId)
@@ -166,8 +166,7 @@ rule "preferEarlierDates"
         int modifier = - $date;
         scoreHolder.addSoftConstraintMatch(kcontext, modifier);
 end
-*/
-
+/*
 rule "orderMatchesByConference"
     when
         Match($conf1 : Conference, $date : Date, $time : Time)
@@ -175,6 +174,7 @@ rule "orderMatchesByConference"
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -1000);
 end
+*/
 
 // if B2B/DH, always prefer to have them as such
 rule "preferBackToBack"
