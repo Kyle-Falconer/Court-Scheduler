@@ -56,24 +56,28 @@ public class CourtScheduleInfo {
     private int numberOfTimeSlotsPerDay;
     private int timeslotDurationInMinutes;
     private List<LocalDate> holidays;
-    private Map<String, String> primaryDays;
-    private Map<String, String> secondaryDays;
-    private Map<String, String> badConferenceDays;
+    private Map<String, List<Integer>> primaryDays;
+    private Map<String, List<Integer>> secondaryDays;
+    private Map<String, List<Integer>> badConferenceDays;
     private String inputFileLocation;
     private String outputFolderLocation;
 
     private List<String> raw_lines;
 
-    private final String MONDAY = "monday";
-    private final String TUESDAY = "tuesday";
-    private final String WEDNESDAY = "wednesday";
-    private final String THURSDAY = "thursday";
-    private final String FRIDAY = "friday";
-    private final String SATURDAY = "saturday";
-    private final String SUNDAY = "sunday";
+    private static final String MONDAY = "monday";
+    private static final String TUESDAY = "tuesday";
+    private static final String WEDNESDAY = "wednesday";
+    private static final String THURSDAY = "thursday";
+    private static final String FRIDAY = "friday";
+    private static final String SATURDAY = "saturday";
+    private static final String SUNDAY = "sunday";
 
-	private final String[] LONG_DAYS = {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY};
-	private final String[] SHORT_DAYS = {"M", "T", "W", "R", "F", "S", "U"};
+	// Joda Time counts its weekdays from one, not from zero, so we have to pad
+	// plus I can't resist a pun
+	private static final String NONEDAY = "";
+
+	public static final String[] LONG_DAYS = {NONEDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY};
+	public static final String[] SHORT_DAYS = {NONEDAY, "M", "T", "W", "R", "F", "S", "U"};
 
 	// TODO:
     // Make numberOfTimeSlotsPerDay, timeslotDurationInMinutes,
@@ -83,9 +87,9 @@ public class CourtScheduleInfo {
 
     public CourtScheduleInfo(String filepath) {
         this.filepath = filepath;
-		this.badConferenceDays = new HashMap<String, String>();
-		this.primaryDays = new HashMap<String, String>();
-		this.secondaryDays = new HashMap<String, String>();
+		this.badConferenceDays = new HashMap<String, List<Integer>>();
+		this.primaryDays = new HashMap<String, List<Integer>>();
+		this.secondaryDays = new HashMap<String, List<Integer>>();
 		this.holidays = new ArrayList<LocalDate>();
 
         DateConstraint.setInfo(this);
@@ -126,12 +130,7 @@ public class CourtScheduleInfo {
             } else if (key.equals("timeslots_start")) {
                 this.timeslotMidnightOffsetInMinutes = timeStringToMinutes(value);
             } else if (key.startsWith("conference")) {
-
-                String[] confDays = parseConferenceDays(value);
-
-                this.badConferenceDays.put(confDays[0], confDays[1]);
-                this.primaryDays.put(confDays[0], confDays[2]);
-                this.secondaryDays.put(confDays[0], confDays[3]);
+                this.parseConferenceDays(value);
             } else if (key.startsWith("holiday")) {
 				if (!value.contains("-")) {
 					// one date
@@ -174,13 +173,13 @@ public class CourtScheduleInfo {
     }
 
 
-    public Map<String,String> getBadConferenceDays(){
+    public Map<String, List<Integer>> getBadConferenceDays(){
         return this.badConferenceDays;
     }
-	public Map<String,String> getPrimaryDays() {
+	public Map<String, List<Integer>> getPrimaryDays() {
 		return this.primaryDays;
 	}
-	public Map<String,String> getSecondaryDays() {
+	public Map<String, List<Integer>> getSecondaryDays() {
 		return this.secondaryDays;
 	}
 
@@ -193,7 +192,7 @@ public class CourtScheduleInfo {
         return hoursInMins + mins;
     }
 
-    private String[] parseConferenceDays(String conferenceString){
+    private void parseConferenceDays(String conferenceString){
         // example line 'conference=11-MW:FS'
         String conference = conferenceString.substring(0, conferenceString.indexOf("-"));
 		String primaryShortDays, secondaryShortDays;
@@ -205,30 +204,28 @@ public class CourtScheduleInfo {
 			primaryShortDays = conferenceString;
 			secondaryShortDays = "";
 		}
-        StringBuilder primaryDays = new StringBuilder();
-        StringBuilder secondaryDays = new StringBuilder();
-        StringBuilder badDays = new StringBuilder();
+        List<Integer> primaryDaysList = new ArrayList<Integer>();
+		List<Integer> secondaryDaysList = new ArrayList<Integer>();
+		List<Integer> badDaysList = new ArrayList<Integer>();
         String[] result = new String[4];
 
-        for (int i = 0; i < SHORT_DAYS.length; i++) {
+        for (int i = 1; i < SHORT_DAYS.length; i++) {
             String shortDay = SHORT_DAYS[i];
             String longDay = LONG_DAYS[i];
             if (primaryShortDays.contains(shortDay)) {
-                primaryDays.append(longDay + " ");
+                primaryDaysList.add(i);
             }
             else if (secondaryShortDays.contains(shortDay)) {
-                secondaryDays.append(longDay + " ");
+                secondaryDaysList.add(i);
             }
             else {
-                badDays.append(longDay + " ");
+                badDaysList.add(i);
             }
         }
 
-        result[0] = conference;
-        result[1] = badDays.toString();
-        result[2] = primaryDays.toString();
-        result[3] = secondaryDays.toString();
-        return result;
+		this.badConferenceDays.put(conference, badDaysList);
+		this.primaryDays.put(conference, primaryDaysList);
+		this.secondaryDays.put(conference, secondaryDaysList);
     }
 
     public static LocalDate parseDateString(String dateString) {
@@ -395,7 +392,8 @@ public class CourtScheduleInfo {
 		ArrayList<DateConstraint> components = new ArrayList<DateConstraint>();
 		for (String request : description) {
 			request = request.trim().toLowerCase();
-			for (String longDay : LONG_DAYS) {
+			for (int i = 1; i < LONG_DAYS.length; i++) {
+				String longDay = LONG_DAYS[i];
 				DateConstraint nextComponent = null;
 				if (request.contains(longDay) && request.contains(":")) {
 					// special constraint: [day] before/after [time]

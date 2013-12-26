@@ -201,4 +201,17 @@ public class Match {
 	public static void setInfo(CourtScheduleInfo info) {
 		Match.info = info;
 	}
+
+	public List<Integer> getPrimaryDays() {
+		List<Integer> team1Primary = info.getPrimaryDays().get(team1.getGrade());
+		if (team1.getGrade().equals(team2.getGrade())) {
+			return team1Primary;
+		}
+		List<Integer> team2Primary = info.getPrimaryDays().get(team2.getGrade());
+		List<Integer> team1Secondary = info.getSecondaryDays().get(team1.getGrade());
+		List<Integer> team2Secondary = info.getSecondaryDays().get(team2.getGrade());
+		// TODO
+		System.out.println(team1.getTeamName() + " and " + team2.getTeamName() + " don't share the same grade; determine shared primary days (defaulting to team 1's)");
+		return team1Primary;
+	}
 }

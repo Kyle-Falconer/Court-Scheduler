@@ -455,18 +455,22 @@ public class CourtScheduleIO {
 
 		// put all conference primary days on prefDates
 		// FIXME
-		String prefDays = info.getPrimaryDays().get(team.getGrade());
+		List<Integer> prefDays = info.getPrimaryDays().get(team.getGrade());
 		if (prefDays != null){
-			parseDateConstraints(prefDays, team, prefDates);
+			for (Integer i : prefDays) {
+				parseDateConstraints(CourtScheduleInfo.LONG_DAYS[i], team, prefDates);
+			}
         }
 		// if there's no primary day marked, then default to doing nothing
 
 		// do nothing with secondary days-- they're neither preferred nor unplayable
 
         // put all dates that are not conference primary/secondary days on the badDates object
-		String badDays = info.getBadConferenceDays().get(team.getGrade());
-		if (badDays != null && badDays.length() != 7) {
-        	parseDateConstraints(badDays, team, badDates);
+		List<Integer> badDays = info.getBadConferenceDays().get(team.getGrade());
+		if (badDays != null && badDays.size() != 7) {
+			for (Integer i : badDays) {
+        		parseDateConstraints(CourtScheduleInfo.LONG_DAYS[i], team, badDates);
+			}
 		} else {
             warning("Team "+team.getTeamId()+" has no conference days!"+
                     "\tFound in "+currentCell());

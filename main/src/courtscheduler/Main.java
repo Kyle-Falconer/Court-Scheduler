@@ -17,8 +17,7 @@
 
 package courtscheduler;
 
-import courtscheduler.domain.CourtSchedule;
-import courtscheduler.domain.Team;
+import courtscheduler.domain.*;
 import courtscheduler.persistence.CourtScheduleIO;
 import courtscheduler.persistence.CourtScheduleInfo;
 import org.optaplanner.core.api.solver.Solver;
@@ -27,8 +26,8 @@ import org.optaplanner.core.config.solver.XmlSolverFactory;
 
 import java.awt.*;
 import java.io.*;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
+import java.util.List;
 
 
 /**
@@ -133,6 +132,7 @@ public class Main {
             solver.solve();
 			CourtSchedule bestSolution = (CourtSchedule)solver.getBestSolution();
             log_strings.append("Best score: "+solver.getBestSolution().getScore());
+			fillPrimaryDays(bestSolution, info);
 
             output_filename = utils.writeXlsx(bestSolution.getMatchList(), info, output_filename);
             openFile(output_filename);
@@ -361,4 +361,49 @@ public class Main {
 
     }
 
+	public static void fillPrimaryDays(CourtSchedule solution, CourtScheduleInfo info) {
+		// determine which days are primary days
+		List<MatchSlot> gaps = detectGaps(solution, info);
+		System.out.println(">> " + gaps.size());
+		for (MatchSlot m : gaps) {
+			System.out.println("Gap in solution at " + m + " on weekday " + info.getDayOfWeek(m.getDay()) );
+			// locate candidate matches
+			// move match there
+		}
+	}
+
+	public static List<MatchSlot> detectGaps(CourtSchedule solution, CourtScheduleInfo info) {
+		List<Match> matches = solution.getMatchList();
+
+		// start with all matchslots that can be played in...
+		List<MatchSlot> gaps = new ArrayList<MatchSlot>();
+		DateConstraint standard = DateConstraint.getStandardDates();
+		int maxDays = info.getNumberOfConferenceDays();
+		int maxTimes = info.getNumberOfTimeSlotsPerDay();
+		int maxCourts = info.getNumberOfCourts();
+		for (int day = 0; day < maxDays; day++) {
+			for (int time = 0; time < maxTimes; time++) {
+				if (standard.getDate(day, time)) {
+					for (int court = 0; court < maxCourts; court++) {
+						MatchSlot newSlot = new MatchSlot(day, time, court);
+						gaps.add(newSlot);
+					}
+				}
+			}
+		}
+
+		// ...then remove all matchslots that are taken
+		for (int i = 0; i < matches.size(); i++) {
+			MatchSlot takenSlot = matches.get(i).getMatchSlot();
+			for (int j = 0; j < gaps.size(); j++) {
+ 				if (takenSlot.equals(gaps.get(j))) {
+					System.out.println("Removing " + gaps.get(j));
+					gaps.remove(j);
+					break;
+				}
+			}
+		}
+
+		return gaps;
+	}
 }

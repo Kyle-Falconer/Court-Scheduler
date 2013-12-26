@@ -37,7 +37,7 @@
       <entityTabuSize>7</entityTabuSize>
     </acceptor>
     <forager>
-      <acceptedCountLimit>1500</acceptedCountLimit>
+      <acceptedCountLimit>2500</acceptedCountLimit>
     </forager>
     <termination>
         <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>

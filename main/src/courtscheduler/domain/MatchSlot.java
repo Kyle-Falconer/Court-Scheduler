@@ -64,6 +64,6 @@ public class MatchSlot extends AbstractPersistable {
 			return false;
 		}
 		MatchSlot o = (MatchSlot) other;
-		return this.getTime() == o.getTime() && this.getDay() == o.getDay() && this.getCourt() == o.getCourt();
+		return this.getTime().equals(o.getTime()) && this.getDay().equals(o.getDay()) && this.getCourt().equals(o.getCourt());
 	}
 }
