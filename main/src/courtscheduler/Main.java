@@ -372,9 +372,19 @@ public class Main {
 
 		// first pass: fix matches which can't play in current slot
 		for (Match m : matches) {
-			List<Integer> primary = m.getPrimaryDays();
 			if (!m.getCanPlayInCurrentSlot()) {
-				// TODO fix the match
+				// move the match
+				for (int i = 0; i < gaps.size(); i++) {
+					MatchSlot gap = gaps.get(i);
+					if (m.canPlayIn(gap)) {
+						MatchSlot s = m.getMatchSlot();
+						m.setMatchSlot(gap);
+						gaps.remove(i);
+						if (DateConstraint.getStandardDates().getDate(s.getDay(), s.getTime())) {
+							gaps.add(s);
+						}
+					}
+				}
 			}
 		}
 
