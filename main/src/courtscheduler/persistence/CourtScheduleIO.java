@@ -220,7 +220,12 @@ public class CourtScheduleIO {
 		// so add one if we're printing for the client
 		dataRow.createCell(cellNumber++).setCellValue(courtId + (Main.LOG_LEVEL > 1 ? 0 : 1));
 
-		dataRow.createCell(cellNumber).setCellValue(match.getCanPlayInCurrentSlot() ? "" : "WARNING: Team is scheduled when they cannot play");
+		if (!match.getCanPlayInCurrentSlot()) {
+			dataRow.createCell(cellNumber).setCellValue("WARNING: Team is scheduled when they cannot play");
+		}
+		else if (match.wasPostProcessed()) {
+			dataRow.createCell(cellNumber).setCellValue("VERIFY: Check that this match meets DH/B2B/NST constraints");
+		}
 	}
 
 	private XSSFSheet initializePage(XSSFWorkbook workbook, String conference) {

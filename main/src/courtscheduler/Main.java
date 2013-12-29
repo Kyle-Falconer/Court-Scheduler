@@ -370,19 +370,14 @@ public class Main {
 		System.out.println(solution.getMatches().size());
 		List<Match> matches = solution.getMatches();
 
+		// TODO: make these consider DH/B2B
 		// first pass: fix matches which can't play in current slot
 		for (Match m : matches) {
 			if (!m.getCanPlayInCurrentSlot()) {
 				// move the match
 				for (int i = 0; i < gaps.size(); i++) {
-					MatchSlot gap = gaps.get(i);
-					if (m.canPlayIn(gap)) {
-						MatchSlot s = m.getMatchSlot();
-						m.setMatchSlot(gap);
-						gaps.remove(i);
-						if (DateConstraint.getStandardDates().getDate(s.getDay(), s.getTime())) {
-							gaps.add(s);
-						}
+					if (m.canPlayIn(gaps.get(i))) {
+						moveMatch(m, gaps, i);
 					}
 				}
 			}
@@ -402,16 +397,22 @@ public class Main {
 				for (int i = 0; i < gaps.size(); i++) {
 					MatchSlot gap = gaps.get(i);
 					if (primary.contains(new Integer(info.getDayOfWeek(gap.getDay()))) && m.canPlayIn(gap)) {
-						MatchSlot s = m.getMatchSlot();
 						System.out.println("Move " + m + " to " + gap + " (DoW " + info.getDayOfWeek(gap.getDay()) + ")");
-						m.setMatchSlot(gap);
-						gaps.remove(i);
-						gaps.add(s);
+						moveMatch(m, gaps, i);
 						break;
 					}
 				}
 			}
 		}
+	}
+
+	private static void moveMatch(Match m, List<MatchSlot> gaps, int i) {
+		MatchSlot s = m.getMatchSlot();
+		m.setMatchSlot(gaps.remove(i));
+		if (DateConstraint.getStandardDates().getDate(s.getDay(), s.getTime())) {
+			gaps.add(s);
+		}
+		m.setPostProcessedFlag();
 	}
 
 	public static List<MatchSlot> detectGaps(CourtSchedule solution, CourtScheduleInfo info) {

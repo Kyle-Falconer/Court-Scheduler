@@ -40,6 +40,7 @@ public class Match {
     private Team team2;
     MatchAvailability avail;   // calculated based on the intersection of the teams' availabilities
     private MatchSlot matchSlot;
+	private boolean wasPostProcessed;
 
 	private static CourtScheduleInfo info;
 
@@ -53,13 +54,22 @@ public class Match {
     }
 
     public Match() {
+		wasPostProcessed = false;
     }
 
     public Match(Team team1, Team team2) {
+		this();
         this.team1 = team1;
         this.team2 = team2;
         avail = new MatchAvailability(team1.getAvailability(), team2.getAvailability());
     }
+
+	public void setPostProcessedFlag() {
+		wasPostProcessed = true;
+	}
+	public boolean wasPostProcessed() {
+		return wasPostProcessed;
+	}
 
     public Team getTeam1() {
         return this.team1;
