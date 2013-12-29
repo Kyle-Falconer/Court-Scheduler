@@ -134,7 +134,7 @@ public class Main {
             log_strings.append("Best score: "+solver.getBestSolution().getScore());
 			fillPrimaryDays(bestSolution, info);
 
-            output_filename = utils.writeXlsx(bestSolution.getMatchList(), info, output_filename);
+            output_filename = utils.writeXlsx(bestSolution.getMatches(), info, output_filename);
             openFile(output_filename);
         } catch(Exception e){
             error(true, "Fatal error", e.toString());
@@ -362,18 +362,49 @@ public class Main {
     }
 
 	public static void fillPrimaryDays(CourtSchedule solution, CourtScheduleInfo info) {
-		// determine which days are primary days
 		List<MatchSlot> gaps = detectGaps(solution, info);
-		System.out.println(">> " + gaps.size());
+		System.out.println(">> " + gaps.size() + " gaps");
 		for (MatchSlot m : gaps) {
 			System.out.println("Gap in solution at " + m + " on weekday " + info.getDayOfWeek(m.getDay()) );
-			// locate candidate matches
-			// move match there
+		}
+		System.out.println(solution.getMatches().size());
+		List<Match> matches = solution.getMatches();
+
+		// first pass: fix matches which can't play in current slot
+		for (Match m : matches) {
+			List<Integer> primary = m.getPrimaryDays();
+			if (!m.getCanPlayInCurrentSlot()) {
+				// TODO fix the match
+			}
+		}
+
+		// second pass: fix matches not on primary day
+		for (Match m : matches) {
+			List<Integer> primary = m.getPrimaryDays();
+			if (!primary.contains(new Integer(m.getDayOfWeek()))) {
+				// detect
+				System.out.print("Match " + m + " is on a non-primary day (" + m.getDayOfWeek() + " not in ");
+				for (Integer i : primary) {
+					System.out.print(i + " ");
+				}
+				System.out.println(")");
+				// fix
+				for (int i = 0; i < gaps.size(); i++) {
+					MatchSlot gap = gaps.get(i);
+					if (primary.contains(new Integer(info.getDayOfWeek(gap.getDay()))) && m.canPlayIn(gap)) {
+						MatchSlot s = m.getMatchSlot();
+						System.out.println("Move " + m + " to " + gap + " (DoW " + info.getDayOfWeek(gap.getDay()) + ")");
+						gaps.remove(i);
+						gaps.add(s);
+						break;
+					}
+				}
+			}
 		}
 	}
 
 	public static List<MatchSlot> detectGaps(CourtSchedule solution, CourtScheduleInfo info) {
-		List<Match> matches = solution.getMatchList();
+		List<Match> matches = solution.getMatches();
 
 		// start with all matchslots that can be played in...
 		List<MatchSlot> gaps = new ArrayList<MatchSlot>();
@@ -397,7 +428,7 @@ public class Main {
 			MatchSlot takenSlot = matches.get(i).getMatchSlot();
 			for (int j = 0; j < gaps.size(); j++) {
  				if (takenSlot.equals(gaps.get(j))) {
-					System.out.println("Removing " + gaps.get(j));
+					//System.out.println("Removing " + gaps.get(j));
 					gaps.remove(j);
 					break;
 				}

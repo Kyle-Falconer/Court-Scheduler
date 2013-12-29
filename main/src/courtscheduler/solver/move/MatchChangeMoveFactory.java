@@ -43,7 +43,7 @@ public class MatchChangeMoveFactory implements MoveListFactory {
     public List<Move> createMoveList(Solution solution) {
         CourtSchedule courtSchedule = (CourtSchedule) solution;
         List<Move> moveList = new ArrayList<Move>();
-        List<Match> matchList = courtSchedule.getMatchList();
+        List<Match> matchList = courtSchedule.getMatches();
         List<MatchSlot> slotList = courtSchedule.getMatchSlots();
         for (Match match : matchList) {
             // if (filter.accept(courtSchedule, match)) {

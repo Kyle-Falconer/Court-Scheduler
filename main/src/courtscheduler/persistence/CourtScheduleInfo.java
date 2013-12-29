@@ -102,7 +102,7 @@ public class CourtScheduleInfo {
             error(true, "Could not read anything from the configuration file."+EOL +
                     "Expected the configuration file to be found at: " + FileSystems.getDefault().getPath(filepath).toAbsolutePath());
         }
-		String[] scheduleDescription = null;
+		String[] scheduleDescription = new String[0];
         for (String line : raw_lines) {
             if (line.startsWith(";", 0) || line.trim().length() == 0) {
                 // this line is a comment or empty line

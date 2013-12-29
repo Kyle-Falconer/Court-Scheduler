@@ -48,7 +48,7 @@ public class teamIsPlayingOnDay {
         }
         CourtScheduleInfo info = new CourtScheduleInfo("config.ini");
         CourtSchedule test = new CourtSchedule(teams, info);
-        List<Match> matches = test.getMatchList();
+        List<Match> matches = test.getMatches();
         bulkTest(0,0,matches, test);
         bulkTest(0,1,matches, test);
 

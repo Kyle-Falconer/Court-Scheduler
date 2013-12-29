@@ -150,9 +150,6 @@ public class CourtSchedule extends AbstractPersistable implements Solution<HardS
     public void setMatchList(List<Match> matchList) {
         this.matchList = matchList;
     }
-    public List<Match> getMatchList() {
-        return matchList;
-    }
     public Match getNextMatch(){
         return matchList.remove(0);
     }

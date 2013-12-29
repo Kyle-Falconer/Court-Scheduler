@@ -23,8 +23,7 @@ import org.joda.time.DateTimeConstants;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -129,8 +128,11 @@ public class Match {
 				.toString();
 	}
 
+	public boolean canPlayIn(MatchSlot s) {
+		return avail.canPlayIn(s);
+	}
 	public boolean getCanPlayInCurrentSlot() {
-		return avail.canPlayIn(matchSlot);
+		return this.canPlayIn(this.getMatchSlot());
 	}
 	public boolean getPreferToPlayInCurrentSlot() {
 		return avail.isPreferredSlot(matchSlot);
@@ -193,8 +195,12 @@ public class Match {
 		return team1.getConference();
 	}
 
+	public int getDayOfWeek() {
+		return info.getDayOfWeek(this.getMatchSlot().getDay());
+	}
+
 	public boolean getIsOnWeekend() {
-		int weekday = info.getDayOfWeek(this.getMatchSlot().getDay());
+		int weekday = this.getDayOfWeek();
 		return weekday == DateTimeConstants.SATURDAY || weekday == DateTimeConstants.SUNDAY;
 	}
 
@@ -205,13 +211,34 @@ public class Match {
 	public List<Integer> getPrimaryDays() {
 		List<Integer> team1Primary = info.getPrimaryDays().get(team1.getGrade());
 		if (team1.getGrade().equals(team2.getGrade())) {
-			return team1Primary;
+			return new ArrayList<Integer>(team1Primary);
 		}
 		List<Integer> team2Primary = info.getPrimaryDays().get(team2.getGrade());
 		List<Integer> team1Secondary = info.getSecondaryDays().get(team1.getGrade());
 		List<Integer> team2Secondary = info.getSecondaryDays().get(team2.getGrade());
-		// TODO
-		System.out.println(team1.getTeamName() + " and " + team2.getTeamName() + " don't share the same grade; determine shared primary days (defaulting to team 1's)");
-		return team1Primary;
+		// primary days = (primary1 intersect primary2) union (primary1 intersect secondary2) union (primary2 intersect secondary1)
+		// the last two clauses address days that are only primary for one team, and just playable for the other
+		List<Integer> clause1 = intersection(team1Primary, team2Primary);
+		List<Integer> clause2 = intersection(team1Primary, team2Secondary);
+		List<Integer> clause3 = intersection(team2Primary, team1Secondary);
+		return union(clause1, clause2, clause3);
+	}
+
+	private <T> List<T> union(List<T> list1, List<T> list2, List<T> list3) {
+		Set<T> set = new HashSet<T>();
+		set.addAll(list1);
+		set.addAll(list2);
+		set.addAll(list3);
+		return new ArrayList<T>(set);
+	}
+
+	private <T> List<T> intersection(List<T> list1, List<T> list2) {
+		List<T> list = new ArrayList<T>();
+		for (T t : list1) {
+			if(list2.contains(t)) {
+				list.add(t);
+			}
+		}
+		return list;
 	}
 }
