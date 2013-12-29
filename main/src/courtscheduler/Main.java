@@ -394,6 +394,7 @@ public class Main {
 					if (primary.contains(new Integer(info.getDayOfWeek(gap.getDay()))) && m.canPlayIn(gap)) {
 						MatchSlot s = m.getMatchSlot();
 						System.out.println("Move " + m + " to " + gap + " (DoW " + info.getDayOfWeek(gap.getDay()) + ")");
+						m.setMatchSlot(gap);
 						gaps.remove(i);
 						gaps.add(s);
 						break;
