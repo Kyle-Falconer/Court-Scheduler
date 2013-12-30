@@ -112,6 +112,30 @@ public class Match {
         return okay;
     }
 
+	public boolean canBeScheduledWith(Match other) {
+		if (this.team1.equals(other.team1) || this.team1.equals(other.team2)) {
+			// team1 is shared
+			if (this.overlapsWith(other.getMatchSlot())) {
+				return false;
+			}
+			if ( (!team1.getBackToBack() && MatchSlot.getTimeDistance(this.getMatchSlot(), other.getMatchSlot()) == 1)
+				|| (!team1.getDoubleHeader() && MatchSlot.getTimeDistance(this.getMatchSlot(), other.getMatchSlot()) == 2) ) {
+				return false;
+			}
+		}
+		if (this.team2.equals(other.team1) || this.team2.equals(other.team2)) {
+			// team2 is shared
+			if (this.overlapsWith(other.getMatchSlot())) {
+				return false;
+			}
+			if ( (!team2.getBackToBack() && MatchSlot.getTimeDistance(this.getMatchSlot(), other.getMatchSlot()) == 1)
+					|| (!team2.getDoubleHeader() && MatchSlot.getTimeDistance(this.getMatchSlot(), other.getMatchSlot()) == 2) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public String getBasketHeight() {
 		return team1.getGrade(); // FIXME
 	}

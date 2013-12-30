@@ -66,4 +66,8 @@ public class MatchSlot extends AbstractPersistable {
 		MatchSlot o = (MatchSlot) other;
 		return this.getTime().equals(o.getTime()) && this.getDay().equals(o.getDay()) && this.getCourt().equals(o.getCourt());
 	}
+
+	public static int getTimeDistance(MatchSlot a, MatchSlot b) {
+		return Math.abs(a.getTime() - b.getTime());
+	}
 }

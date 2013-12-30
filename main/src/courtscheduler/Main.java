@@ -364,17 +364,25 @@ public class Main {
 	public static void fillPrimaryDays(CourtSchedule solution, CourtScheduleInfo info) {
 		List<MatchSlot> gaps = detectGaps(solution, info);
 		System.out.println(">> " + gaps.size() + " gaps");
+		// Randomize what gaps come up when, so we don't wind up placing long streaks of contiguous games with the same team
+		//Collections.shuffle(gaps);
 		for (MatchSlot m : gaps) {
 			System.out.println("Gap in solution at " + m + " on weekday " + info.getDayOfWeek(m.getDay()) );
 		}
 		System.out.println(solution.getMatches().size());
 		List<Match> matches = solution.getMatches();
 
+		// TODO: make these consider DH/B2B
 		// first pass: fix matches which can't play in current slot
 		for (Match m : matches) {
 			List<Integer> primary = m.getPrimaryDays();
 			if (!m.getCanPlayInCurrentSlot()) {
-				// TODO fix the match
+				// move the match
+				for (int i = 0; i < gaps.size(); i++) {
+					if (m.canPlayIn(gaps.get(i))) {
+						moveMatch(m, gaps, i);
+					}
+				}
 			}
 		}
 
@@ -391,17 +399,35 @@ public class Main {
 				// fix
 				for (int i = 0; i < gaps.size(); i++) {
 					MatchSlot gap = gaps.get(i);
-					if (primary.contains(new Integer(info.getDayOfWeek(gap.getDay()))) && m.canPlayIn(gap)) {
-						MatchSlot s = m.getMatchSlot();
+					if (primary.contains(new Integer(info.getDayOfWeek(gap.getDay()))) && canPlayInSlot(m, gap, matches)) {
 						System.out.println("Move " + m + " to " + gap + " (DoW " + info.getDayOfWeek(gap.getDay()) + ")");
-						m.setMatchSlot(gap);
-						gaps.remove(i);
-						gaps.add(s);
+						moveMatch(m, gaps, i);
 						break;
 					}
 				}
 			}
 		}
+	}
+
+	private static boolean canPlayInSlot(Match target, MatchSlot s, List<Match> matches) {
+		if (!target.canPlayIn(s)) {
+			return false;
+		}
+		for (Match m : matches) {
+			if (m.getDate().equals(target.getDate()) && !target.canBeScheduledWith(m)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static void moveMatch(Match m, List<MatchSlot> gaps, int i) {
+		MatchSlot s = m.getMatchSlot();
+		m.setMatchSlot(gaps.remove(i));
+		if (DateConstraint.getStandardDates().getDate(s.getDay(), s.getTime())) {
+			gaps.add(s);
+		}
+		m.setPostProcessedFlag();
 	}
 
 	public static List<MatchSlot> detectGaps(CourtSchedule solution, CourtScheduleInfo info) {
