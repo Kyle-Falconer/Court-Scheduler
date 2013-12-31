@@ -35,7 +35,7 @@ public class MatchAvailability {
 
 
     public MatchAvailability(){
-		badDates = new DateConstraint(new DateConstraint(), DateConstraint.getStandardDates());
+		badDates = new DateConstraint(new DateConstraint(), DateConstraint.getStandardDates().getInverse());
 		prefDates = new DateConstraint();
 		// intentionally leaving onlyDates uninitialized
 		notSameTimeAs = new SharedTeams();

@@ -428,7 +428,7 @@ public class Main {
 	private static void moveMatch(Match m, List<MatchSlot> gaps, int i) {
 		MatchSlot s = m.getMatchSlot();
 		m.setMatchSlot(gaps.remove(i));
-		if (DateConstraint.getStandardDates().getDate(s.getDay(), s.getTime())) {
+		if (!DateConstraint.getStandardDates().getDate(s.getDay(), s.getTime())) {
 			gaps.add(s);
 		}
 		m.setPostProcessedFlag();
@@ -445,7 +445,7 @@ public class Main {
 		int maxCourts = info.getNumberOfCourts();
 		for (int day = 0; day < maxDays; day++) {
 			for (int time = 0; time < maxTimes; time++) {
-				if (standard.getDate(day, time)) {
+				if (!standard.getDate(day, time)) {
 					for (int court = 0; court < maxCourts; court++) {
 						MatchSlot newSlot = new MatchSlot(day, time, court);
 						gaps.add(newSlot);

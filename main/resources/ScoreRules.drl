@@ -149,7 +149,7 @@ rule "dontWantFarApartGames"
         scoreHolder.addSoftConstraintMatch(kcontext, -1000 * modifier);
 end
 
-
+/*
 rule "preferEarlierTimes"
     when
         Team($teamId : teamId)
@@ -157,7 +157,7 @@ rule "preferEarlierTimes"
     then
         int modifier = - $time1 * 100;
         scoreHolder.addSoftConstraintMatch(kcontext, modifier);
-end
+end*/
 rule "preferEarlierDates"
     when
         Team($teamId : teamId)

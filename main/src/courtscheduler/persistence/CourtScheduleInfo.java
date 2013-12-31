@@ -405,25 +405,32 @@ public class CourtScheduleInfo {
 				}
 			}
 		}
-		for (DateConstraint c : components) {
+		for (int i = 0; i < components.size(); i+=2) {
+			// this means the description NEEDS to be paired-- the two constraints describing a day need to be adjacent
+			DateConstraint c1 = components.get(i);
+			DateConstraint c2 = components.get(i+1);
+			DateConstraint c = DateConstraint.getIntersection(c1, c2);
 			// and then OR all the components together
 			standardSchedule = new DateConstraint(standardSchedule, c);
 		}
 
 		// FIXME -- bandaid fix, first day is always completely open?
-		standardSchedule.blockFirstDay();
+		//standardSchedule.blockFirstDay();
 
 		return standardSchedule;
 	}
 	private String cleanRequest(String r, String longDay) {
 		String request = r.replace(longDay, "").trim();
 		// don't even ask
-		if (request.contains("before")) {
+		/*if (request.contains("before")) {
 			request = request.replace("before", "after");
+			if (request.substring(request.length() - 3, request.length()-2).equals("0")) {
+				request = request.substring(0, request.length()-3) + "1" + request.substring(request.length()-2);
+			}
 		}
 		else {
 			request = request.replace("after", "before");
-		}
+		}*/
 		return request;
 	}
 }
