@@ -415,7 +415,9 @@ public class Main {
 		}
 		// handle playing at same time as themselves
 		for (Match m : matches) {
-			if (m.getDate().equals(gap.getDay()) && m.containsTeamsFrom(target) && !m.equals(target)) {
+			int distance = MatchSlot.getDateDistance(m.getMatchSlot(), gap);
+			if (m.getDate().equals(gap.getDay()) && (distance == 0 || distance > 2)
+					&& m.containsTeamsFrom(target) && !m.equals(target)) {
 				System.out.println(target + " can't be on " + gap.getDay() + " because of " + m);
 				return false;
 			}
