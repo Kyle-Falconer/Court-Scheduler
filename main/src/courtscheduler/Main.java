@@ -364,6 +364,8 @@ public class Main {
 	public static void fillPrimaryDays(CourtSchedule solution, CourtScheduleInfo info) {
 		List<MatchSlot> gaps = detectGaps(solution, info);
 		System.out.println(">> " + gaps.size() + " gaps");
+		// make sure it doesn't try to put all the same team's games near each other
+		Collections.shuffle(gaps);
 		for (MatchSlot m : gaps) {
 			System.out.println("Gap in solution at " + m + " on weekday " + info.getDayOfWeek(m.getDay()) );
 		}
@@ -376,8 +378,9 @@ public class Main {
 			if (!m.getCanPlayInCurrentSlot()) {
 				// move the match
 				for (int i = 0; i < gaps.size(); i++) {
-					if (m.canPlayIn(gaps.get(i))) {
+					if (matchCanMove(m, gaps.get(i), matches)) {
 						moveMatch(m, gaps, i);
+						break;
 					}
 				}
 			}
@@ -404,6 +407,20 @@ public class Main {
 				}
 			}
 		}
+	}
+
+	private static boolean matchCanMove(Match target, MatchSlot gap, List<Match> matches) {
+		if (!target.canPlayIn(gap)) {
+			return false;
+		}
+		// handle playing at same time as themselves
+		for (Match m : matches) {
+			if (m.getDate().equals(gap.getDay()) && m.containsTeamsFrom(target) && !m.equals(target)) {
+				System.out.println(target + " can't be on " + gap.getDay() + " because of " + m);
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static void moveMatch(Match m, List<MatchSlot> gaps, int i) {
