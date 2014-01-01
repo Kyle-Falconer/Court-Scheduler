@@ -464,7 +464,7 @@ class schedulerConfig(Frame):
                             if save == 0:
                                 config.write( "court_count=" + ntryCourts.get() + "\n" + "\n")
                                 config.write("timeslots_start=5:00am" + "\n")
-                                config.write("timeslots_count=20" + "\n")
+                                config.write("timeslots_count=25" + "\n")
                                 config.write( "timeslot_duration_minutes=" + ntryMatchLength.get() + "\n")
                                 Initial.grid_forget()
                                 btnSubmit.grid_forget()
@@ -627,6 +627,7 @@ def main():
     global root
     if DEBUG:
         print("Starting the configuration utility for Court Scheduler")
+    parseConfigFile()
     populateTimeList()
     populateDayPrefs()
     root = schedulerConfig()
