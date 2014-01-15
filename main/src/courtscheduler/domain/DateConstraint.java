@@ -277,13 +277,16 @@ public class DateConstraint extends Constraint{
     public Integer[] findDayOfWeek(int weekday){
         LocalDate firstDay = info.getConferenceStartDate().withDayOfWeek(weekday);
 		ArrayList<Integer> days = new ArrayList<Integer>();
-		do {
-            Integer day = Days.daysBetween(info.getConferenceStartDate(), firstDay).getDays();
-            if (day > 0){
-			    days.add(day);
-            }
+		if (firstDay.isBefore(info.getConferenceStartDate())) {
+			firstDay.plusWeeks(1);
+		}
+		while ( firstDay.isBefore(info.getConferenceEndDate()) || firstDay.equals(info.getConferenceEndDate()) ) {
+            Integer index = Days.daysBetween(info.getConferenceStartDate(), firstDay).getDays();
+			if (index >= 0) {
+				days.add(index);
+			}
 			firstDay = firstDay.plusWeeks(1);
-		} while (firstDay.isBefore(info.getConferenceEndDate()));
+		}
         return days.toArray(new Integer[days.size()]);
     }
 
@@ -322,12 +325,7 @@ public class DateConstraint extends Constraint{
 		return standardDates;
 	}
 
-	// please never use this
-	// refactor this out as soon as possible
-	public void blockFirstDay() {
-		// FIXME
-		for (int i = 0; i < dates[0].length; i++) {
-			dates[0][i] = true;
-		}
+	public void blockDate(int index) {
+		this.dates[index] = new boolean[this.dates[index].length];
 	}
 }

@@ -386,8 +386,6 @@ public class CourtScheduleInfo {
 
 	public DateConstraint createStandardSchedule(String[] description) {
 		DateConstraint standardSchedule = new DateConstraint();
-		for (LocalDate holiday : holidays)
-			standardSchedule.addDate(standardSchedule.findDate(holiday));
 		Team noTeam = null;
 		ArrayList<DateConstraint> components = new ArrayList<DateConstraint>();
 		for (String request : description) {
@@ -414,8 +412,11 @@ public class CourtScheduleInfo {
 			standardSchedule = new DateConstraint(standardSchedule, c);
 		}
 
-		// FIXME -- bandaid fix, first day is always completely open?
-		//standardSchedule.blockFirstDay();
+		// wipe holidays
+		for (LocalDate holiday : holidays) {
+			int holidayIndex = standardSchedule.findDate(holiday);
+			standardSchedule.blockDate(holidayIndex);
+		}
 
 		return standardSchedule;
 	}

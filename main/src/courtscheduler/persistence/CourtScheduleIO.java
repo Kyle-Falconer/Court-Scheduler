@@ -321,6 +321,7 @@ public class CourtScheduleIO {
                 try {
                     teamId = Integer.parseInt(teamString);
                     team.setTeamId(teamId);
+					team.getDontPlay().addSharedTeam(teamId);
                 } catch (NumberFormatException e) {
                     //not sure what we should do here, this means a team's id is not being captured
                     String niceMessage = String.format("Could not determine the team id from '%s'", teamString);
@@ -523,7 +524,8 @@ public class CourtScheduleIO {
         request = request.trim();
         String[] reSplit = request.split(" ");
         for(int i = 0; i < reSplit.length; i++) {
-            dates.addDates(dates.findDayOfWeek(reSplit[i]));
+			Integer[] weekdayIndexes = dates.findDayOfWeek(reSplit[i]);
+			dates.addDates(weekdayIndexes);
         }
     }
     public static void requestDate(String request, Team team, DateConstraint date){
